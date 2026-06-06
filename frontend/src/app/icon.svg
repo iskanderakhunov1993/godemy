@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="godemy favicon">
+  <rect width="64" height="64" rx="14" fill="#05070f"/>
+  <text
+    x="17"
+    y="40"
+    fill="#7a3ff2"
+    font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace"
+    font-size="28"
+    font-weight="700"
+  >[</text>
+  <text
+    x="30"
+    y="40"
+    fill="#f5f5f7"
+    font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace"
+    font-size="26"
+    font-weight="600"
+  >g</text>
+  <text
+    x="40"
+    y="40"
+    fill="#7a3ff2"
+    font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace"
+    font-size="26"
+    font-weight="700"
+  >_</text>
+</svg>

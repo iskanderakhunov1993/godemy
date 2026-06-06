@@ -1,0 +1,27 @@
+<svg width="960" height="360" viewBox="0 0 960 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="960" height="360" rx="24" fill="#111827"/>
+  <rect x="72" y="110" width="180" height="120" rx="20" fill="#1F2937" stroke="#374151"/>
+  <text x="162" y="150" text-anchor="middle" fill="#E5E7EB" font-family="Arial, sans-serif" font-size="26" font-weight="700">Client</text>
+  <text x="162" y="188" text-anchor="middle" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="18">browser / curl</text>
+
+  <rect x="390" y="80" width="180" height="180" rx="20" fill="#0F172A" stroke="#06B6D4" stroke-width="2"/>
+  <text x="480" y="130" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="28" font-weight="700">Go Server</text>
+  <text x="480" y="170" text-anchor="middle" fill="#67E8F9" font-family="Arial, sans-serif" font-size="18">main() + port + handler</text>
+  <text x="480" y="205" text-anchor="middle" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="16">слушает порт и ждет запросы</text>
+
+  <rect x="708" y="110" width="180" height="120" rx="20" fill="#1F2937" stroke="#374151"/>
+  <text x="798" y="150" text-anchor="middle" fill="#E5E7EB" font-family="Arial, sans-serif" font-size="26" font-weight="700">Handler</text>
+  <text x="798" y="188" text-anchor="middle" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="18">обработка запроса</text>
+
+  <path d="M252 170H370" stroke="#06B6D4" stroke-width="4" stroke-linecap="round"/>
+  <path d="M358 158L378 170L358 182" fill="#06B6D4"/>
+  <text x="312" y="156" text-anchor="middle" fill="#67E8F9" font-family="Arial, sans-serif" font-size="16">request</text>
+
+  <path d="M570 170H688" stroke="#06B6D4" stroke-width="4" stroke-linecap="round"/>
+  <path d="M676 158L696 170L676 182" fill="#06B6D4"/>
+  <text x="629" y="156" text-anchor="middle" fill="#67E8F9" font-family="Arial, sans-serif" font-size="16">call handler</text>
+
+  <path d="M688 210H570" stroke="#34D399" stroke-width="4" stroke-linecap="round"/>
+  <path d="M582 198L562 210L582 222" fill="#34D399"/>
+  <text x="629" y="236" text-anchor="middle" fill="#86EFAC" font-family="Arial, sans-serif" font-size="16">response data</text>
+</svg>

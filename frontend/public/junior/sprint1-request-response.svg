@@ -1,0 +1,26 @@
+<svg width="960" height="360" viewBox="0 0 960 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="960" height="360" rx="24" fill="#111827"/>
+  <rect x="90" y="92" width="220" height="176" rx="20" fill="#1F2937" stroke="#374151"/>
+  <text x="200" y="132" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="26" font-weight="700">Request</text>
+  <text x="200" y="172" text-anchor="middle" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="18">method</text>
+  <text x="200" y="202" text-anchor="middle" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="18">path</text>
+  <text x="200" y="232" text-anchor="middle" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="18">headers / body</text>
+
+  <rect x="370" y="92" width="220" height="176" rx="20" fill="#0F172A" stroke="#06B6D4" stroke-width="2"/>
+  <text x="480" y="132" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="26" font-weight="700">Handler</text>
+  <text x="480" y="172" text-anchor="middle" fill="#67E8F9" font-family="Arial, sans-serif" font-size="18">читает request</text>
+  <text x="480" y="202" text-anchor="middle" fill="#67E8F9" font-family="Arial, sans-serif" font-size="18">выполняет логику</text>
+  <text x="480" y="232" text-anchor="middle" fill="#67E8F9" font-family="Arial, sans-serif" font-size="18">готовит response</text>
+
+  <rect x="650" y="92" width="220" height="176" rx="20" fill="#1F2937" stroke="#374151"/>
+  <text x="760" y="132" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="26" font-weight="700">Response</text>
+  <text x="760" y="172" text-anchor="middle" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="18">status code</text>
+  <text x="760" y="202" text-anchor="middle" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="18">JSON body</text>
+  <text x="760" y="232" text-anchor="middle" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="18">error or success</text>
+
+  <path d="M310 180H350" stroke="#06B6D4" stroke-width="4" stroke-linecap="round"/>
+  <path d="M338 168L358 180L338 192" fill="#06B6D4"/>
+
+  <path d="M590 180H630" stroke="#34D399" stroke-width="4" stroke-linecap="round"/>
+  <path d="M618 168L638 180L618 192" fill="#34D399"/>
+</svg>

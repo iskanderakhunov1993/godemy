@@ -1,0 +1,44 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to production server
+        env:
+          DEPLOY_HOST: ${{ secrets.PRODUCTION_DEPLOY_HOST }}
+          DEPLOY_PATH: ${{ secrets.PRODUCTION_DEPLOY_PATH }}
+          SSH_KEY: ${{ secrets.PRODUCTION_SSH_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          
+          # Validate required secrets
+          [[ -n "$DEPLOY_HOST" ]] || { echo "❌ PRODUCTION_DEPLOY_HOST is not set"; exit 1; }
+          [[ -n "$DEPLOY_PATH" ]] || { echo "❌ PRODUCTION_DEPLOY_PATH is not set"; exit 1; }
+          [[ -n "$SSH_KEY" ]] || { echo "❌ PRODUCTION_SSH_PRIVATE_KEY is not set"; exit 1; }
+          
+          # Setup SSH
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+          
+          # Deploy
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=accept-new root@"$DEPLOY_HOST" <<'EOF'
+          set -euo pipefail
+          cd "$DEPLOY_PATH"
+          git fetch origin
+          git checkout main
+          git reset --hard origin/main
+          docker compose -f docker-compose.prod.yml up -d --build
+          docker image prune -f
+EOF
+          
+          echo "✓ Production deployment completed"

@@ -1,0 +1,43 @@
+# Local environment
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build output
+dist/
+build/
+.next/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+npm-debug.log
+npm-error.log
+*.log
+
+# OS
+Thumbs.db
+
+# Backend
+/backend/.env
+/backend/.env.local
+/backend/*.db
+/backend/*.db-*
+
+# Frontend
+/frontend/.env.local
+/frontend/.env.*.local
+/frontend/.next
