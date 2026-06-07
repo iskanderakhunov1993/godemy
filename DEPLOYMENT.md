@@ -276,4 +276,36 @@ git push origin main
 
 ---
 
+## Развертывание на VPS / Timeweb
+
+Для Timeweb или другого VPS с Docker можно использовать скрипт `scripts/deploy-timeweb.sh`.
+
+1. Скопируй репозиторий на сервер:
+   ```bash
+   git clone https://github.com/<USERNAME>/golanger.git /opt/golanger
+   ```
+2. Создай файлы окружения:
+   ```bash
+   cd /opt/golanger
+   cp .env.production.example .env.production
+   cp backend/.env.production.example backend/.env.production
+   cp frontend/.env.production.example frontend/.env.production
+   ```
+3. Отредактируй `.env.production`, `backend/.env.production` и `frontend/.env.production` реальными значениями.
+4. Запусти скрипт:
+   ```bash
+   sudo bash scripts/deploy-timeweb.sh https://github.com/<USERNAME>/golanger.git godemy.ru /opt/golanger
+   ```
+5. После успешного запуска выполни выдачу SSL:
+   ```bash
+   docker compose --env-file .env.production -f docker-compose.prod.yml run --rm certbot certonly \
+     --webroot -w /var/www/certbot \
+     -d godemy.ru -d www.godemy.ru \
+     --email your-email@example.com --agree-tos --non-interactive
+   ```
+
+> На Timeweb требуется VDS/VPS с доступом по SSH, Docker и Docker Compose plugin.
+
+---
+
 **Готово! 🎉 Твой проект в интернете!**

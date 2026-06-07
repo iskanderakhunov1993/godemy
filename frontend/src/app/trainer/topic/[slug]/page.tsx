@@ -3,7 +3,6 @@
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
-import { JetBrains_Mono } from 'next/font/google'
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '@/lib/api'
 import type { Exercise, RunResult, TopicExample, TrainerTopic } from '@/lib/api'
@@ -15,10 +14,8 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   loading: () => <div className="h-full w-full bg-[#0b1220] animate-pulse" />,
 })
 
-const mono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-})
+const monoClassName = 'font-mono'
+const monoFontFamily = '"JetBrains Mono", "Fira Code", ui-monospace, monospace'
 
 type TestStatus = 'idle' | 'passed' | 'failed'
 
@@ -381,7 +378,7 @@ export default function TrainerTopicPage() {
                     minimap: { enabled: false },
                     scrollBeyondLastLine: false,
                     tabSize: 4,
-                    fontFamily: `${mono.style.fontFamily}, monospace`,
+                    fontFamily: monoFontFamily,
                     padding: { top: 12 },
                   }}
                 />
@@ -395,7 +392,7 @@ export default function TrainerTopicPage() {
 
               <div className="p-4 bg-[#0a1020]">
                 <div className="text-sm font-semibold mb-2">Вывод</div>
-                <div className={`rounded-2xl border p-3 min-h-[110px] text-sm whitespace-pre-wrap ${mono.className} ${
+                <div className={`rounded-2xl border p-3 min-h-[110px] text-sm whitespace-pre-wrap ${monoClassName} ${
                   result?.error
                     ? 'border-red-500/40 bg-red-950/20 text-red-200'
                     : result?.passed

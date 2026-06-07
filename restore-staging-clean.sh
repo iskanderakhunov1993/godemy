@@ -5,7 +5,7 @@
 
 set -e
 
-STAGING_IP="72.56.232.70"
+STAGING_IP="94.141.162.107"
 STAGING_PASS="$1"
 PROD_IP="186.246.5.197"
 PROD_PASS="$2"
@@ -68,9 +68,9 @@ sshpass -p "$STAGING_PASS" ssh -o StrictHostKeyChecking=no root@$STAGING_IP \
 echo ""
 echo "Step 7: Verifying data..."
 sleep 2
-LEVELS=$(curl -s 'http://72.56.232.70:18080/api/levels' | grep -o '"id"' | wc -l || echo "0")
-EXERCISES=$(curl -s 'http://72.56.232.70:18080/api/exercises?limit=1' | grep -o '"id"' | wc -l || echo "0")
-LESSONS=$(curl -s 'http://72.56.232.70:18080/api/lessons?limit=1' | grep -o '"id"' | wc -l || echo "0")
+LEVELS=$(curl -s 'http://94.141.162.107:18080/api/levels' | grep -o '"id"' | wc -l || echo "0")
+EXERCISES=$(curl -s 'http://94.141.162.107:18080/api/exercises?limit=1' | grep -o '"id"' | wc -l || echo "0")
+LESSONS=$(curl -s 'http://94.141.162.107:18080/api/lessons?limit=1' | grep -o '"id"' | wc -l || echo "0")
 
 echo "✅ Staging database verification:"
 echo "   - Levels: $LEVELS"

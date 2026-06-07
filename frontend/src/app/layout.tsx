@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Footer } from "@/components/Footer";
-
-const inter = Inter({ subsets: ["latin"] });
 
 const METRIKA_ID = process.env.NEXT_PUBLIC_METRIKA_ID || ""
 
@@ -39,7 +36,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ru" suppressHydrationWarning>
-      <body className={`${inter.className} bg-gray-950 text-gray-100 min-h-screen`}>
+      <body className="bg-gray-950 text-gray-100 min-h-screen">
         <ThemeProvider>
           <Navbar />
           <div className="flex flex-col min-h-screen">

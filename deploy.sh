@@ -8,7 +8,7 @@ set -e
 
 REPO_URL="https://github.com/YOUR_USERNAME/golanger.git"
 APP_DIR="/opt/golanger"
-DOMAIN="your-domain.com"
+DOMAIN="godemy.ru"
 EMAIL="your-email@example.com"
 
 echo "==> [1/7] Обновление системы и установка зависимостей..."

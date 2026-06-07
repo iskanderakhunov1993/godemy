@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
-import { JetBrains_Mono } from 'next/font/google'
 import { useEffect, useMemo, useState } from 'react'
 import { api, type Exercise, type RunResult } from '@/lib/api'
 import CodeEditor from '@/components/trainer/CodeEditor'
@@ -18,7 +17,8 @@ import {
 } from '@/lib/trainerPractice'
 import { useAuthStore } from '@/lib/store'
 
-const mono = JetBrains_Mono({ subsets: ['latin'], weight: ['400', '500', '600'] })
+const monoClassName = 'font-mono'
+const monoFontFamily = '"JetBrains Mono", "Fira Code", ui-monospace, monospace'
 
 export default function ExercisePage() {
   const { id } = useParams<{ id: string }>()
@@ -243,7 +243,7 @@ export default function ExercisePage() {
               {layout.firstExample ? (
                 <div className="rounded-xl border border-[#1f2937] bg-[#0b1220] p-4">
                   <p className="text-xs uppercase tracking-wide text-gray-400 mb-2">{layout.firstExample.title}</p>
-                  <pre className={`rounded-xl border border-[#1f2937] bg-[#020617] p-4 text-sm text-cyan-200 whitespace-pre-wrap overflow-x-auto ${mono.className}`}>
+                  <pre className={`rounded-xl border border-[#1f2937] bg-[#020617] p-4 text-sm text-cyan-200 whitespace-pre-wrap overflow-x-auto ${monoClassName}`}>
                     {layout.firstExample.code}
                   </pre>
                   <p className="text-sm text-emerald-300 mt-3">{layout.firstExample.result}</p>
@@ -254,7 +254,7 @@ export default function ExercisePage() {
             <section className="rounded-2xl border border-[#1f2937] bg-[#111827] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.28)]">
               <h2 className="text-lg font-semibold mb-3">Короткая теория и синтаксис</h2>
               <p className="text-sm text-gray-300 mb-3">{layout.shortTheory || 'Разбивай решение на короткие шаги и проверяй каждую функцию отдельно.'}</p>
-              <pre className={`rounded-xl border border-[#1f2937] bg-[#020617] p-4 text-sm text-cyan-200 whitespace-pre-wrap overflow-x-auto ${mono.className}`}>
+              <pre className={`rounded-xl border border-[#1f2937] bg-[#020617] p-4 text-sm text-cyan-200 whitespace-pre-wrap overflow-x-auto ${monoClassName}`}>
                 {layout.syntax || exercise.starterCode}
               </pre>
             </section>
@@ -266,7 +266,7 @@ export default function ExercisePage() {
                   {layout.implementations.map((item) => (
                     <div key={`${item.title}-${item.code}`} className="rounded-xl border border-[#1f2937] bg-[#0b1220] p-4">
                       <p className="text-sm text-white mb-2">{item.title}</p>
-                      <pre className={`rounded-xl border border-[#1f2937] bg-[#020617] p-3 text-xs sm:text-sm text-cyan-200 whitespace-pre-wrap overflow-x-auto ${mono.className}`}>
+                      <pre className={`rounded-xl border border-[#1f2937] bg-[#020617] p-3 text-xs sm:text-sm text-cyan-200 whitespace-pre-wrap overflow-x-auto ${monoClassName}`}>
                         {item.code}
                       </pre>
                       {item.description ? <p className="mt-2 text-sm text-gray-400">{item.description}</p> : null}
@@ -278,7 +278,7 @@ export default function ExercisePage() {
 
             <section className="rounded-2xl border border-[#1f2937] bg-[#111827] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.28)]">
               <h2 className="text-lg font-semibold mb-3">Паттерн решения</h2>
-              <pre className={`rounded-xl border border-[#1f2937] bg-[#020617] p-4 text-sm text-cyan-200 whitespace-pre-wrap overflow-x-auto ${mono.className}`}>
+              <pre className={`rounded-xl border border-[#1f2937] bg-[#020617] p-4 text-sm text-cyan-200 whitespace-pre-wrap overflow-x-auto ${monoClassName}`}>
                 {layout.pattern || exercise.starterCode}
               </pre>
             </section>
@@ -362,7 +362,7 @@ export default function ExercisePage() {
                         value={taskProgress.answers[index] || ''}
                         onChange={(event) => handleTaskAnswerChange(index, event.target.value)}
                         placeholder={task.placeholder}
-                        className={`mb-2 min-h-[130px] w-full rounded-xl border bg-[#020617] px-3 py-2 text-xs text-cyan-100 outline-none transition-colors ${mono.className} ${
+                        className={`mb-2 min-h-[130px] w-full rounded-xl border bg-[#020617] px-3 py-2 text-xs text-cyan-100 outline-none transition-colors ${monoClassName} ${
                           passed
                             ? 'border-emerald-500/50'
                             : status === 'failed'
@@ -412,10 +412,10 @@ export default function ExercisePage() {
               running={running}
               submitting={submitting}
               fullscreen={fullscreen}
-              monoClassName={mono.style.fontFamily}
+              monoClassName={monoFontFamily}
             />
 
-            <OutputPanel result={result} monoClassName={mono.className} />
+            <OutputPanel result={result} monoClassName={monoClassName} />
           </aside>
         </div>
       </div>

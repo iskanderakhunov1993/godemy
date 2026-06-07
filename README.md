@@ -64,18 +64,18 @@ docker-compose up --build
 | **Frontend** | http://186.246.5.197 |
 | **Backend API** | http://186.246.5.197/api |
 | **SSH User** | `root` |
-| **SSH Password** | `a42+?SqqY^bsu*` |
+| **SSH Access** | ключ или пароль из менеджера секретов |
 | **Database** | PostgreSQL (голангер_prod) |
 
 ### 🟠 Staging (Testing)
 
 | Параметр | Значение |
 |----------|----------|
-| **IP адрес** | `72.56.232.70` |
-| **Frontend** | http://72.56.232.70:13000 |
-| **Backend API** | http://72.56.232.70:18080/api |
+| **IP адрес** | `94.141.162.107` |
+| **Frontend** | http://94.141.162.107:13000 |
+| **Backend API** | http://94.141.162.107:18080/api |
 | **SSH User** | `root` |
-| **SSH Password** | `gMQ4S?vSxtN^g8` |
+| **SSH Access** | ключ или пароль из менеджера секретов |
 | **Database** | PostgreSQL (golanger_staging) |
 
 #### Синхронизация Staging с Production
@@ -85,7 +85,7 @@ bash
 ./restore-staging-clean.sh <staging_password> <prod_password>
 
 # Пример:
-./restore-staging-clean.sh 'gMQ4S?vSxtN^g8' 'a42+?SqqY^bsu*'
+./restore-staging-clean.sh '<staging_password>' '<prod_password>'
 
 
 🎯 Спринты и проекты
@@ -171,9 +171,7 @@ docker run -d --name jenkins \
 
 Доступ: http://localhost:8080
 
-Стартовые креденшалы (для первого входа):
-- Username: `iskander`
-- Password: `Admin12345!`
+Стартовые креденшалы Jenkins задаются при установке и хранятся вне репозитория.
 
 Настройка Pipeline
 
@@ -201,6 +199,7 @@ docker run -d --name jenkins \
 - На Jenkins агенте должен быть доступен Docker (`docker`, `docker compose`)
 - На сервере деплоя должен быть клонирован проект в `DEPLOY_PATH`
 - Для первого разворачивания сервера используй `deploy.sh`
+- Для VPS/Timeweb с Docker можно использовать `scripts/deploy-timeweb.sh`
 
 Staging стенд (тестовое окружение)
 
@@ -298,20 +297,20 @@ export const useAuthStore = create((set) => ({ }))
 Проект настроен на автодеплой через GitHub Actions:
 
 Staging (develop ветка)
-Каждый `git push` в ветку `develop` → автоматический деплой на staging сервер (72.56.232.70)
+Каждый `git push` в ветку `develop` → автоматический деплой на staging сервер (94.141.162.107)
 
 Что происходит:**
 1. GitHub Actions запускает workflow
 2. Код скачивается на staging сервер
 3. Выполняется `./scripts/deploy-staging.sh`
-4. Docker Compose пересобирает и перезапускает контейнеры
-5. Staging обновляется: http://72.56.232.70
+4. Docker Compose пересобирает и перезапускавает контейнеры
+5. Staging обновляется: http://94.141.162.107
 
 Для работы нужно настроить GitHub Secrets:
 - Settings → Secrets and variables → Actions → New repository secret
 
 Добавь эти переменные:
-STAGING_DEPLOY_HOST = 72.56.232.70
+STAGING_DEPLOY_HOST = 94.141.162.107
 STAGING_DEPLOY_PATH = /opt/golanger-staging
 STAGING_SSH_PRIVATE_KEY = <содержимое приватного ключа>
 

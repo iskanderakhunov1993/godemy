@@ -12,7 +12,7 @@ pipeline {
     string(name: 'DEPLOY_HOST', defaultValue: '', description: 'Production server host or IP')
     string(name: 'DEPLOY_PATH', defaultValue: '/opt/golanger', description: 'Project path on target server')
     string(name: 'SSH_CREDENTIALS_ID', defaultValue: 'golanger-ssh-key', description: 'Jenkins SSH key credentials ID')
-    string(name: 'STAGING_DEPLOY_HOST', defaultValue: '72.56.232.70', description: 'Staging server host or IP')
+    string(name: 'STAGING_DEPLOY_HOST', defaultValue: '94.141.162.107', description: 'Staging server host or IP')
     string(name: 'STAGING_DEPLOY_PATH', defaultValue: '/opt/golanger-staging', description: 'Project path on staging server')
     string(name: 'STAGING_SSH_CREDENTIALS_ID', defaultValue: 'golanger-staging-ssh-key', description: 'Jenkins SSH key credentials ID for staging')
   }

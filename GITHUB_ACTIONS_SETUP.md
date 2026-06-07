@@ -22,7 +22,7 @@ chmod +x ./setup-github-secrets.sh
 ```
 
 Скрипт автоматически:
-- Получит SSH ключ со staging сервера (72.56.232.70)
+- Получит SSH ключ со staging сервера (94.141.162.107)
 - Добавит все необходимые secrets в GitHub
 
 ## ✅ Step 3: Verify secrets
@@ -31,7 +31,7 @@ chmod +x ./setup-github-secrets.sh
 https://github.com/iskander/golanger/settings/secrets/actions
 
 Должны быть:
-- ✅ STAGING_DEPLOY_HOST = 72.56.232.70
+- ✅ STAGING_DEPLOY_HOST = 94.141.162.107
 - ✅ STAGING_DEPLOY_PATH = /opt/golanger-staging
 - ✅ STAGING_SSH_PRIVATE_KEY = (длинный ключ)
 
@@ -50,7 +50,7 @@ git push origin develop
 Проверьте:
 1. GitHub Actions: https://github.com/iskander/golanger/actions
 2. Смотрите workflow "Deploy to Staging"
-3. После завершения staging обновится на http://72.56.232.70
+3. После завершения staging обновится на http://94.141.162.107
 
 ## 🛠️ Если что-то не сработало
 
@@ -64,7 +64,7 @@ gh auth login --web
 ### Ошибка: SSH key not found
 Проверьте, что на staging сервере есть ключ:
 ```bash
-ssh root@72.56.232.70 "cat /root/.ssh/github_actions | head -1"
+ssh root@94.141.162.107 "cat /root/.ssh/github_actions | head -1"
 # Должно быть: -----BEGIN OPENSSH PRIVATE KEY-----
 ```
 

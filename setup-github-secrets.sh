@@ -23,8 +23,12 @@ echo "✅ Authenticated with GitHub"
 echo ""
 
 # Step 2: Get SSH key from staging
-STAGING_PASSWORD="gMQ4S?vSxtN^g8"
-STAGING_SERVER="72.56.232.70"
+STAGING_SERVER="${STAGING_SERVER:-94.141.162.107}"
+
+if [[ -z "${STAGING_PASSWORD:-}" ]]; then
+    read -r -s -p "Staging SSH password: " STAGING_PASSWORD
+    echo
+fi
 
 echo "Retrieving SSH key from staging server..."
 SSH_KEY=$(sshpass -p "$STAGING_PASSWORD" ssh root@"$STAGING_SERVER" 'cat /root/.ssh/github_actions' 2>/dev/null)
@@ -41,9 +45,11 @@ echo ""
 echo "Adding secrets to GitHub..."
 echo ""
 
-echo "$SSH_KEY" | gh secret set STAGING_SSH_PRIVATE_KEY --repo iskander/golanger 2>/dev/null && echo "✅ STAGING_SSH_PRIVATE_KEY" || echo "⚠️  STAGING_SSH_PRIVATE_KEY"
-echo "72.56.232.70" | gh secret set STAGING_DEPLOY_HOST --repo iskander/golanger 2>/dev/null && echo "✅ STAGING_DEPLOY_HOST" || echo "⚠️  STAGING_DEPLOY_HOST"
-echo "/opt/golanger-staging" | gh secret set STAGING_DEPLOY_PATH --repo iskander/golanger 2>/dev/null && echo "✅ STAGING_DEPLOY_PATH" || echo "⚠️  STAGING_DEPLOY_PATH"
+GITHUB_REPOSITORY="${GITHUB_REPOSITORY:-iskanderakhunov1993/godemy}"
+
+echo "$SSH_KEY" | gh secret set STAGING_SSH_PRIVATE_KEY --repo "$GITHUB_REPOSITORY" 2>/dev/null && echo "✅ STAGING_SSH_PRIVATE_KEY" || echo "⚠️  STAGING_SSH_PRIVATE_KEY"
+echo "$STAGING_SERVER" | gh secret set STAGING_DEPLOY_HOST --repo "$GITHUB_REPOSITORY" 2>/dev/null && echo "✅ STAGING_DEPLOY_HOST" || echo "⚠️  STAGING_DEPLOY_HOST"
+echo "/opt/golanger-staging" | gh secret set STAGING_DEPLOY_PATH --repo "$GITHUB_REPOSITORY" 2>/dev/null && echo "✅ STAGING_DEPLOY_PATH" || echo "⚠️  STAGING_DEPLOY_PATH"
 
 echo ""
 echo "✨ Done!"

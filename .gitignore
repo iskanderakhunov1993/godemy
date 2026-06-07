@@ -2,6 +2,7 @@
 .env
 .env.local
 .env.*.local
+.env.production
 
 # Dependencies
 node_modules/
@@ -34,10 +35,14 @@ Thumbs.db
 # Backend
 /backend/.env
 /backend/.env.local
+/backend/.env.production
+/backend/.env.staging
 /backend/*.db
 /backend/*.db-*
 
 # Frontend
 /frontend/.env.local
+/frontend/.env.production
+/frontend/.env.staging
 /frontend/.env.*.local
 /frontend/.next

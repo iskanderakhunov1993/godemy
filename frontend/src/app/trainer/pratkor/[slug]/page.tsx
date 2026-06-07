@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { JetBrains_Mono } from 'next/font/google'
 import { useMemo, useState } from 'react'
 import CodeEditor from '@/components/trainer/CodeEditor'
 import OutputPanel from '@/components/trainer/OutputPanel'
@@ -17,7 +16,8 @@ import {
   validatePratkorSolution,
 } from '@/lib/pratkor'
 
-const mono = JetBrains_Mono({ subsets: ['latin'], weight: ['400', '500', '600'] })
+const monoClassName = 'font-mono'
+const monoFontFamily = '"JetBrains Mono", "Fira Code", ui-monospace, monospace'
 
 export default function PratkorExercisePage() {
   const { slug } = useParams<{ slug: string }>()
@@ -218,7 +218,7 @@ export default function PratkorExercisePage() {
               <h3 className="text-sm font-semibold uppercase tracking-wide text-[#5b6791]">Критерии автопроверки</h3>
               <ul className="mt-2 space-y-1 text-sm text-[#3a4775]">
                 {exercise.requiredPatterns.map((pattern) => (
-                  <li key={pattern}>• содержит шаблон: <span className={`font-mono text-xs ${mono.className}`}>{pattern}</span></li>
+                  <li key={pattern}>• содержит шаблон: <span className={`font-mono text-xs ${monoClassName}`}>{pattern}</span></li>
                 ))}
               </ul>
             </div>
@@ -245,10 +245,10 @@ export default function PratkorExercisePage() {
               running={running}
               submitting={checking}
               fullscreen={fullscreen}
-              monoClassName={mono.style.fontFamily}
+              monoClassName={monoFontFamily}
             />
 
-            <OutputPanel result={result} monoClassName={mono.className} />
+            <OutputPanel result={result} monoClassName={monoClassName} />
 
             <div className="rounded-2xl border border-[#d8def0] bg-white p-4">
               <div className="flex flex-wrap gap-2">

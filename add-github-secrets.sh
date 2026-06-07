@@ -4,10 +4,14 @@ set -euo pipefail
 # Script to add GitHub Secrets for staging CI/CD using gh CLI
 # Works automatically after 'gh auth login'
 
-OWNER="iskander"
-REPO="golanger"
-STAGING_SERVER="72.56.232.70"
-STAGING_PASSWORD="gMQ4S?vSxtN^g8"
+OWNER="${GITHUB_OWNER:-iskanderakhunov1993}"
+REPO="${GITHUB_REPO:-godemy}"
+STAGING_SERVER="${STAGING_SERVER:-94.141.162.107}"
+
+if [[ -z "${STAGING_PASSWORD:-}" ]]; then
+    read -r -s -p "Staging SSH password: " STAGING_PASSWORD
+    echo
+fi
 
 echo "🔐 GitHub Secrets Setup for Golanger"
 echo "======================================"
@@ -54,7 +58,7 @@ add_secret_gh() {
     echo "$value" | gh secret set "$name" --repo "$OWNER/$REPO" 2>/dev/null && echo "✅" || echo "⚠️  (may already exist)"
 }
 
-add_secret_gh "STAGING_DEPLOY_HOST" "72.56.232.70"
+add_secret_gh "STAGING_DEPLOY_HOST" "$STAGING_SERVER"
 add_secret_gh "STAGING_DEPLOY_PATH" "/opt/golanger-staging"
 add_secret_gh "STAGING_SSH_PRIVATE_KEY" "$SSH_PRIVATE_KEY"
 
@@ -69,6 +73,6 @@ echo "   git push origin develop"
 echo ""
 echo "The GitHub Actions workflow will automatically:"
 echo "  1. Trigger on push to 'develop'"
-echo "  2. SSH into staging server (72.56.232.70)"
+echo "  2. SSH into staging server (94.141.162.107)"
 echo "  3. Run: ./scripts/deploy-staging.sh"
-echo "  4. Update staging at: http://72.56.232.70"
+echo "  4. Update staging at: http://94.141.162.107"
