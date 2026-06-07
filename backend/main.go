@@ -1,8 +1,9 @@
 package main
 
 import (
+	"context"
 	"log"
-	"strings"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -19,6 +20,9 @@ import (
 
 func main() {
 	cfg := config.Load()
+	if err := cfg.Validate(); err != nil {
+		log.Fatalf("Invalid production configuration: %v", err)
+	}
 
 	if err := database.Init(cfg.DatabaseURL); err != nil {
 		log.Fatalf("Failed to init database: %v", err)
@@ -35,12 +39,24 @@ func main() {
 	trainerTopicRepo := repository.NewTrainerTopicRepository(database.DB)
 	skillRepo := repository.NewSkillRepository(database.DB)
 
-	// Initialize Redis client
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     cfg.RedisAddr,
-		Password: cfg.RedisPassword,
-		DB:       cfg.RedisDB,
-	})
+	var rdb *redis.Client
+	if cfg.RedisAddr != "" {
+		rdb = redis.NewClient(&redis.Options{
+			Addr:     cfg.RedisAddr,
+			Password: cfg.RedisPassword,
+			DB:       cfg.RedisDB,
+		})
+
+		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+		defer cancel()
+		if err := rdb.Ping(ctx).Err(); err != nil {
+			log.Printf("Redis is unavailable, starting without rate limit store: %v", err)
+			_ = rdb.Close()
+			rdb = nil
+		}
+	} else {
+		log.Printf("REDIS_ADDR is not configured, starting without rate limit store")
+	}
 
 	authUC := usecase.NewAuthUseCase(userRepo, passwordResetRepo, cfg.JWTSecret)
 	contentUC := usecase.NewContentUseCase(lessonRepo, exerciseRepo, progressRepo, levelRepo, trainerTopicRepo, skillRepo)
@@ -48,6 +64,9 @@ func main() {
 	h := httpdelivery.NewHandler(authUC, contentUC, runnerUC, cfg, rdb)
 
 	r := gin.Default()
+	if err := r.SetTrustedProxies([]string{"10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"}); err != nil {
+		log.Fatalf("Failed to configure trusted proxies: %v", err)
+	}
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
@@ -55,25 +74,25 @@ func main() {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
 
-	// Тестовый маршрут для проверки Redis
-	r.GET("/test-redis", func(c *gin.Context) {
-		h.TestRedis(c.Writer, c.Request)
-	})
-
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: cfg.AllowedOrigins,
-		AllowOriginFunc: func(origin string) bool {
-			for _, allowed := range cfg.AllowedOrigins {
-				if origin == allowed {
-					return true
-				}
-			}
-			return strings.HasSuffix(origin, ".vercel.app")
-		},
+		AllowOrigins:     cfg.AllowedOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "X-Admin-Secret"},
 		AllowCredentials: true,
 	}))
+	r.OPTIONS("/*path", func(c *gin.Context) {
+		origin := c.GetHeader("Origin")
+		for _, allowed := range cfg.AllowedOrigins {
+			if origin == allowed {
+				c.Header("Access-Control-Allow-Origin", origin)
+				c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+				c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization, X-Admin-Secret")
+				c.Header("Access-Control-Allow-Credentials", "true")
+				break
+			}
+		}
+		c.Status(204)
+	})
 
 	// Serve uploaded images statically
 	r.Static("/uploads", "./uploads")
@@ -82,6 +101,7 @@ func main() {
 
 	// Auth
 	auth := api.Group("/auth")
+	auth.Use(middleware.RedisRateLimit(rdb, "auth", 30, time.Minute))
 	auth.POST("/register", h.Register())
 	auth.POST("/login", h.Login())
 	auth.POST("/forgot-password", h.ForgotPassword())
@@ -101,12 +121,12 @@ func main() {
 	api.GET("/trainer/topics", h.GetTrainerTopics())
 	api.GET("/trainer/topics/:slug", h.GetTrainerTopic())
 
-	// Runner (public — rate limiting should be added for production)
-	api.POST("/run", h.RunCode())
+	runnerLimit := middleware.RedisRateLimit(rdb, "runner", 12, time.Minute)
+	api.POST("/run", runnerLimit, h.RunCode())
 
 	// Submit (auth optional — saves progress when logged in)
 	submitMiddleware := middleware.AuthRequired(cfg.JWTSecret)
-	api.POST("/submit", func(c *gin.Context) {
+	api.POST("/submit", runnerLimit, func(c *gin.Context) {
 		// Try auth, but don't block if not provided
 		authHeader := c.GetHeader("Authorization")
 		if authHeader != "" {

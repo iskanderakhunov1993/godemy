@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -9,6 +10,7 @@ import (
 )
 
 type Config struct {
+	AppEnv             string
 	Port               string
 	JWTSecret          string
 	DatabaseURL        string
@@ -56,11 +58,7 @@ func Load() *Config {
 		}
 	}
 	frontendURL := os.Getenv("FRONTEND_URL")
-	redisAddr := os.Getenv("REDIS_ADDR")
-	if redisAddr == "" {
-		redisAddr = "localhost:6379"
-	}
-
+	redisAddr := strings.TrimSpace(os.Getenv("REDIS_ADDR"))
 	redisPassword := os.Getenv("REDIS_PASSWORD")
 
 	dbStr := os.Getenv("REDIS_DB")
@@ -76,6 +74,7 @@ func Load() *Config {
 		adminSecret = "change-me-admin-secret-2026"
 	}
 	return &Config{
+		AppEnv:             os.Getenv("APP_ENV"),
 		Port:               port,
 		JWTSecret:          secret,
 		DatabaseURL:        dbURL,
@@ -93,4 +92,23 @@ func Load() *Config {
 		SMTPPassword:       os.Getenv("SMTP_PASSWORD"),
 		SMTPFrom:           os.Getenv("SMTP_FROM"),
 	}
+}
+
+func (c *Config) Validate() error {
+	if !strings.EqualFold(c.AppEnv, "production") {
+		return nil
+	}
+	if len(c.JWTSecret) < 32 || c.JWTSecret == "golanger-secret-key-change-in-prod" {
+		return fmt.Errorf("JWT_SECRET must contain at least 32 characters in production")
+	}
+	if len(c.AdminSecret) < 32 || c.AdminSecret == "change-me-admin-secret-2026" {
+		return fmt.Errorf("ADMIN_SECRET must contain at least 32 characters in production")
+	}
+	if strings.Contains(c.DatabaseURL, "password=golanger") {
+		return fmt.Errorf("DATABASE_URL must use a strong production password")
+	}
+	if len(c.AllowedOrigins) == 0 {
+		return fmt.Errorf("CORS_ALLOWED_ORIGINS must be configured in production")
+	}
+	return nil
 }
