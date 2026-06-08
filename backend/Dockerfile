@@ -1,4 +1,4 @@
-FROM golang:1.26-alpine AS builder
+FROM mirror.gcr.io/library/golang:1.26-alpine AS builder
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ COPY . .
 # Build in image build step and limit parallelism to reduce memory usage.
 RUN CGO_ENABLED=0 go build -p=1 -o /app/server main.go
 
-FROM alpine:3.21
+FROM mirror.gcr.io/library/docker:27-cli
 
 WORKDIR /app
 

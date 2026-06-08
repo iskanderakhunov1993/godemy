@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"net/smtp"
 	"net/http"
+	"net/smtp"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -179,6 +179,9 @@ func (h *Handler) sendPasswordResetEmail(email, token string) error {
 
 	// Fallback for local/dev where SMTP is not configured
 	if h.cfg.SMTPHost == "" || h.cfg.SMTPPort == "" || h.cfg.SMTPUser == "" || h.cfg.SMTPPassword == "" {
+		if strings.EqualFold(h.cfg.AppEnv, "production") {
+			return fmt.Errorf("SMTP is not configured")
+		}
 		log.Printf("[password-reset] SMTP not configured. Reset link for %s: %s", email, resetLink)
 		return nil
 	}

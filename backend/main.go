@@ -110,6 +110,8 @@ func main() {
 	auth.PUT("/me", middleware.AuthRequired(cfg.JWTSecret), h.UpdateMe())
 	auth.GET("/yandex", h.YandexOAuth())
 	auth.POST("/yandex", h.YandexCallback())
+	auth.GET("/google", h.GoogleOAuth())
+	auth.POST("/google", h.GoogleCallback())
 
 	// Content (public)
 	api.GET("/lessons", h.GetLessons())

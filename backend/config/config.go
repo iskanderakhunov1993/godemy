@@ -17,6 +17,8 @@ type Config struct {
 	AllowedOrigins     []string
 	YandexClientID     string
 	YandexClientSecret string
+	GoogleClientID     string
+	GoogleClientSecret string
 	FrontendURL        string
 	AdminSecret        string
 	RedisAddr          string
@@ -81,6 +83,8 @@ func Load() *Config {
 		AllowedOrigins:     allowedOrigins,
 		YandexClientID:     os.Getenv("YANDEX_CLIENT_ID"),
 		YandexClientSecret: os.Getenv("YANDEX_CLIENT_SECRET"),
+		GoogleClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
+		GoogleClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
 		FrontendURL:        frontendURL,
 		AdminSecret:        adminSecret,
 		RedisAddr:          redisAddr,

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"golanger/backend/models"
+
 	"gorm.io/gorm"
 )
 
@@ -882,27 +883,11 @@ func increment() {
 			lessons[i].Module = "bootcamp"
 		}
 		var existing models.Lesson
-		db.Where("slug = ?", lessons[i].Slug).Assign(lessons[i]).FirstOrCreate(&existing)
+		db.Where("slug = ?", lessons[i].Slug).Attrs(lessons[i]).FirstOrCreate(&existing)
 	}
-
-	// Remove stale junior lessons from previous revisions.
-	db.Where("module IN ? AND slug IN ?", []string{"junior", "bootcamp"}, []string{
-		"junior-tooling-and-workflow",
-		"junior-http-basics",
-		"junior-work-with-errors",
-		"junior-sprint1-project-plan",
-		"junior-sprint2-project-plan",
-		"junior-sprint3-project-plan",
-		"junior-sprint4-project-plan",
-		"junior-sprint5-project-plan",
-		"junior-sprint0-foundation",
-	}).Delete(&models.Lesson{})
 
 	exercises := generatedPracticeExercises("core", 1, 50)
 	exercises = append(exercises, juniorSprintExercises()...)
-
-	// Keep junior trainer aligned with 5 sprints x 2 tasks.
-	db.Where("module IN ? AND \"order\" > ?", []string{"junior", "bootcamp"}, 10).Delete(&models.Exercise{})
 
 	for i := range exercises {
 		if exercises[i].Module == "" {
@@ -912,7 +897,7 @@ func increment() {
 			exercises[i].Module = "bootcamp"
 		}
 		var existing models.Exercise
-		db.Where("module = ? AND \"order\" = ?", exercises[i].Module, exercises[i].Order).Assign(exercises[i]).FirstOrCreate(&existing)
+		db.Where("module = ? AND \"order\" = ?", exercises[i].Module, exercises[i].Order).Attrs(exercises[i]).FirstOrCreate(&existing)
 	}
 }
 
@@ -4894,7 +4879,7 @@ log.Println("Старт")
 
 ## slog — structured logging (Go 1.21+)
 
-Structured logging — логи в JSON для систем мониторинга (Grafana, ELK):
+Structured logging — логи в JSON для централизованной обработки и анализа:
 
 ` + "```" + `go
 import "log/slog"

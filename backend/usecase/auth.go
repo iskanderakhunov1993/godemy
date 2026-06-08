@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -174,6 +175,11 @@ func (u *AuthUseCase) ResetPassword(rawToken, newPassword string) error {
 }
 
 func (u *AuthUseCase) LoginOrCreateOAuth(provider, providerID, email, username string) (string, *models.User, error) {
+	provider = strings.TrimSpace(provider)
+	providerID = strings.TrimSpace(providerID)
+	email = strings.TrimSpace(email)
+	username = strings.TrimSpace(username)
+
 	// 1. Try to find by provider
 	user, err := u.users.FindByProvider(provider, providerID)
 	if err == nil {
@@ -194,17 +200,11 @@ func (u *AuthUseCase) LoginOrCreateOAuth(provider, providerID, email, username s
 	}
 
 	// 3. Create new user
-	if username == "" {
-		username = provider + "_" + providerID[:8]
+	if email == "" {
+		email = providerID + "@" + provider + ".oauth.local"
 	}
-	// Ensure username uniqueness by appending suffix if needed
-	finalUsername := username
-	for i := 1; i <= 9; i++ {
-		_, findErr := u.users.FindByEmail("__check_username_" + finalUsername + "@noop")
-		// We check username via a direct attempt — just try creating
-		_ = findErr
-		break
-	}
+
+	finalUsername := normalizeOAuthUsername(username, provider, providerID, "")
 
 	newUser := &models.User{
 		Email:           email,
@@ -215,8 +215,8 @@ func (u *AuthUseCase) LoginOrCreateOAuth(provider, providerID, email, username s
 	}
 
 	if err := u.users.Create(newUser); err != nil {
-		// Username conflict — append suffix
-		newUser.Username = finalUsername + "_" + providerID[:4]
+		// Username conflict — append suffix and retry once.
+		newUser.Username = normalizeOAuthUsername(username, provider, providerID, providerIDSuffix(providerID))
 		if err2 := u.users.Create(newUser); err2 != nil {
 			return "", nil, ErrConflict
 		}
@@ -245,4 +245,69 @@ func generateSecureToken(size int) (string, error) {
 		return "", err
 	}
 	return hex.EncodeToString(b), nil
+}
+
+func normalizeOAuthUsername(candidate, provider, providerID, suffix string) string {
+	base := sanitizeUsernameCandidate(candidate)
+	if base == "" {
+		base = provider + "_" + providerIDPrefix(providerID)
+	}
+	if suffix != "" {
+		cleanSuffix := sanitizeUsernameCandidate(suffix)
+		if cleanSuffix != "" {
+			maxBaseLen := 20 - len(cleanSuffix) - 1
+			if maxBaseLen < 1 {
+				maxBaseLen = 1
+			}
+			if len(base) > maxBaseLen {
+				base = strings.Trim(base[:maxBaseLen], "_")
+			}
+			if base == "" {
+				base = provider + "_" + providerIDPrefix(providerID)
+			}
+			base = base + "_" + cleanSuffix
+		}
+	}
+	if len(base) > 20 {
+		base = strings.Trim(base[:20], "_")
+	}
+	if base == "" {
+		base = provider + "_" + providerIDPrefix(providerID)
+	}
+	return base
+}
+
+func sanitizeUsernameCandidate(value string) string {
+	value = strings.ToLower(strings.TrimSpace(value))
+	var builder strings.Builder
+	lastUnderscore := false
+	for _, r := range value {
+		switch {
+		case r >= 'a' && r <= 'z', r >= '0' && r <= '9':
+			builder.WriteRune(r)
+			lastUnderscore = false
+		case r == '_' || r == '-' || r == '.' || r == ' ':
+			if !lastUnderscore {
+				builder.WriteRune('_')
+				lastUnderscore = true
+			}
+		}
+	}
+	return strings.Trim(builder.String(), "_")
+}
+
+func providerIDPrefix(providerID string) string {
+	providerID = strings.TrimSpace(providerID)
+	if len(providerID) <= 8 {
+		return providerID
+	}
+	return providerID[:8]
+}
+
+func providerIDSuffix(providerID string) string {
+	providerID = strings.TrimSpace(providerID)
+	if len(providerID) <= 4 {
+		return providerID
+	}
+	return providerID[:4]
 }

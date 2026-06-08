@@ -2,10 +2,10 @@ package http
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -19,10 +19,29 @@ func (h *Handler) UploadImage() gin.HandlerFunc {
 			return
 		}
 
-		// Validate content type
-		contentType := file.Header.Get("Content-Type")
-		if !strings.HasPrefix(contentType, "image/") {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "only images allowed"})
+		src, err := file.Open()
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "failed to read file"})
+			return
+		}
+		defer src.Close()
+
+		header := make([]byte, 512)
+		n, readErr := io.ReadFull(src, header)
+		if readErr != nil && readErr != io.ErrUnexpectedEOF {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "failed to inspect file"})
+			return
+		}
+		contentType := http.DetectContentType(header[:n])
+		allowedTypes := map[string]string{
+			"image/jpeg": ".jpg",
+			"image/png":  ".png",
+			"image/gif":  ".gif",
+			"image/webp": ".webp",
+		}
+		ext, allowed := allowedTypes[contentType]
+		if !allowed {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "only JPEG, PNG, GIF and WebP images are allowed"})
 			return
 		}
 
@@ -39,11 +58,6 @@ func (h *Handler) UploadImage() gin.HandlerFunc {
 			return
 		}
 
-		// Build unique filename: timestamp + original extension
-		ext := strings.ToLower(filepath.Ext(file.Filename))
-		if ext == "" {
-			ext = ".png"
-		}
 		filename := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
 		dst := filepath.Join(uploadsDir, filename)
 

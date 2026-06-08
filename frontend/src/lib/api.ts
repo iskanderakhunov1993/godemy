@@ -4,8 +4,33 @@ function trimTrailingSlash(value: string): string {
 
 const envBackendUrl = process.env.NEXT_PUBLIC_BACKEND_URL?.trim() || ''
 const browserOrigin = typeof window !== 'undefined' ? window.location.origin : ''
-const BACKEND_URL = trimTrailingSlash(envBackendUrl || browserOrigin)
-const REQUEST_TIMEOUT_MS = Number(process.env.NEXT_PUBLIC_API_TIMEOUT_MS || 10000)
+
+function buildApiSubdomain(origin: string): string {
+  try {
+    const parsed = new URL(origin)
+    if (!parsed.hostname || parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1') {
+      return ''
+    }
+    const hostname = parsed.hostname.replace(/^www\./, '')
+    if (hostname.startsWith('api.')) {
+      return origin
+    }
+    parsed.hostname = `api.${hostname}`
+    return parsed.origin
+  } catch {
+    return ''
+  }
+}
+
+function getBackendUrlCandidates(): string[] {
+  const candidates = [envBackendUrl, browserOrigin, buildApiSubdomain(browserOrigin)]
+    .map(trimTrailingSlash)
+    .filter(Boolean)
+
+  return Array.from(new Set(candidates))
+}
+
+const REQUEST_TIMEOUT_MS = Number(process.env.NEXT_PUBLIC_API_TIMEOUT_MS || 45000)
 
 export interface User {
   id: number
@@ -119,65 +144,103 @@ function authHeaders(): HeadersInit {
 }
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
   const normalizedPath = path.startsWith('/') ? path : `/${path}`
-  const apiBaseForMessage = BACKEND_URL || '(same-origin)'
+  const baseCandidates = getBackendUrlCandidates()
+  const apiBaseForMessage = baseCandidates.join(' → ') || '(same-origin)'
 
-  try {
-    const res = await fetch(`${BACKEND_URL}${normalizedPath}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders(),
-        ...options?.headers,
-      },
-      ...options,
-      signal: options?.signal || controller.signal,
-    })
+  let lastError: unknown = null
 
-    const text = await res.text()
-    let data: unknown = null
-    if (text) {
-      try {
-        data = JSON.parse(text)
-      } catch {
-        data = { error: text }
+  for (let i = 0; i < baseCandidates.length; i += 1) {
+    const baseUrl = baseCandidates[i]
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+
+    try {
+      const res = await fetch(`${baseUrl}${normalizedPath}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...authHeaders(),
+          ...options?.headers,
+        },
+        ...options,
+        signal: options?.signal || controller.signal,
+      })
+
+      const text = await res.text()
+      let data: unknown = null
+      if (text) {
+        try {
+          data = JSON.parse(text)
+        } catch {
+          data = { error: text }
+        }
       }
-    }
 
-    if (!res.ok) {
-      const message =
-        typeof data === 'object' && data !== null && 'error' in data
-          ? String((data as { error: unknown }).error)
-          : `Request failed with status ${res.status}`
-      throw new Error(message)
-    }
+      if (!res.ok) {
+        const message =
+          typeof data === 'object' && data !== null && 'error' in data
+            ? String((data as { error: unknown }).error)
+            : `Request failed with status ${res.status}`
 
-    return data as T
-  } catch (error) {
-    if (error instanceof Error && error.name === 'AbortError') {
-      throw new Error(
-        `Request timeout after ${REQUEST_TIMEOUT_MS}ms. Check backend availability at ${apiBaseForMessage}.`
-      )
-    }
+        const shouldFallback =
+          (res.status === 404 || res.status === 405) && i < baseCandidates.length - 1
 
-    if (error instanceof TypeError) {
-      const text = error.message.toLowerCase()
-      if (
-        text.includes('failed to fetch') ||
-        text.includes('load failed') ||
-        text.includes('networkerror')
-      ) {
+        if (shouldFallback) {
+          lastError = new Error(message)
+          continue
+        }
+
+        throw new Error(message)
+      }
+
+      return data as T
+    } catch (error) {
+      lastError = error
+
+      if (error instanceof Error && error.name === 'AbortError') {
+        if (i < baseCandidates.length - 1) {
+          continue
+        }
         throw new Error(
-          `Network error: API is unreachable at ${apiBaseForMessage}. Check NEXT_PUBLIC_BACKEND_URL and backend CORS_ALLOWED_ORIGINS.`
+          `Request timeout after ${REQUEST_TIMEOUT_MS}ms. Check backend availability at ${apiBaseForMessage}.`
         )
       }
-    }
 
-    throw error
-  } finally {
-    clearTimeout(timeoutId)
+      if (error instanceof TypeError) {
+        const text = error.message.toLowerCase()
+        if (
+          text.includes('failed to fetch') ||
+          text.includes('load failed') ||
+          text.includes('networkerror')
+        ) {
+          if (i < baseCandidates.length - 1) {
+            continue
+          }
+          throw new Error(
+            `Network error: API is unreachable at ${apiBaseForMessage}. Check NEXT_PUBLIC_BACKEND_URL and backend CORS_ALLOWED_ORIGINS.`
+          )
+        }
+      }
+
+      if (i < baseCandidates.length - 1) {
+        continue
+      }
+
+      throw error
+    } finally {
+      clearTimeout(timeoutId)
+    }
   }
+
+  if (lastError instanceof Error) {
+    throw lastError
+  }
+  throw new Error(`Network error: API is unreachable at ${apiBaseForMessage}.`)
+}
+
+export function getBackendBaseUrl(): string {
+  const candidates = getBackendUrlCandidates()
+  return candidates[0] || trimTrailingSlash(browserOrigin || envBackendUrl)
 }
 
 export const api = {
@@ -254,6 +317,12 @@ export const api = {
   // OAuth
   yandexExchange: (code: string) =>
     request<{ token: string; user: User }>('/api/auth/yandex', {
+      method: 'POST',
+      body: JSON.stringify({ code }),
+    }),
+
+  googleExchange: (code: string) =>
+    request<{ token: string; user: User }>('/api/auth/google', {
       method: 'POST',
       body: JSON.stringify({ code }),
     }),
@@ -474,7 +543,8 @@ export const adminApi = {
   uploadImage: async (secret: string, file: File): Promise<string> => {
     const formData = new FormData()
     formData.append('file', file)
-    const res = await fetch(`${BACKEND_URL}/api/admin/upload`, {
+    const backendUrl = getBackendBaseUrl()
+    const res = await fetch(`${backendUrl}/api/admin/upload`, {
       method: 'POST',
       headers: { 'X-Admin-Secret': secret },
       body: formData,
@@ -482,8 +552,8 @@ export const adminApi = {
     if (!res.ok) throw new Error('Upload failed')
     const data = await res.json() as { url: string }
     if (/^https?:\/\//i.test(data.url)) return data.url
-    if (data.url.startsWith('/')) return `${BACKEND_URL}${data.url}`
-    return `${BACKEND_URL}/${data.url}`
+    if (data.url.startsWith('/')) return `${backendUrl}${data.url}`
+    return `${backendUrl}/${data.url}`
   },
 }
 

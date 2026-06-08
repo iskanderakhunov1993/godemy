@@ -17,11 +17,17 @@ type submitInput struct {
 	ExerciseID uint   `json:"exerciseId" binding:"required"`
 }
 
+const maxSubmittedCodeSize = 64 * 1024
+
 func (h *Handler) RunCode() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var input runInput
 		if err := c.ShouldBindJSON(&input); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		if len(input.Code) > maxSubmittedCodeSize {
+			c.JSON(http.StatusRequestEntityTooLarge, gin.H{"error": "code is too large"})
 			return
 		}
 
@@ -35,6 +41,10 @@ func (h *Handler) SubmitExercise() gin.HandlerFunc {
 		var input submitInput
 		if err := c.ShouldBindJSON(&input); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		if len(input.Code) > maxSubmittedCodeSize {
+			c.JSON(http.StatusRequestEntityTooLarge, gin.H{"error": "code is too large"})
 			return
 		}
 

@@ -31,13 +31,18 @@ jobs:
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
           
           # Deploy
-          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=accept-new root@"$DEPLOY_HOST" <<'EOF'
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=accept-new root@"$DEPLOY_HOST" \
+            "bash -s -- '$DEPLOY_PATH'" <<'EOF'
           set -euo pipefail
+          DEPLOY_PATH="$1"
           cd "$DEPLOY_PATH"
           git fetch origin
           git checkout main
           git reset --hard origin/main
-          docker compose -f docker-compose.prod.yml up -d --build
+          test -f .env.production
+          chmod +x scripts/backup-loop.sh
+          docker compose --env-file .env.production -f docker-compose.prod.yml --profile runner-build build runner-image
+          docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build --remove-orphans
           docker image prune -f
 EOF
           

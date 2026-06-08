@@ -1,6 +1,7 @@
 package http
 
 import (
+	"crypto/subtle"
 	"net/http"
 	"strconv"
 	"strings"
@@ -32,7 +33,9 @@ func (h *Handler) AdminAuth() gin.HandlerFunc {
 			c.Next()
 			return
 		}
-		if c.GetHeader("X-Admin-Secret") != h.cfg.AdminSecret {
+		provided := []byte(c.GetHeader("X-Admin-Secret"))
+		expected := []byte(h.cfg.AdminSecret)
+		if len(provided) != len(expected) || subtle.ConstantTimeCompare(provided, expected) != 1 {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 			return
 		}

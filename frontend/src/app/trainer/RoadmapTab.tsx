@@ -81,7 +81,7 @@ const roadmap: RoadmapNode[] = [
     title: 'Production',
     icon: '🏆',
     level: 'advanced',
-    items: ['Docker + multi-stage build', 'Graceful shutdown', 'Structured logging (slog / zap)', 'Metrics (prometheus), Tracing (otel)'],
+    items: ['Docker + multi-stage build', 'Graceful shutdown', 'Structured logging (slog / zap)', 'Health checks and error handling'],
   },
 ]
 

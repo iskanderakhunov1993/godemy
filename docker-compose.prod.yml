@@ -1,7 +1,6 @@
 services:
   db:
-    image: postgres:16-alpine
-    container_name: golanger-db
+    image: mirror.gcr.io/library/postgres:16-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-golanger}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -16,8 +15,7 @@ services:
       retries: 5
 
   redis:
-    image: redis:7-alpine
-    container_name: golanger-redis
+    image: mirror.gcr.io/library/redis:7-alpine
     volumes:
       - redis-data:/data
     restart: unless-stopped
@@ -31,21 +29,46 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: golanger-backend
-    env_file:
-      - ./backend/.env.production
     environment:
+      - APP_ENV=production
       - PORT=8080
       - DATABASE_URL=host=db user=${POSTGRES_USER:-golanger} password=${POSTGRES_PASSWORD} dbname=${POSTGRES_DB:-golanger} port=5432 sslmode=disable
+      - JWT_SECRET=${JWT_SECRET}
+      - ADMIN_SECRET=${ADMIN_SECRET}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - YANDEX_CLIENT_ID=${YANDEX_CLIENT_ID:-}
+      - YANDEX_CLIENT_SECRET=${YANDEX_CLIENT_SECRET:-}
       - REDIS_ADDR=redis:6379
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - SMTP_FROM=${SMTP_FROM:-}
+      - SANDBOX_MODE=docker
+      - RUNNER_IMAGE=golanger-runner:latest
+      - SANDBOX_CPUS=${SANDBOX_CPUS:-0.50}
+      - SANDBOX_MEMORY=${SANDBOX_MEMORY:-256m}
+      - SANDBOX_PIDS_LIMIT=${SANDBOX_PIDS_LIMIT:-64}
     volumes:
       - uploads-data:/app/uploads
+      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+  runner-image:
+    build:
+      context: ./docker/runner
+      dockerfile: Dockerfile
+    image: golanger-runner:latest
+    profiles:
+      - runner-build
 
   frontend:
     build:
@@ -53,16 +76,14 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-}
-    container_name: golanger-frontend
-    env_file:
-      - ./frontend/.env.production
     depends_on:
       - backend
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
 
   nginx:
-    image: nginx:1.27-alpine
-    container_name: golanger-nginx
+    image: mirror.gcr.io/library/nginx:1.27-alpine
     ports:
       - "80:80"
       - "443:443"
@@ -76,9 +97,27 @@ services:
       - frontend
     restart: unless-stopped
 
+  backup:
+    image: mirror.gcr.io/library/postgres:16-alpine
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_USER: ${POSTGRES_USER:-golanger}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-golanger}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
+    volumes:
+      - ./scripts/backup-loop.sh:/usr/local/bin/backup-loop.sh:ro
+      - backups-data:/backups
+    command: ["/bin/sh", "/usr/local/bin/backup-loop.sh"]
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
   certbot:
-    image: certbot/certbot:v2.11.0
-    container_name: golanger-certbot
+    image: mirror.gcr.io/certbot/certbot:v2.11.0
     volumes:
       - certbot-www:/var/www/certbot
       - certbot-conf:/etc/letsencrypt
@@ -92,5 +131,6 @@ volumes:
   postgres-data:
   redis-data:
   uploads-data:
+  backups-data:
   certbot-www:
   certbot-conf:

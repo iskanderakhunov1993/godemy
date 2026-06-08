@@ -56,6 +56,8 @@ else
   echo "==> Docker already installed"
 fi
 
+install_package git
+
 if ! docker compose version &>/dev/null; then
   echo "==> Installing Docker Compose plugin..."
   install_package docker-compose-plugin
@@ -87,8 +89,6 @@ check_env_file() {
   fi
 }
 
-check_env_file backend/.env.production backend/.env.production.example
-check_env_file frontend/.env.production frontend/.env.production.example
 check_env_file .env.production .env.production.example
 
 replace_env() {
@@ -102,10 +102,9 @@ replace_env() {
   fi
 }
 
-replace_env backend/.env.production CORS_ALLOWED_ORIGINS "http://$BASE_DOMAIN,http://www.$BASE_DOMAIN"
-replace_env backend/.env.production FRONTEND_URL "http://$BASE_DOMAIN"
-replace_env frontend/.env.production NEXT_PUBLIC_BACKEND_URL "http://$BASE_DOMAIN"
-replace_env .env.production NEXT_PUBLIC_BACKEND_URL "http://$BASE_DOMAIN"
+replace_env .env.production CORS_ALLOWED_ORIGINS "http://$BASE_DOMAIN,http://www.$BASE_DOMAIN,https://$BASE_DOMAIN,https://www.$BASE_DOMAIN"
+replace_env .env.production FRONTEND_URL "https://$BASE_DOMAIN"
+replace_env .env.production NEXT_PUBLIC_BACKEND_URL "https://api.$BASE_DOMAIN"
 
 require_non_placeholder() {
   local file="$1"
@@ -120,8 +119,8 @@ require_non_placeholder() {
 }
 
 require_non_placeholder .env.production POSTGRES_PASSWORD
-require_non_placeholder backend/.env.production JWT_SECRET
-require_non_placeholder backend/.env.production ADMIN_SECRET
+require_non_placeholder .env.production JWT_SECRET
+require_non_placeholder .env.production ADMIN_SECRET
 
 nginx_conf="docker/nginx/conf.d/golanger.conf"
 if [[ -f "$nginx_conf" ]]; then
@@ -135,8 +134,10 @@ if [[ ! -f docker-compose.prod.yml ]]; then
 fi
 
 echo "==> Building and starting containers..."
+chmod +x scripts/backup-loop.sh scripts/issue-cert.sh
+docker compose --env-file .env.production -f docker-compose.prod.yml --profile runner-build build runner-image
 docker compose --env-file .env.production -f docker-compose.prod.yml pull --ignore-buildable
-docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build
+docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build --remove-orphans
 
 cat <<EOF
 
@@ -145,10 +146,7 @@ Deploy completed for $BASE_DOMAIN
 
 Next steps:
 1) If you want HTTPS, request certificates:
-   docker compose --env-file .env.production -f docker-compose.prod.yml run --rm certbot certonly \
-     --webroot -w /var/www/certbot \
-     -d $BASE_DOMAIN -d www.$BASE_DOMAIN \
-     --email $EMAIL --agree-tos --non-interactive
+   ./scripts/issue-cert.sh $BASE_DOMAIN $EMAIL
 
 2) Check logs:
    docker compose --env-file .env.production -f docker-compose.prod.yml logs -f

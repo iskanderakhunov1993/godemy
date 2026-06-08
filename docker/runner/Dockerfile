@@ -1,9 +1,14 @@
-# Docker-based Go code runner image for production isolation
-FROM golang:1.23-alpine
+FROM mirror.gcr.io/library/golang:1.26-alpine
 
-WORKDIR /sandbox
+RUN addgroup -g 10001 -S runner \
+    && adduser -u 10001 -S runner -G runner
 
-RUN addgroup -S runner && adduser -S runner -G runner
+WORKDIR /workspace
 USER runner
 
-CMD ["sh", "-c", "echo 'Runner image ready'"]
+ENV HOME=/tmp \
+    GOCACHE=/tmp/go-cache \
+    GOTMPDIR=/tmp/go-tmp \
+    GOPATH=/tmp/go
+
+CMD ["go", "version"]

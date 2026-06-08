@@ -17,14 +17,14 @@ import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeRaw from 'rehype-raw'
 import 'highlight.js/styles/github-dark.css'
-import { api } from '@/lib/api'
+import { api, getBackendBaseUrl } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
 
 function resolveImageSrc(src?: string | Blob): string {
   if (!src) return ''
   if (typeof src !== 'string') return ''
   if (/^(https?:)?\/\//i.test(src) || src.startsWith('data:') || src.startsWith('blob:')) return src
-  const backend = (process.env.NEXT_PUBLIC_BACKEND_URL || '').trim().replace(/\/+$/, '')
+  const backend = getBackendBaseUrl()
   if (!backend) return src
   if (src.startsWith('/')) return `${backend}${src}`
   return `${backend}/${src}`

@@ -21,7 +21,7 @@ golanger/
 │   └── .env.example
 ├── docker/           # Конфиги для Docker
 ├── docker-compose.yml
-└── DEPLOYMENT.md     # 🌍 Гайд развертывания в интернет
+└── scripts/          # Скрипты для деплоя и бэкапов
 
 
 🛠 Установка локально
@@ -60,32 +60,12 @@ docker-compose up --build
 
 | Параметр | Значение |
 |----------|----------|
-| **IP адрес** | `186.246.5.197` |
-| **Frontend** | http://186.246.5.197 |
-| **Backend API** | http://186.246.5.197/api |
+| **Сервер** | `186.246.0.46` |
+| **Домен** | `godemy.ru` |
+| **Frontend** | https://godemy.ru |
+| **Backend API** | https://godemy.ru/api |
 | **SSH User** | `root` |
-| **SSH Access** | ключ или пароль из менеджера секретов |
-| **Database** | PostgreSQL (голангер_prod) |
-
-### 🟠 Staging (Testing)
-
-| Параметр | Значение |
-|----------|----------|
-| **IP адрес** | `94.141.162.107` |
-| **Frontend** | http://94.141.162.107:13000 |
-| **Backend API** | http://94.141.162.107:18080/api |
-| **SSH User** | `root` |
-| **SSH Access** | ключ или пароль из менеджера секретов |
-| **Database** | PostgreSQL (golanger_staging) |
-
-#### Синхронизация Staging с Production
-
-bash
-# Использование скрипта восстановления
-./restore-staging-clean.sh <staging_password> <prod_password>
-
-# Пример:
-./restore-staging-clean.sh '<staging_password>' '<prod_password>'
+| **Database** | PostgreSQL (`golanger`) |
 
 
 🎯 Спринты и проекты
@@ -146,208 +126,30 @@ Frontend (.env)
 
 NEXT_PUBLIC_BACKEND_URL=http://localhost:8081
 
-🌍 Развертывание (Production)
+🌍 Развертывание
 
-📖 Полный гайд деплоя: смотри [DEPLOYMENT.md](./DEPLOYMENT.md)
+Сейчас актуальная схема одна: **Timeweb VPS + Docker Compose**.
 
-TL;DR
-1. Залить на GitHub
-2. Настроить Vercel для frontend
-3. Настроить Railway/Render для backend
-4. GitHub Actions автоматически деплоит на каждый пуш
-5. Купить домен (опционально)
+- Сервер: `186.246.0.46`
+- Домен: `godemy.ru`
+- Публичный вход: `http://godemy.ru` и `https://godemy.ru`
+- API: `https://godemy.ru/api`
+- Все сервисы запускаются из `docker-compose.prod.yml`
 
-Jenkins CI/CD (альтернатива GitHub Actions)
+Полезные команды:
 
-Запуск Jenkins локально
-
-bash
-docker run -d --name jenkins \
-  -p 8080:8080 -p 50000:50000 \
-  -v jenkins_home:/var/jenkins_home \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  jenkins/jenkins:lts
+```bash
+./scripts/deploy-timeweb.sh https://github.com/USERNAME/golanger.git godemy.ru /opt/golanger
+./scripts/issue-cert.sh godemy.ru admin@godemy.ru
 ```
 
-Доступ: http://localhost:8080
+Проверка после деплоя:
 
-Стартовые креденшалы Jenkins задаются при установке и хранятся вне репозитория.
-
-Настройка Pipeline
-
-В репозитории есть готовый pipeline: [Jenkinsfile](Jenkinsfile).
-
-Что делает pipeline:
-- Checkout кода
-- Сборка frontend в контейнере `node:20-alpine`
-- Сборка backend в контейнере `golang:1.26-alpine`
-- Для ветки `develop`: сборка staging Docker-образов
-- Для ветки `develop`: деплой staging по SSH (если заполнены параметры)
-- Для ветки `main`: сборка production Docker-образов
-- Для ветки `main`: деплой по SSH на сервер (если заполнены параметры)
-
-Что нужно настроить в Jenkins:
-1. New Item → Pipeline → имя: `golanger-pipeline`
-2. Pipeline → Definition: `Pipeline script from SCM`
-3. SCM: Git → Repository URL: `https://github.com/lewiscarrolwr-ops/golanger.git`
-4. Credentials: добавить GitHub Personal Access Token (Manage Jenkins → Credentials → Add Credentials)
-5. Branches to build: `*/main`
-6. Script Path: `Jenkinsfile`
-7. Build Now
-
-Важно:
-- На Jenkins агенте должен быть доступен Docker (`docker`, `docker compose`)
-- На сервере деплоя должен быть клонирован проект в `DEPLOY_PATH`
-- Для первого разворачивания сервера используй `deploy.sh`
-- Для VPS/Timeweb с Docker можно использовать `scripts/deploy-timeweb.sh`
-
-Staging стенд (тестовое окружение)
-
-В репозитории добавлены staging-конфиги:
-- `docker-compose.staging.yml`
-- `backend/.env.staging.example`
-- `frontend/.env.staging.example`
-- `scripts/deploy-staging.sh`
-
-Быстрый запуск staging на сервере:
-
-bash
-cd /opt/golanger-staging
-cp backend/.env.staging.example backend/.env.staging
-cp frontend/.env.staging.example frontend/.env.staging
-
-заполни реальные значения в .env.staging файлах
-
-docker compose -f docker-compose.staging.yml up -d --build
-
-
-По умолчанию стенд поднимается на портах:
-- Frontend: `http://<server-ip>:13000`
-- Backend: `http://<server-ip>:18080`
-
-Smoke-check staging:
-
-bash
-./scripts/check-prod.sh http://<server-ip>:18080 http://<server-ip>:13000
-
-
-После деплоя:
-- ✅ Frontend: Vercel (`https://your-frontend.vercel.app`)
-- ✅ Backend: Railway (`https://your-backend.up.railway.app`)
-- ✅ CI/CD: Автоматический деплой на каждый пуш
-- ✅ HTTPS: Включен по умолчанию
-
-### Smoke-check продакшена
-
-После деплоя проверь связку frontend/backend одной командой:
-
-bash
-./scripts/check-prod.sh https://your-backend.up.railway.app https://your-frontend.vercel.app
-
-Скрипт проверит:
-- `GET /api/health`
-- CORS preflight для `POST /api/auth/register`
-- регистрацию
-- логин
-
----
-
-🛠 Разработка
-
-Структура backend
-
-go
-// handlers/lesson.go - логика уроков
-func GetLessons(c *gin.Context) { }
-func GetLesson(c *gin.Context) { }
-
-// models/lesson.go - схема БД
-type Lesson struct {
-    ID    uint
-    Slug  string
-    Title string
-    ...
-}
-
-// data/seed.go - инициализация данных
-func Seed(db *gorm.DB) { }
+```bash
+curl -i http://godemy.ru/api/health
 ```
 
-Структура frontend
-
-typescript
-// src/lib/api.ts - клиент
-export const api = { getLessons(), getLesson() }
-
-// src/app/junior/guide/page.tsx - страница списка
-// src/app/junior/guide/[slug]/page.tsx - страница урока
-
-// src/lib/store.ts - состояние (Zustand)
-export const useAuthStore = create((set) => ({ }))
-
-Добавить новый спринт
-
-1. Backend - отредактировать `backend/data/seed.go`
-2. Frontend - обновить список на `/junior/guide`
-3. Push - GitHub Actions автоматически деплоит
-
-
-� Автоматизация (GitHub Actions)
-
-Проект настроен на автодеплой через GitHub Actions:
-
-Staging (develop ветка)
-Каждый `git push` в ветку `develop` → автоматический деплой на staging сервер (94.141.162.107)
-
-Что происходит:**
-1. GitHub Actions запускает workflow
-2. Код скачивается на staging сервер
-3. Выполняется `./scripts/deploy-staging.sh`
-4. Docker Compose пересобирает и перезапускавает контейнеры
-5. Staging обновляется: http://94.141.162.107
-
-Для работы нужно настроить GitHub Secrets:
-- Settings → Secrets and variables → Actions → New repository secret
-
-Добавь эти переменные:
-STAGING_DEPLOY_HOST = 94.141.162.107
-STAGING_DEPLOY_PATH = /opt/golanger-staging
-STAGING_SSH_PRIVATE_KEY = <содержимое приватного ключа>
-
-### Production (main ветка)
-Каждый `git push` в ветку `main` → автоматический деплой на production сервер
-
-Что происходит:
-1. GitHub Actions запускает workflow
-2. Код скачивается на production сервер
-3. Выполняется `docker compose -f docker-compose.prod.yml up -d --build`
-4. Production обновляется
-
-Для работы нужно настроить GitHub Secrets:**
-
-PRODUCTION_DEPLOY_HOST = <IP production сервера>
-PRODUCTION_DEPLOY_PATH = /opt/golanger
-PRODUCTION_SSH_PRIVATE_KEY = <содержимое приватного ключа>
-
-
-Как добавить SSH ключи в GitHub Secrets
-
-1. На целевом сервере генерируем SSH ключ (если его нет):
-bash
-ssh-keygen -t ed25519 -f ~/.ssh/github_actions -N ""
-cat ~/.ssh/github_actions.pub >> ~/.ssh/authorized_keys
-
-
-2. Копируем приватный ключ:
-bash
-cat ~/.ssh/github_actions
-
-
-3. В GitHub (Settings → Secrets) добавляем как `STAGING_SSH_PRIVATE_KEY` (или `PRODUCTION_SSH_PRIVATE_KEY`)
-
----
-
-## �📊 Технологический стек
+## Технологический стек
 
 | Компонент | Технология | Версия |
 |-----------|-----------|--------|
@@ -355,11 +157,11 @@ cat ~/.ssh/github_actions
 | Frontend | Next.js + TypeScript | 16.2 |
 | Styling | Tailwind CSS | 4.x |
 | State | Zustand | Latest |
-| Database | SQLite + GORM | Latest |
+| Database | PostgreSQL + GORM | Latest |
 | Auth | JWT | - |
 | Docker | Docker Compose | 3.9 |
-| CI/CD | GitHub Actions / Jenkins | - |
-| Hosting | Vercel + Railway | - |
+| CI/CD | GitHub Actions + Docker Compose | - |
+| Hosting | Timeweb VPS | - |
 
 📝 Лицензия
 
@@ -371,15 +173,13 @@ GitHub**: [@iskander](https://github.com/iskander)
 
 Готово к старту? 🚀
 - Локальная разработка: `docker-compose up`
-- Развертывание: смотри [DEPLOYMENT.md](./DEPLOYMENT.md)
+- Развертывание: `scripts/deploy-timeweb.sh` или `docker compose up -d --build`
 - Вопросы? Создай Issue на GitHub
 
 Твой текущий доступ:
 
-Админка курса (UI): http://localhost:3001/admin/structure
+Админка курса (UI): https://godemy.ru/admin/structure
 Пароль админки (Admin Secret): смотри переменную `ADMIN_SECRET` в backend/.env
 Для API админки используется заголовок `X-Admin-Secret` со значением из `ADMIN_SECRET`
 
 
-
-6be409299343e8ab58cfb592fbb92e1b2e38a38d7da6e6f3
