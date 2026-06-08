@@ -12,7 +12,7 @@ type SearchResult =
 const STATIC_PAGES: { title: string; desc: string; href: string }[] = [
   { title: 'Курс по Go',      desc: 'Все уроки курса',                href: '/guide' },
   { title: 'Тренажёр',        desc: 'Практические задачи',            href: '/trainer' },
-  { title: 'Bootcamp Junior', desc: 'Реальные проекты для резюме',    href: '/bootcamp' },
+  { title: 'Bootcamp',        desc: 'Путь Junior → Middle → Senior',   href: '/bootcamp' },
   { title: 'Профиль',         desc: 'Твоя активность и прогресс',     href: '/profile' },
   { title: 'Сертификаты',     desc: 'Все твои сертификаты',           href: '/certificates' },
 ]

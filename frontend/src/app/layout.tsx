@@ -9,14 +9,14 @@ const METRIKA_ID = process.env.NEXT_PUBLIC_METRIKA_ID || ""
 
 export const metadata: Metadata = {
   title: "Godemy — Интерактивный курс по Go",
-  description: "Изучи Go с нуля через практику: интерактивный курс, тренажёр задач и Bootcamp с реальными проектами для резюме.",
+  description: "Изучи Go через практику: бесплатный курс с проектами, тренажёр задач и Bootcamp от Junior до Senior.",
   icons: {
     icon: "/icon.svg",
   },
   metadataBase: new URL("https://lavish-eagerness-production-a11a.up.railway.app"),
   openGraph: {
     title: "Godemy — Интерактивный курс по Go",
-    description: "Изучи Go с нуля через практику: курс, тренажёр и Bootcamp с реальными проектами для резюме.",
+    description: "Изучи Go через практику: бесплатный курс, тренажёр и Bootcamp от Junior до Senior.",
     url: "https://lavish-eagerness-production-a11a.up.railway.app",
     siteName: "Godemy",
     locale: "ru_RU",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Godemy — Интерактивный курс по Go",
-    description: "Изучи Go с нуля через практику: курс, тренажёр и Bootcamp с реальными проектами для резюме.",
+    description: "Изучи Go через практику: бесплатный курс, тренажёр и Bootcamp от Junior до Senior.",
   },
 };
 

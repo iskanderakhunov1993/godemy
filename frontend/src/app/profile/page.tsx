@@ -470,14 +470,14 @@ function ProfileContent() {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <span className="text-lg">🏆</span>
-                    <span className="font-semibold text-gray-200 text-sm">Bootcamp Junior</span>
+                    <span className="font-semibold text-gray-200 text-sm">Bootcamp · Junior</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-bold text-amber-400">
                       {user.isPremium ? '5%' : '0%'}
                     </span>
                     <Link
-                      href="/bootcamp"
+                      href={user.isPremium ? '/junior' : '/bootcamp'}
                       className="text-xs font-semibold text-black bg-amber-400 hover:bg-amber-300 px-3 py-1 rounded-lg transition-colors"
                     >
                       Начать
@@ -491,7 +491,7 @@ function ProfileContent() {
                   />
                 </div>
                 <p className="text-xs text-gray-500 mt-1.5">
-                  {user.isPremium ? 'Буткемп начат' : 'Нужен Премиум доступ'}
+                  {user.isPremium ? 'Уровень Junior открыт' : 'Доступ по подписке Godemy Pro'}
                 </p>
               </div>
             </div>

@@ -7,263 +7,146 @@ import { useAuthStore } from '@/lib/store'
 
 export default function StartPage() {
   const { user, token, progress, loadProgress } = useAuthStore()
-  const [flashcardsLearned, setFlashcardsLearned] = useState(0)
-  const [lessonsTotal, setLessonsTotal] = useState(8)
+  const [lessonsTotal, setLessonsTotal] = useState(0)
+  const [exercisesTotal, setExercisesTotal] = useState(0)
 
   useEffect(() => {
     if (token) loadProgress()
-    api.getLessons({ module: 'core' }).then((l) => setLessonsTotal(l.length)).catch(() => {})
+    Promise.all([
+      api.getLessons(),
+      api.getExercises({ module: 'core' }),
+    ]).then(([lessons, exercises]) => {
+      setLessonsTotal(lessons.filter((lesson) => lesson.module !== 'bootcamp').length)
+      setExercisesTotal(exercises.length)
+    }).catch(() => {})
   }, [token, loadProgress])
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem('go-flashcards-v1')
-      if (raw) {
-        const data = JSON.parse(raw) as Record<string, string>
-        const count = Object.values(data).filter((v) => v === 'learned').length
-        setFlashcardsLearned(count)
-      }
-    } catch { /* ignore */ }
-  }, [])
-
   const completedLessons = useMemo(
-    () => progress.filter((p) => p.entityType === 'lesson' && p.status === 'completed').length,
+    () => progress.filter((item) => item.entityType === 'lesson' && item.status === 'completed').length,
     [progress]
   )
   const completedExercises = useMemo(
-    () => progress.filter((p) => p.entityType === 'exercise' && p.status === 'completed').length,
+    () => progress.filter((item) => item.entityType === 'exercise' && item.status === 'completed').length,
     [progress]
   )
 
-  const lessonPct = Math.round((completedLessons / lessonsTotal) * 100)
-  const exercisePct = Math.min(Math.round((completedExercises / 5) * 100), 100)
-  const flashcardPct = Math.min(Math.round((flashcardsLearned / 20) * 100), 100)
+  const lessonProgress = lessonsTotal > 0 ? Math.min(Math.round((completedLessons / lessonsTotal) * 100), 100) : 0
+  const exerciseProgress = exercisesTotal > 0 ? Math.min(Math.round((completedExercises / exercisesTotal) * 100), 100) : 0
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-
-      {/* Header */}
-      <div className="mb-12 text-center">
-        <p className="text-cyan-400 text-sm font-semibold uppercase tracking-widest mb-3">Путь от нуля до Junior</p>
-        <h1 className="text-4xl font-bold text-white mb-4">С чего начать</h1>
-        <p className="text-gray-400 max-w-lg mx-auto">
-          Платформа состоит из 4 блоков. Проходи по порядку — каждый шаг готовит тебя к следующему.
+    <main className="mx-auto max-w-5xl px-4 py-14 sm:px-6">
+      <div className="max-w-2xl">
+        <p className="text-sm font-bold uppercase tracking-[0.2em] text-cyan-400">Твой маршрут</p>
+        <h1 className="mt-3 text-4xl font-black text-white sm:text-5xl">Всегда один понятный следующий шаг</h1>
+        <p className="mt-5 text-lg leading-relaxed text-gray-400">
+          Не пытайся пройти всё сразу. Сначала собери базу бесплатно, затем переходи к профессиональной практике.
         </p>
       </div>
 
-      {/* Steps */}
-      <div className="space-y-4">
-
-        {/* Step 1 — Course */}
-        <div className="group relative rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden hover:border-cyan-500/40 transition-all">
-          <div className="absolute top-0 left-0 bottom-0 w-1 bg-cyan-500 rounded-l-2xl" />
-          <div className="px-7 py-6">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-start gap-4 flex-1 min-w-0">
-                <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-2xl">
-                  📖
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-1 flex-wrap">
-                    <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">Шаг 1</span>
-                    <span className="text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded-full font-semibold">Бесплатно</span>
-                  </div>
-                  <h2 className="text-xl font-bold text-white mb-1">Курс по Go</h2>
-                  <p className="text-gray-400 text-sm mb-4">
-                    {lessonsTotal} уроков от основ до горутин. Читай теорию, смотри примеры кода — никакой воды, только суть. Каждый урок занимает 10–15 минут.
-                  </p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {['Синтаксис', 'Типы данных', 'Функции', 'Структуры', 'Горутины', 'Ошибки'].map((tag) => (
-                      <span key={tag} className="text-xs bg-gray-800 text-gray-400 px-2.5 py-1 rounded-full border border-gray-700">{tag}</span>
-                    ))}
-                  </div>
-                  {token && (
-                    <div className="mb-4">
-                      <div className="flex justify-between text-xs text-gray-500 mb-1.5">
-                        <span>Пройдено уроков</span>
-                        <span className="font-semibold text-white">{completedLessons} / {lessonsTotal}</span>
-                      </div>
-                      <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden">
-                        <div className="h-full bg-cyan-500 rounded-full transition-all duration-700" style={{ width: `${lessonPct}%` }} />
-                      </div>
-                    </div>
-                  )}
+      <div className="mt-12 space-y-5">
+        <section className="rounded-3xl border border-cyan-500/30 bg-cyan-500/5 p-6 sm:p-8">
+          <div className="grid gap-7 md:grid-cols-[1fr_auto] md:items-center">
+            <div>
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500 font-black text-gray-950">1</span>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-emerald-400">Бесплатно</p>
+                  <h2 className="text-2xl font-black text-white">Курс и 3 учебных проекта</h2>
                 </div>
               </div>
+              <p className="mt-5 max-w-2xl text-gray-400">
+                Изучи основы Go и примени их последовательно: CLI-приложение, REST API и сервис с PostgreSQL.
+              </p>
+              {token && lessonsTotal > 0 && (
+                <div className="mt-6 max-w-xl">
+                  <div className="mb-2 flex justify-between text-xs text-gray-400">
+                    <span>Прогресс курса</span>
+                    <span>{completedLessons} / {lessonsTotal}</span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-gray-800">
+                    <div className="h-full rounded-full bg-cyan-400" style={{ width: `${lessonProgress}%` }} />
+                  </div>
+                </div>
+              )}
             </div>
-            <Link href="/guide" className="inline-flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors">
-              {completedLessons > 0 ? 'Продолжить курс' : 'Начать курс'} →
+            <Link href="/guide" className="btn-primary whitespace-nowrap px-6 py-3">
+              {completedLessons > 0 ? 'Продолжить курс →' : 'Начать курс →'}
             </Link>
           </div>
-        </div>
+        </section>
 
-        {/* Step 2 — Trainer */}
-        <div className="group relative rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden hover:border-violet-500/40 transition-all">
-          <div className="absolute top-0 left-0 bottom-0 w-1 bg-violet-500 rounded-l-2xl" />
-          <div className="px-7 py-6">
-            <div className="flex items-start gap-4 mb-5">
-              <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-2xl">
-                ⚡
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3 mb-1 flex-wrap">
-                  <span className="text-xs font-bold text-violet-400 uppercase tracking-wider">Шаг 2</span>
-                  <span className="text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded-full font-semibold">Бесплатно</span>
+        <section className="rounded-3xl border border-violet-500/30 bg-violet-500/5 p-6 sm:p-8">
+          <div className="grid gap-7 md:grid-cols-[1fr_auto] md:items-center">
+            <div>
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500 font-black text-white">2</span>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-violet-300">Практикуйся параллельно</p>
+                  <h2 className="text-2xl font-black text-white">Тренажёр Go</h2>
                 </div>
-                <h2 className="text-xl font-bold text-white mb-1">Тренажёр</h2>
-                <p className="text-gray-400 text-sm">
-                  Закрепи знания практикой. Тренажёр включает три инструмента — выбирай нужный.
-                </p>
               </div>
-            </div>
-
-            {/* 3 sub-tools */}
-            <div className="grid sm:grid-cols-3 gap-3 mb-5">
-              <div className="bg-gray-800/60 border border-gray-700 rounded-xl p-4">
-                <div className="text-lg mb-2">💻</div>
-                <div className="font-semibold text-white text-sm mb-1">Задачи</div>
-                <div className="text-xs text-gray-500 mb-3">Реши задачи прямо в браузере — как на собеседовании</div>
-                {token && (
-                  <div>
-                    <div className="flex justify-between text-xs text-gray-500 mb-1">
-                      <span>{completedExercises} / 5</span>
-                      <span>{exercisePct}%</span>
-                    </div>
-                    <div className="h-1 bg-gray-700 rounded-full overflow-hidden">
-                      <div className="h-full bg-violet-500 rounded-full" style={{ width: `${exercisePct}%` }} />
-                    </div>
+              <p className="mt-5 max-w-2xl text-gray-400">
+                Используй его после каждой темы: решай задачи, повторяй материал по карточкам и готовься к собеседованиям.
+              </p>
+              {token && exercisesTotal > 0 && (
+                <div className="mt-6 max-w-xl">
+                  <div className="mb-2 flex justify-between text-xs text-gray-400">
+                    <span>Решено задач</span>
+                    <span>{completedExercises} / {exercisesTotal}</span>
                   </div>
-                )}
-              </div>
-              <div className="bg-gray-800/60 border border-gray-700 rounded-xl p-4">
-                <div className="text-lg mb-2">🗺️</div>
-                <div className="font-semibold text-white text-sm mb-1">Роадмапа</div>
-                <div className="text-xs text-gray-500">Наглядный путь Go-разработчика: от основ до продвинутых тем</div>
-              </div>
-              <div className="bg-gray-800/60 border border-gray-700 rounded-xl p-4">
-                <div className="text-lg mb-2">🃏</div>
-                <div className="font-semibold text-white text-sm mb-1">Карточки</div>
-                <div className="text-xs text-gray-500 mb-3">20 карточек с ключевыми вопросами для интервью</div>
-                {token && (
-                  <div>
-                    <div className="flex justify-between text-xs text-gray-500 mb-1">
-                      <span>{flashcardsLearned} / 20</span>
-                      <span>{flashcardPct}%</span>
-                    </div>
-                    <div className="h-1 bg-gray-700 rounded-full overflow-hidden">
-                      <div className="h-full bg-violet-500 rounded-full" style={{ width: `${flashcardPct}%` }} />
-                    </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-gray-800">
+                    <div className="h-full rounded-full bg-violet-400" style={{ width: `${exerciseProgress}%` }} />
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
-
-            <Link href="/trainer" className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors">
+            <Link href="/trainer" className="whitespace-nowrap rounded-xl bg-violet-500 px-6 py-3 font-bold text-white transition-colors hover:bg-violet-400">
               Открыть тренажёр →
             </Link>
           </div>
-        </div>
+        </section>
 
-        {/* Step 3 — Profile */}
-        <div className="group relative rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden hover:border-emerald-500/40 transition-all">
-          <div className="absolute top-0 left-0 bottom-0 w-1 bg-emerald-500 rounded-l-2xl" />
-          <div className="px-7 py-6">
-            <div className="flex items-start gap-4 mb-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-2xl">
-                🏅
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3 mb-1">
-                  <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Шаг 3</span>
+        <section className="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-violet-500/5 p-6 sm:p-8">
+          <div className="grid gap-7 md:grid-cols-[1fr_auto] md:items-center">
+            <div>
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400 font-black text-gray-950">3</span>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-amber-300">Godemy Pro</p>
+                  <h2 className="text-2xl font-black text-white">Bootcamp: Junior → Middle → Senior</h2>
                 </div>
-                <h2 className="text-xl font-bold text-white mb-1">Профиль и сертификаты</h2>
-                <p className="text-gray-400 text-sm">
-                  В профиле хранится вся твоя история: GitHub-like тепловая карта активности и сертификаты.
-                </p>
+              </div>
+              <p className="mt-5 max-w-2xl text-gray-400">
+                Переходи в Bootcamp, когда готов строить более сложные проекты, подтверждать уровни и собирать профессиональное портфолио.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {['Проекты', 'Задачи', 'Проверка навыков', 'Сертификаты'].map((item) => (
+                  <span key={item} className="rounded-lg border border-gray-700 bg-gray-950/50 px-3 py-1.5 text-xs text-gray-400">
+                    {item}
+                  </span>
+                ))}
               </div>
             </div>
-            <div className="grid sm:grid-cols-2 gap-3 mb-5">
-              <div className="bg-gray-800/60 border border-gray-700 rounded-xl p-4 flex items-start gap-3">
-                <span className="text-xl">📊</span>
-                <div>
-                  <div className="font-semibold text-white text-sm mb-1">Активность</div>
-                  <div className="text-xs text-gray-500">Тепловая карта за 9 месяцев — как у GitHub</div>
-                </div>
-              </div>
-              <div className="bg-gray-800/60 border border-gray-700 rounded-xl p-4 flex items-start gap-3">
-                <span className="text-xl">🎓</span>
-                <div>
-                  <div className="font-semibold text-white text-sm mb-1">Сертификаты</div>
-                  <div className="text-xs text-gray-500">Открываются по мере прохождения курса. Премиум-сертификат — с Premium-аккаунтом</div>
-                </div>
-              </div>
-            </div>
-            <Link href="/profile" className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors">
-              Перейти в профиль →
+            <Link
+              href={user?.isPremium ? '/junior' : '/bootcamp'}
+              className="whitespace-nowrap rounded-xl bg-amber-400 px-6 py-3 text-center font-bold text-gray-950 transition-colors hover:bg-amber-300"
+            >
+              {user?.isPremium ? 'Продолжить Bootcamp →' : 'Посмотреть Bootcamp →'}
             </Link>
           </div>
-        </div>
-
-        {/* Step 4 — Bootcamp Junior (flagship) */}
-        <div className="group relative rounded-2xl overflow-hidden border border-amber-500/30 bg-gradient-to-br from-amber-500/5 via-gray-900 to-orange-600/5 hover:border-amber-500/60 transition-all">
-          {/* Glow */}
-          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent pointer-events-none" />
-          <div className="absolute top-0 left-0 bottom-0 w-1 bg-gradient-to-b from-amber-400 to-orange-500 rounded-l-2xl" />
-
-          <div className="px-7 py-6 relative">
-            <div className="flex items-start gap-4 mb-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-2xl">
-                🚀
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3 mb-1 flex-wrap">
-                  <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Шаг 4 · Флагман</span>
-                  <span className="text-xs bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold">Premium</span>
-                  <span className="text-xs bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded-full font-semibold">Скоро</span>
-                </div>
-                <h2 className="text-xl font-bold text-white mb-1">Bootcamp Junior</h2>
-                <p className="text-amber-200/60 text-sm font-medium mb-1">Чистая практика — без воды</p>
-                <p className="text-gray-400 text-sm">
-                  Наш главный продукт. Реальные задачи уровня Junior, код-ревью, работа в команде и портфолио на выходе. Ты не просто учишься — ты уже работаешь.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid sm:grid-cols-3 gap-3 mb-5">
-              {[
-                { icon: '🛠️', title: 'Реальные проекты', desc: 'Пишешь код, который работает' },
-                { icon: '👥', title: 'Командная работа', desc: 'GitHub, PR, код-ревью' },
-                { icon: '📁', title: 'Портфолио', desc: 'Проекты для резюме' },
-              ].map((f) => (
-                <div key={f.title} className="bg-amber-500/5 border border-amber-500/15 rounded-xl p-4">
-                  <div className="text-lg mb-2">{f.icon}</div>
-                  <div className="font-semibold text-white text-sm mb-1">{f.title}</div>
-                  <div className="text-xs text-gray-500">{f.desc}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-3 flex-wrap">
-              <button disabled className="inline-flex items-center gap-2 bg-amber-500/20 text-amber-300 font-semibold px-5 py-2.5 rounded-xl text-sm cursor-not-allowed border border-amber-500/20">
-                🔒 Скоро открывается
-              </button>
-              <span className="text-xs text-gray-500">Оставь заявку — получишь доступ первым</span>
-            </div>
-          </div>
-        </div>
-
+        </section>
       </div>
 
-      {/* Bottom CTA */}
-      {!user && (
-        <div className="mt-10 text-center bg-gray-900 border border-gray-800 rounded-2xl px-6 py-8">
-          <p className="text-white font-semibold text-lg mb-2">Готов начать?</p>
-          <p className="text-gray-400 text-sm mb-5">Создай бесплатный аккаунт — прогресс сохраняется, сертификаты открываются</p>
-          <Link href="/auth/register" className="inline-flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-black font-bold px-6 py-3 rounded-xl transition-colors">
-            Создать аккаунт бесплатно →
-          </Link>
-        </div>
-      )}
-    </div>
+      <div className="mt-8 grid gap-4 sm:grid-cols-2">
+        <Link href="/profile" className="rounded-2xl border border-gray-800 bg-gray-900 p-5 transition-colors hover:border-gray-700">
+          <p className="font-bold text-white">Профиль и прогресс</p>
+          <p className="mt-2 text-sm text-gray-500">Продолжай с нужного места и следи за завершёнными материалами.</p>
+        </Link>
+        <Link href="/certificates" className="rounded-2xl border border-gray-800 bg-gray-900 p-5 transition-colors hover:border-gray-700">
+          <p className="font-bold text-white">Сертификаты</p>
+          <p className="mt-2 text-sm text-gray-500">Смотри требования и скачивай полученные сертификаты.</p>
+        </Link>
+      </div>
+    </main>
   )
 }

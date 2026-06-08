@@ -1,8 +1,8 @@
 import Link from 'next/link'
 
 const sprints = [
-  { label: 'Sprint 0: IT контекст, Agile, роли и карьера Go специалиста', free: true },
-  { label: 'Sprint 1: Todo List API (roadmap.sh)', free: true },
+  { label: 'Sprint 0: IT контекст, Agile, роли и карьера Go специалиста', free: false },
+  { label: 'Sprint 1: Todo List API (roadmap.sh)', free: false },
   { label: 'Sprint 2: Blogging Platform API (roadmap.sh)', free: false },
   { label: 'Sprint 3: Weather API Wrapper Service (roadmap.sh)', free: false },
   { label: 'Sprint 4: Expense Tracker API (roadmap.sh)', free: false },
@@ -18,7 +18,7 @@ export default function JuniorModulePage() {
         </div>
         <h1 className="text-4xl font-bold text-white mb-3">Junior Module</h1>
         <p className="text-gray-400 max-w-2xl">
-          Нулевая неделя + 5 спринтов = 5 реальных Go-проектов для резюме. Sprint 0 и Sprint 1 — бесплатно.
+          Нулевая неделя + 5 спринтов = 5 реальных Go-проектов для резюме. Доступ входит в подписку Godemy Pro.
         </p>
       </div>
 
@@ -52,7 +52,7 @@ export default function JuniorModulePage() {
         <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
           <h3 className="text-xl font-semibold text-white">Программа Bootcamp Junior</h3>
           <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            2 спринта бесплатно
+            Уровень 1 из 3
           </span>
         </div>
         <div className="grid md:grid-cols-3 gap-3 text-sm mb-5">
@@ -71,7 +71,7 @@ export default function JuniorModulePage() {
                 {s.free ? i + 1 : '🔒'}
               </span>
               <span className="flex-1">{s.label}</span>
-              {s.free && <span className="text-xs text-emerald-400 font-semibold">бесплатно</span>}
+              <span className="text-xs text-violet-300 font-semibold">Godemy Pro</span>
             </li>
           ))}
         </ul>
@@ -79,8 +79,8 @@ export default function JuniorModulePage() {
         {/* Buy CTA */}
         <div className="border border-amber-500/30 bg-amber-500/5 rounded-xl px-5 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <p className="text-white font-bold mb-1">Открой все 5 проектов</p>
-            <p className="text-gray-400 text-sm">Авто-проверка кода · Дедлайны · Сертификат Junior</p>
+            <p className="text-white font-bold mb-1">Все 5 проектов уже доступны</p>
+            <p className="text-gray-400 text-sm">Авто-проверка кода · Задачи · Сертификат Junior</p>
           </div>
           <a
             href="https://t.me/golangacademy"
@@ -88,7 +88,7 @@ export default function JuniorModulePage() {
             rel="noopener noreferrer"
             className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-2.5 rounded-xl transition-colors whitespace-nowrap text-sm"
           >
-            Купить Bootcamp Junior →
+            Поддержка в Telegram →
           </a>
         </div>
       </div>

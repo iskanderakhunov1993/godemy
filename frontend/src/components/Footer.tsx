@@ -4,7 +4,7 @@ import { BrandLogo } from './BrandLogo'
 const navLinks = [
   { label: 'Курс по Go',     href: '/guide' },
   { label: 'Тренажёр задач', href: '/trainer' },
-  { label: 'Bootcamp Junior',href: '/bootcamp' },
+  { label: 'Bootcamp',       href: '/bootcamp' },
   { label: 'Сертификаты',    href: '/certificates' },
   { label: 'Профиль',        href: '/profile' },
 ]
@@ -21,7 +21,7 @@ export function Footer() {
               <BrandLogo />
             </Link>
             <p className="text-sm text-gray-500 leading-relaxed mb-5">
-              Интерактивная платформа для изучения Go с нуля. Практика, тренажёр, реальные проекты.
+              Изучай Go через практику: бесплатный курс, тренажёр и профессиональный Bootcamp.
             </p>
             {/* Socials */}
             <div className="flex items-center gap-3">
@@ -77,10 +77,10 @@ export function Footer() {
           <div>
             <p className="text-white font-bold text-sm mb-4">Фокус продукта</p>
             <ul className="space-y-2.5 text-sm text-gray-500 leading-relaxed">
-              <li>Короткие уроки без воды</li>
-              <li>Практика с мгновенной проверкой</li>
-              <li>Прогресс и сертификаты в профиле</li>
-              <li>Админка только для роли admin</li>
+              <li>Бесплатный курс с тремя проектами</li>
+              <li>Отдельный тренажёр для практики</li>
+              <li>Bootcamp: Junior → Middle → Senior</li>
+              <li>Сертификаты за подтверждённые навыки</li>
             </ul>
           </div>
         </div>

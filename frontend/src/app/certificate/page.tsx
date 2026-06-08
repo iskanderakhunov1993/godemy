@@ -44,8 +44,8 @@ const CERT_CONFIG: Record<string, {
   },
   bootcamp: {
     title: 'Agile-практик',
-    subtitle: 'Bootcamp Junior',
-    desc: 'Завершил Bootcamp Junior в Godemy: разработал 5 реальных проектов, применяя Go, REST API и Agile-методологию',
+    subtitle: 'Bootcamp · Junior',
+    desc: 'Завершил уровень Junior в Bootcamp Godemy и подтвердил навыки Go, REST API, PostgreSQL и разработки backend-сервисов',
     color: '#fbbf24',
     icon: '🏆',
     accentFrom: '#d97706',

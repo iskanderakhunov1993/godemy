@@ -146,7 +146,7 @@ function CertificatesContent() {
       id: 'bootcamp',
       title: 'Agile-практик',
       subtitle: 'Буткемп & Agile',
-      desc: 'Выдаётся за прохождение буткемпа и освоение Agile-методологии',
+      desc: 'Выдаётся после выполнения обязательных материалов и итогового проекта уровня Junior',
       icon: '🏆',
       gradient: 'from-amber-500/20 to-orange-600/20',
       border: 'border-amber-500/40',
@@ -314,7 +314,7 @@ function CertificatesContent() {
                     href="/bootcamp/buy"
                     className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 px-4 py-2.5 rounded-xl transition-colors"
                   >
-                    🔒 Премиум — скачать PDF
+                    🔒 Godemy Pro — скачать PDF
                   </Link>
                 )
               ) : !cert.comingSoon ? (
@@ -340,9 +340,9 @@ function CertificatesContent() {
       <div className="mt-8 rounded-2xl border border-gray-800 bg-gray-900/50 px-6 py-5">
         <p className="text-sm text-gray-400 leading-relaxed">
           <span className="text-white font-semibold">Как скачать сертификат?</span>{' '}
-          Сертификаты доступны в формате PDF для пользователей с Премиум доступом.{' '}
+          Просматривать прогресс сертификатов могут все пользователи. Скачивание PDF входит в подписку Godemy Pro.{' '}
           <Link href="/bootcamp/buy" className="text-cyan-400 hover:text-cyan-300 transition-colors">
-            Получить Премиум →
+            Получить Godemy Pro →
           </Link>
         </p>
       </div>

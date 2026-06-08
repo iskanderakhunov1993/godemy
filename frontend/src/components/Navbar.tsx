@@ -97,14 +97,14 @@ export function Navbar() {
               <>
                 {user.isPremium ? (
                   <span className="hidden sm:flex items-center text-sm font-medium text-gray-200 border border-gray-700/70 bg-gray-900/70 rounded-full px-3 py-1">
-                    Премиум
+                    Godemy Pro
                   </span>
                 ) : (
                   <Link
                     href="/bootcamp/buy"
                     className="hidden sm:flex items-center text-sm font-medium text-gray-300 hover:text-gray-100 border border-gray-700/70 hover:border-cyan-500/40 bg-gray-900/70 rounded-full px-3 py-1 transition-colors"
                   >
-                    Премиум
+                    Godemy Pro
                   </Link>
                 )}
 
@@ -156,7 +156,7 @@ export function Navbar() {
                             className="block px-5 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-gray-800/60 transition-colors"
                             onClick={() => setMenuOpen(false)}
                           >
-                            Купить Премиум
+                            Получить Godemy Pro
                           </Link>
                         )}
                         <div className="my-1.5 border-t border-gray-700/50" />
