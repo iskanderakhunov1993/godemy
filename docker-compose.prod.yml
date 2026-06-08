@@ -23,6 +23,7 @@ services:
       - PORT=8080
       - DATABASE_URL=host=db user=${POSTGRES_USER:-golanger} password=${POSTGRES_PASSWORD} dbname=${POSTGRES_DB:-golanger} port=5432 sslmode=disable
       - JWT_SECRET=${JWT_SECRET}
+      - ADMIN_LOGIN=${ADMIN_LOGIN}
       - ADMIN_SECRET=${ADMIN_SECRET}
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
       - FRONTEND_URL=${FRONTEND_URL}
