@@ -159,12 +159,12 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
     try {
       const res = await fetch(`${baseUrl}${normalizedPath}`, {
+        ...options,
         headers: {
           'Content-Type': 'application/json',
           ...authHeaders(),
           ...options?.headers,
         },
-        ...options,
         signal: options?.signal || controller.signal,
       })
 
