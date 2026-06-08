@@ -161,7 +161,7 @@ curl -i http://godemy.ru/api/health
 | Auth | JWT | - |
 | Docker | Docker Compose | 3.9 |
 | CI/CD | GitHub Actions + Docker Compose | - |
-| Hosting | Timeweb VPS | - |
+| Hosting | Timeweb Cloud Server | - |
 
 📝 Лицензия
 
@@ -178,8 +178,8 @@ GitHub**: [@iskander](https://github.com/iskander)
 
 Твой текущий доступ:
 
-Админка курса (UI): https://godemy.ru/admin/structure
-Пароль админки (Admin Secret): смотри переменную `ADMIN_SECRET` в backend/.env
-Для API админки используется заголовок `X-Admin-Secret` со значением из `ADMIN_SECRET`
-
+- Админка курса (UI): https://godemy.ru/admin
+- Вход в админку: обычная форма логина, но под админским email из `ADMIN_LOGIN`
+- Пароль администратора: значение `ADMIN_SECRET` из `.env.production`
+- Обычный пользователь не видит админку и не может открыть её напрямую
 

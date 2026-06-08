@@ -96,7 +96,7 @@ export default function LessonEditorPage() {
   const [preview, setPreview] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const secret = typeof window !== 'undefined' ? sessionStorage.getItem('admin_secret') || '' : ''
+  const secret = ''
 
   useEffect(() => {
     if (isNew) return

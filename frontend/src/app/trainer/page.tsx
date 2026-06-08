@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { api, Exercise, TrainerTopic } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
 import FlashcardsTab from './FlashcardsTab'
-import BootcampPopup from '@/components/BootcampPopup'
 import {
   getPratkorExercises,
   getPratkorProgress,
@@ -125,7 +124,6 @@ export default function TrainerPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
-      <BootcampPopup />
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-100 mb-2">Тренажёр Go</h1>
         <p className="text-gray-400">Два инструмента для уверенного знания Go — задачи и карточки.</p>
@@ -393,4 +391,3 @@ export default function TrainerPage() {
     </div>
   )
 }
-

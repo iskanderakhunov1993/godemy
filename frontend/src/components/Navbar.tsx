@@ -127,6 +127,15 @@ export function Navbar() {
                         >
                           Профиль
                         </Link>
+                        {user.isAdmin && (
+                          <Link
+                            href="/admin"
+                            className="block px-5 py-2.5 text-sm text-cyan-300 hover:text-white hover:bg-gray-800/60 transition-colors"
+                            onClick={() => setMenuOpen(false)}
+                          >
+                            Админка
+                          </Link>
+                        )}
                         <Link
                           href="/certificates"
                           className="block px-5 py-2.5 text-sm text-gray-200 hover:text-white hover:bg-gray-800/60 transition-colors"

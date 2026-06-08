@@ -9,7 +9,7 @@ export default function AdminLevelsPage() {
   const [lessons, setLessons] = useState<AdminLesson[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
-  const secret = typeof window !== "undefined" ? sessionStorage.getItem("admin_secret") || "" : ""
+  const secret = ''
 
   useEffect(() => {
     adminApi

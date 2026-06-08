@@ -9,25 +9,12 @@ const navLinks = [
   { label: 'Профиль',        href: '/profile' },
 ]
 
-const premiumLinks = [
-  { label: 'Купить Премиум',  href: '/bootcamp/buy' },
-  { label: 'Что входит',      href: '/bootcamp/buy' },
-  { label: 'Сертификат PDF',  href: '/certificates' },
-]
-
-const communityLinks = [
-  { label: 'Обратная связь', href: '/feedback' },
-  { label: 'Сообщить об ошибке', href: '/feedback#bug' },
-  { label: 'Идеи для платформы', href: '/feedback#ideas' },
-  { label: 'Поддержать проект', href: '/feedback#donate' },
-]
-
 export function Footer() {
   return (
     <footer className="border-t border-gray-800 bg-gray-950/90 mt-8">
       {/* Main grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
           {/* Col 1 — Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center mb-4">
@@ -86,34 +73,14 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Col 3 — Premium */}
+          {/* Col 3 — Focus */}
           <div>
-            <p className="text-white font-bold text-sm mb-4">Премиум</p>
-            <ul className="space-y-2.5">
-              {premiumLinks.map((l) => (
-                <li key={l.label}>
-                  <Link href={l.href} className="text-sm text-gray-500 hover:text-gray-300 transition-colors">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-5 inline-flex items-center gap-1.5 text-xs font-medium text-gray-300 bg-gray-900/70 border border-gray-700 rounded-full px-3 py-1">
-              Bootcamp Junior — 4 990 ₽
-            </div>
-          </div>
-
-          {/* Col 4 — Community */}
-          <div>
-            <p className="text-white font-bold text-sm mb-4">Сообщество</p>
-            <ul className="space-y-2.5">
-              {communityLinks.map((l) => (
-                <li key={l.label}>
-                  <Link href={l.href} className="text-sm text-gray-500 hover:text-gray-300 transition-colors">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
+            <p className="text-white font-bold text-sm mb-4">Фокус продукта</p>
+            <ul className="space-y-2.5 text-sm text-gray-500 leading-relaxed">
+              <li>Короткие уроки без воды</li>
+              <li>Практика с мгновенной проверкой</li>
+              <li>Прогресс и сертификаты в профиле</li>
+              <li>Админка только для роли admin</li>
             </ul>
           </div>
         </div>
@@ -126,8 +93,9 @@ export function Footer() {
             © {new Date().getFullYear()} Godemy. Все права защищены.
           </p>
           <div className="flex items-center gap-4 text-xs text-gray-600">
-            <Link href="/feedback" className="hover:text-gray-400 transition-colors">Обратная связь</Link>
-            <Link href="/bootcamp/buy" className="hover:text-gray-400 transition-colors">Купить Премиум</Link>
+            <Link href="/guide" className="hover:text-gray-400 transition-colors">Курс</Link>
+            <Link href="/trainer" className="hover:text-gray-400 transition-colors">Тренажёр</Link>
+            <Link href="/bootcamp" className="hover:text-gray-400 transition-colors">Bootcamp</Link>
           </div>
         </div>
       </div>

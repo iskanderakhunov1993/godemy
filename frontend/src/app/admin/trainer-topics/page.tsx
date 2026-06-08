@@ -10,7 +10,7 @@ export default function AdminTrainerTopicsPage() {
   const [error, setError] = useState('')
   const [deleting, setDeleting] = useState<number | null>(null)
 
-  const secret = typeof window !== 'undefined' ? sessionStorage.getItem('admin_secret') || '' : ''
+  const secret = ''
 
   useEffect(() => {
     adminApi

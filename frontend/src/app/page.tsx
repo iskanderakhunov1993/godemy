@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import ContinueBanner from '@/components/ContinueBanner'
 import { FadeInSection } from '@/components/ScrollEffects'
-import OnlineCounter from '@/components/OnlineCounter'
 
 const topics = [
   { title: 'Введение в Go', category: 'Основы' },
@@ -111,10 +110,11 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
             <div className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 rounded-full px-4 py-1.5 text-sm text-cyan-400">
               <span>🏆</span>
-              <span>Более 500 человек уже прошли курс</span>
+              <span>Курс, тренажёр и bootcamp в одном месте</span>
             </div>
-            <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-4 py-1.5 text-sm">
-              <OnlineCounter />
+            <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-4 py-1.5 text-sm text-emerald-300">
+              <span>✓</span>
+              <span>Прогресс сохраняется в аккаунте</span>
             </div>
           </div>
 

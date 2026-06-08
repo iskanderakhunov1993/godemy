@@ -68,7 +68,7 @@ export default function ExerciseEditorPage() {
   const [error, setError] = useState('')
   const [activeTab, setActiveTab] = useState<Tab>('Основное')
 
-  const secret = typeof window !== 'undefined' ? sessionStorage.getItem('admin_secret') || '' : ''
+  const secret = ''
 
   useEffect(() => {
     if (isNew) return

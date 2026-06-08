@@ -28,7 +28,7 @@ export default function TrainerPracticeEditorPage() {
   const params = useParams<{ id: string }>()
   const router = useRouter()
   const id = Number(params.id)
-  const secret = typeof window !== 'undefined' ? sessionStorage.getItem('admin_secret') || '' : ''
+  const secret = ''
 
   const [exercise, setExercise] = useState<AdminExercise | null>(null)
   const [loading, setLoading] = useState(true)

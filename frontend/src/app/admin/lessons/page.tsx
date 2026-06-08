@@ -14,7 +14,7 @@ export default function AdminLessonsPage() {
   const [moduleFilter, setModuleFilter] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('')
 
-  const secret = typeof window !== 'undefined' ? sessionStorage.getItem('admin_secret') || '' : ''
+  const secret = ''
 
   useEffect(() => {
     adminApi

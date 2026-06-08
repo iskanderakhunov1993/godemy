@@ -140,7 +140,7 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
   const [movingTopicKey, setMovingTopicKey] = useState<string | null>(null)
   const [moveTopicTargetModuleKey, setMoveTopicTargetModuleKey] = useState("")
 
-  const secret = typeof window !== "undefined" ? sessionStorage.getItem("admin_secret") || "" : ""
+  const secret = ''
 
   async function refreshData() {
     const [data, lvls] = await Promise.all([
@@ -1726,4 +1726,3 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
 export default function AdminStructurePage() {
   return <AdminStructureEditor mode="course" />
 }
-

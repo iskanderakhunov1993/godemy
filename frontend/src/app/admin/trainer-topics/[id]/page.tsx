@@ -59,7 +59,7 @@ export default function TrainerTopicEditorPage() {
   const [error, setError] = useState('')
   const [activeTab, setActiveTab] = useState<Tab>('Основное')
 
-  const secret = typeof window !== 'undefined' ? sessionStorage.getItem('admin_secret') || '' : ''
+  const secret = ''
 
   // Auto-generate slug from title
   const autoSlug = (title: string) =>

@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { api, getLevels, Lesson, AdminLevel } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
-import BootcampPopup from '@/components/BootcampPopup'
 
 const S = '#8B5CF6'
 const SW = 1.6
@@ -153,7 +152,6 @@ function GuideContent() {
 
   return (
     <div className="min-h-screen bg-gray-950">
-      <BootcampPopup />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
 
         {!loading && lessons.length > 0 && (

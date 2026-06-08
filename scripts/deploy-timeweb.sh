@@ -136,7 +136,7 @@ if [[ ! -f docker-compose.prod.yml ]]; then
 fi
 
 echo "==> Building and starting containers..."
-chmod +x scripts/backup-loop.sh scripts/issue-cert.sh
+chmod +x scripts/issue-cert.sh
 docker compose --env-file .env.production -f docker-compose.prod.yml --profile runner-build build runner-image
 docker compose --env-file .env.production -f docker-compose.prod.yml pull --ignore-buildable
 docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build --remove-orphans

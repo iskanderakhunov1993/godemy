@@ -15,8 +15,6 @@ const STATIC_PAGES: { title: string; desc: string; href: string }[] = [
   { title: 'Bootcamp Junior', desc: 'Реальные проекты для резюме',    href: '/bootcamp' },
   { title: 'Профиль',         desc: 'Твоя активность и прогресс',     href: '/profile' },
   { title: 'Сертификаты',     desc: 'Все твои сертификаты',           href: '/certificates' },
-  { title: 'Купить Премиум',  desc: 'Полный доступ к платформе',      href: '/bootcamp/buy' },
-  { title: 'Обратная связь', desc: 'Вопросы, баги, идеи, донаты',    href: '/feedback' },
 ]
 
 interface Props {
