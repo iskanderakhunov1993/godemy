@@ -101,6 +101,61 @@ func (u *AuthUseCase) UpdateUser(user *models.User) error {
 	return u.users.Update(user)
 }
 
+func (u *AuthUseCase) EnsureAdminAccount(adminLogin, adminPassword string) error {
+	adminLogin = strings.TrimSpace(adminLogin)
+	adminPassword = strings.TrimSpace(adminPassword)
+	if adminLogin == "" || adminPassword == "" {
+		return nil
+	}
+
+	hashed, err := bcrypt.GenerateFromPassword([]byte(adminPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	passwordHash := string(hashed)
+
+	user, err := u.users.FindByEmail(adminLogin)
+	switch {
+	case err == nil:
+		user.IsAdmin = true
+		user.Password = &passwordHash
+		if strings.TrimSpace(user.Username) == "" {
+			user.Username = sanitizeUsernameCandidate(strings.SplitN(adminLogin, "@", 2)[0])
+		}
+		if user.Username == "" {
+			user.Username = "admin"
+		}
+		return u.users.Update(user)
+	case !errors.Is(err, repository.ErrNotFound):
+		return err
+	}
+
+	username := sanitizeUsernameCandidate(strings.SplitN(adminLogin, "@", 2)[0])
+	if username == "" {
+		username = "admin"
+	}
+
+	newUser := &models.User{
+		Email:    adminLogin,
+		Username: username,
+		Password: &passwordHash,
+		IsAdmin:  true,
+	}
+
+	if err := u.users.Create(newUser); err != nil {
+		fallback := sanitizeUsernameCandidate(username + "_admin")
+		if fallback == "" || fallback == username {
+			fallback = "admin_admin"
+		}
+		newUser.Username = fallback
+		if err2 := u.users.Create(newUser); err2 != nil {
+			return err2
+		}
+	}
+
+	return nil
+}
+
 func (u *AuthUseCase) RequestPasswordReset(email string) (string, error) {
 	user, err := u.users.FindByEmail(email)
 	if errors.Is(err, repository.ErrNotFound) {

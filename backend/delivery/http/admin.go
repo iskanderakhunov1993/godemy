@@ -1,7 +1,6 @@
 package http
 
 import (
-	"crypto/subtle"
 	"net/http"
 	"strconv"
 	"strings"
@@ -25,22 +24,6 @@ type createModuleInput struct {
 
 type renameModuleInput struct {
 	NewName string `json:"newName" binding:"required"`
-}
-
-func (h *Handler) AdminAuth() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		if c.Request.Method == "OPTIONS" {
-			c.Next()
-			return
-		}
-		provided := []byte(c.GetHeader("X-Admin-Secret"))
-		expected := []byte(h.cfg.AdminSecret)
-		if len(provided) != len(expected) || subtle.ConstantTimeCompare(provided, expected) != 1 {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-			return
-		}
-		c.Next()
-	}
 }
 
 // ActivatePremium godoc

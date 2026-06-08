@@ -53,6 +53,7 @@ type User struct {
 	OAuthProvider   string         `json:"-" gorm:"index;default:''"`
 	OAuthProviderID string         `json:"-" gorm:"index;default:''"`
 	IsPremium       bool           `json:"isPremium" gorm:"default:false"`
+	IsAdmin         bool           `json:"isAdmin" gorm:"default:false"`
 	PremiumUntil    *time.Time     `json:"premiumUntil" gorm:"index"`
 	JuniorReadiness int            `json:"juniorReadiness" gorm:"default:0"` // 0-100% готовность как junior в Go
 	CreatedAt       time.Time      `json:"createdAt"`

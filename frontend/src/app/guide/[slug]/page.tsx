@@ -97,9 +97,7 @@ function LessonContent() {
   const allTasksDone = tasksStatus === null || tasksStatus.done >= tasksStatus.total
   const canProceed = completed || allTasksDone
 
-  const courseLessons = allLessons.filter(
-    (l) => l.module !== 'core' && l.module !== 'junior' && l.module !== 'bootcamp'
-  )
+  const courseLessons = allLessons
   const currentLevelIndex = levels.findIndex((l) => l.slug === lesson.level)
   const nextLevel = currentLevelIndex >= 0 ? levels[currentLevelIndex + 1] : null
   const nextLevelFirstLesson = nextLevel

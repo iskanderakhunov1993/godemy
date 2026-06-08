@@ -83,9 +83,7 @@ function lessonsByMode(lessons: AdminLesson[], mode: AdminEditorMode): AdminLess
   if (mode === "bootcamp") {
     return lessons.filter((lesson) => lesson.module === "bootcamp")
   }
-  return lessons.filter(
-    (lesson) => lesson.module !== "core" && lesson.module !== "junior" && lesson.module !== "bootcamp"
-  )
+  return lessons.filter((lesson) => lesson.module !== "bootcamp")
 }
 
 function levelsByMode(levels: AdminLevel[], lessons: AdminLesson[], mode: AdminEditorMode): AdminLevel[] {

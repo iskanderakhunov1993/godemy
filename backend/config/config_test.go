@@ -13,6 +13,7 @@ func TestValidateRejectsWeakProductionSecrets(t *testing.T) {
 	cfg := &Config{
 		AppEnv:         "production",
 		JWTSecret:      "short",
+		AdminLogin:     "",
 		AdminSecret:    "also-short",
 		DatabaseURL:    "host=db password=strong-password",
 		AllowedOrigins: []string{"https://example.com"},
@@ -26,6 +27,7 @@ func TestValidateAcceptsProductionConfig(t *testing.T) {
 	cfg := &Config{
 		AppEnv:         "production",
 		JWTSecret:      "0123456789abcdef0123456789abcdef",
+		AdminLogin:     "admin@godemy.ru",
 		AdminSecret:    "abcdef0123456789abcdef0123456789",
 		DatabaseURL:    "host=db user=app password=strong-password dbname=app",
 		AllowedOrigins: []string{"https://example.com"},

@@ -90,7 +90,7 @@ function intensityClass(count: number, maxCount: number): string {
 }
 
 function isCourseLesson(lesson: Lesson): boolean {
-  return lesson.module !== 'core' && lesson.module !== 'junior' && lesson.module !== 'bootcamp'
+  return lesson.module !== 'bootcamp'
 }
 
 function lessonHref(lesson: Lesson): string {

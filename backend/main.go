@@ -63,6 +63,10 @@ func main() {
 	runnerUC := usecase.NewRunnerUseCase(exerciseRepo, progressRepo)
 	h := httpdelivery.NewHandler(authUC, contentUC, runnerUC, cfg, rdb)
 
+	if err := authUC.EnsureAdminAccount(cfg.AdminLogin, cfg.AdminSecret); err != nil {
+		log.Fatalf("Failed to ensure admin account: %v", err)
+	}
+
 	r := gin.Default()
 	if err := r.SetTrustedProxies([]string{"10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"}); err != nil {
 		log.Fatalf("Failed to configure trusted proxies: %v", err)
@@ -77,7 +81,7 @@ func main() {
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     cfg.AllowedOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "X-Admin-Secret"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		AllowCredentials: true,
 	}))
 	r.OPTIONS("/*path", func(c *gin.Context) {
@@ -86,7 +90,7 @@ func main() {
 			if origin == allowed {
 				c.Header("Access-Control-Allow-Origin", origin)
 				c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
-				c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization, X-Admin-Secret")
+				c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization")
 				c.Header("Access-Control-Allow-Credentials", "true")
 				break
 			}
@@ -146,9 +150,9 @@ func main() {
 	protected.POST("/progress", h.UpdateProgress())
 	protected.GET("/user/profile", h.GetProfile())
 
-	// Admin (protected by secret header)
+	// Admin (protected by authenticated admin role)
 	admin := api.Group("/admin")
-	admin.Use(h.AdminAuth())
+	admin.Use(middleware.AuthRequired(cfg.JWTSecret), middleware.AdminRequired(authUC))
 	admin.POST("/activate", h.ActivatePremium())
 
 	// Admin: Lessons CRUD

@@ -374,10 +374,6 @@ func (u *ContentUseCase) GetCourseProgress(userID uint) ([]CourseProgress, int, 
 	// Группируем уроки по модулям
 	moduleMap := make(map[string][]models.Lesson)
 	for _, lesson := range allLessons {
-		// Пропускаем системные модули
-		if lesson.Module == "core" || lesson.Module == "junior" || lesson.Module == "bootcamp" {
-			continue
-		}
 		moduleMap[lesson.Module] = append(moduleMap[lesson.Module], lesson)
 	}
 

@@ -38,9 +38,7 @@ function CertificatesContent() {
       api.getLessons(),
       api.getExercises({ module: 'core' }),
     ]).then(([allLessons, syntaxExercises]) => {
-      const freeCourseLessons = allLessons.filter(
-        (lesson) => lesson.module !== 'core' && lesson.module !== 'junior' && lesson.module !== 'bootcamp'
-      )
+      const freeCourseLessons = allLessons.filter((lesson) => lesson.module !== 'bootcamp')
       setCourseLessonIds(freeCourseLessons.map((lesson) => lesson.id))
       setTrainerExerciseIds(syntaxExercises.map((exercise) => exercise.id))
 

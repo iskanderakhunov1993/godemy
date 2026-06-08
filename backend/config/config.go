@@ -15,6 +15,7 @@ type Config struct {
 	JWTSecret          string
 	DatabaseURL        string
 	AllowedOrigins     []string
+	AdminLogin         string
 	YandexClientID     string
 	YandexClientSecret string
 	GoogleClientID     string
@@ -60,6 +61,7 @@ func Load() *Config {
 		}
 	}
 	frontendURL := os.Getenv("FRONTEND_URL")
+	adminLogin := strings.TrimSpace(os.Getenv("ADMIN_LOGIN"))
 	redisAddr := strings.TrimSpace(os.Getenv("REDIS_ADDR"))
 	redisPassword := os.Getenv("REDIS_PASSWORD")
 
@@ -81,6 +83,7 @@ func Load() *Config {
 		JWTSecret:          secret,
 		DatabaseURL:        dbURL,
 		AllowedOrigins:     allowedOrigins,
+		AdminLogin:         adminLogin,
 		YandexClientID:     os.Getenv("YANDEX_CLIENT_ID"),
 		YandexClientSecret: os.Getenv("YANDEX_CLIENT_SECRET"),
 		GoogleClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
@@ -104,6 +107,9 @@ func (c *Config) Validate() error {
 	}
 	if len(c.JWTSecret) < 32 || c.JWTSecret == "golanger-secret-key-change-in-prod" {
 		return fmt.Errorf("JWT_SECRET must contain at least 32 characters in production")
+	}
+	if strings.TrimSpace(c.AdminLogin) == "" {
+		return fmt.Errorf("ADMIN_LOGIN must be configured in production")
 	}
 	if len(c.AdminSecret) < 32 || c.AdminSecret == "change-me-admin-secret-2026" {
 		return fmt.Errorf("ADMIN_SECRET must contain at least 32 characters in production")

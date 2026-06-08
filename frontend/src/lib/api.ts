@@ -38,6 +38,7 @@ export interface User {
   username: string
   fullName?: string
   isPremium: boolean
+  isAdmin: boolean
   premiumUntil?: string
   createdAt: string
 }
@@ -122,6 +123,7 @@ export interface UserProfile {
     username: string
     fullName?: string
     isPremium: boolean
+    isAdmin: boolean
   }
   juniorReadiness: number
   personaType: 'newbie' | 'junior' | 'mid' | 'senior' | 'neo'
@@ -337,8 +339,8 @@ export const api = {
     }),
 }
 
-function adminHeaders(secret: string): HeadersInit {
-  return { 'X-Admin-Secret': secret, 'Content-Type': 'application/json' }
+function adminHeaders(): HeadersInit {
+  return { 'Content-Type': 'application/json' }
 }
 
 export interface AdminLesson {
@@ -404,149 +406,150 @@ export interface AdminLevel {
 
 export const adminApi = {
   // Lessons
-  getLessons: (secret: string) =>
-    request<AdminLesson[]>('/api/admin/lessons', { headers: adminHeaders(secret) }),
+  getLessons: (_secret?: string) =>
+    request<AdminLesson[]>('/api/admin/lessons', { headers: adminHeaders() }),
 
-  getLesson: (secret: string, id: number) =>
-    request<AdminLesson>(`/api/admin/lessons/${id}`, { headers: adminHeaders(secret) }),
+  getLesson: (_secret: string, id: number) =>
+    request<AdminLesson>(`/api/admin/lessons/${id}`, { headers: adminHeaders() }),
 
-  createLesson: (secret: string, data: Omit<AdminLesson, 'id' | 'createdAt' | 'updatedAt'>) =>
+  createLesson: (_secret: string, data: Omit<AdminLesson, 'id' | 'createdAt' | 'updatedAt'>) =>
     request<AdminLesson>('/api/admin/lessons', {
       method: 'POST',
-      headers: adminHeaders(secret),
+      headers: adminHeaders(),
       body: JSON.stringify(data),
     }),
 
-  updateLesson: (secret: string, id: number, data: Partial<AdminLesson>) =>
+  updateLesson: (_secret: string, id: number, data: Partial<AdminLesson>) =>
     request<AdminLesson>(`/api/admin/lessons/${id}`, {
       method: 'PUT',
-      headers: adminHeaders(secret),
+      headers: adminHeaders(),
       body: JSON.stringify(data),
     }),
 
-  deleteLesson: (secret: string, id: number) =>
+  deleteLesson: (_secret: string, id: number) =>
     request<{ ok: boolean }>(`/api/admin/lessons/${id}`, {
       method: 'DELETE',
-      headers: adminHeaders(secret),
+      headers: adminHeaders(),
     }),
 
   // Exercises
-  getExercises: (secret: string) =>
-    request<AdminExercise[]>('/api/admin/exercises', { headers: adminHeaders(secret) }),
+  getExercises: (_secret?: string) =>
+    request<AdminExercise[]>('/api/admin/exercises', { headers: adminHeaders() }),
 
-  getExercise: (secret: string, id: number) =>
-    request<AdminExercise>(`/api/admin/exercises/${id}`, { headers: adminHeaders(secret) }),
+  getExercise: (_secret: string, id: number) =>
+    request<AdminExercise>(`/api/admin/exercises/${id}`, { headers: adminHeaders() }),
 
-  createExercise: (secret: string, data: Omit<AdminExercise, 'id' | 'createdAt' | 'updatedAt'>) =>
+  createExercise: (_secret: string, data: Omit<AdminExercise, 'id' | 'createdAt' | 'updatedAt'>) =>
     request<AdminExercise>('/api/admin/exercises', {
       method: 'POST',
-      headers: adminHeaders(secret),
+      headers: adminHeaders(),
       body: JSON.stringify(data),
     }),
 
-  updateExercise: (secret: string, id: number, data: Partial<AdminExercise>) =>
+  updateExercise: (_secret: string, id: number, data: Partial<AdminExercise>) =>
     request<AdminExercise>(`/api/admin/exercises/${id}`, {
       method: 'PUT',
-      headers: adminHeaders(secret),
+      headers: adminHeaders(),
       body: JSON.stringify(data),
     }),
 
-  deleteExercise: (secret: string, id: number) =>
+  deleteExercise: (_secret: string, id: number) =>
     request<{ ok: boolean }>(`/api/admin/exercises/${id}`, {
       method: 'DELETE',
-      headers: adminHeaders(secret),
+      headers: adminHeaders(),
     }),
 
   // TrainerTopics
-  getTrainerTopics: (secret: string, module?: string) => {
+  getTrainerTopics: (_secret: string, module?: string) => {
     const q = module ? `?module=${module}` : ''
-    return request<AdminTrainerTopic[]>(`/api/admin/trainer-topics${q}`, { headers: adminHeaders(secret) })
+    return request<AdminTrainerTopic[]>(`/api/admin/trainer-topics${q}`, { headers: adminHeaders() })
   },
-  getTrainerTopic: (secret: string, id: number) =>
-    request<AdminTrainerTopic>(`/api/admin/trainer-topics/${id}`, { headers: adminHeaders(secret) }),
-  createTrainerTopic: (secret: string, data: Omit<AdminTrainerTopic, 'id' | 'createdAt' | 'updatedAt'>) =>
+  getTrainerTopic: (_secret: string, id: number) =>
+    request<AdminTrainerTopic>(`/api/admin/trainer-topics/${id}`, { headers: adminHeaders() }),
+  createTrainerTopic: (_secret: string, data: Omit<AdminTrainerTopic, 'id' | 'createdAt' | 'updatedAt'>) =>
     request<AdminTrainerTopic>('/api/admin/trainer-topics', {
       method: 'POST',
-      headers: adminHeaders(secret),
+      headers: adminHeaders(),
       body: JSON.stringify(data),
     }),
-  updateTrainerTopic: (secret: string, id: number, data: Partial<AdminTrainerTopic>) =>
+  updateTrainerTopic: (_secret: string, id: number, data: Partial<AdminTrainerTopic>) =>
     request<AdminTrainerTopic>(`/api/admin/trainer-topics/${id}`, {
       method: 'PUT',
-      headers: adminHeaders(secret),
+      headers: adminHeaders(),
       body: JSON.stringify(data),
     }),
-  deleteTrainerTopic: (secret: string, id: number) =>
+  deleteTrainerTopic: (_secret: string, id: number) =>
     request<{ ok: boolean }>(`/api/admin/trainer-topics/${id}`, {
       method: 'DELETE',
-      headers: adminHeaders(secret),
+      headers: adminHeaders(),
     }),
 
   // Modules
-  getModules: (secret: string) =>
-    request<AdminCourseModule[]>('/api/admin/modules', { headers: adminHeaders(secret) }),
+  getModules: (_secret: string) =>
+    request<AdminCourseModule[]>('/api/admin/modules', { headers: adminHeaders() }),
 
   createModule: (
-    secret: string,
+    _secret: string,
     data: { name: string; level?: string; category?: string; firstLessonTitle: string }
   ) =>
     request<AdminLesson>('/api/admin/modules', {
       method: 'POST',
-      headers: adminHeaders(secret),
+      headers: adminHeaders(),
       body: JSON.stringify(data),
     }),
 
-  renameModule: (secret: string, oldName: string, newName: string) =>
+  renameModule: (_secret: string, oldName: string, newName: string) =>
     request<{ ok: boolean }>(`/api/admin/modules/${encodeURIComponent(oldName)}`, {
       method: 'PUT',
-      headers: adminHeaders(secret),
+      headers: adminHeaders(),
       body: JSON.stringify({ newName }),
     }),
 
-  deleteModule: (secret: string, name: string) =>
+  deleteModule: (_secret: string, name: string) =>
     request<{ ok: boolean }>(`/api/admin/modules/${encodeURIComponent(name)}`, {
       method: 'DELETE',
-      headers: adminHeaders(secret),
+      headers: adminHeaders(),
     }),
 
-  moveModule: (secret: string, name: string, newLevel: string) =>
+  moveModule: (_secret: string, name: string, newLevel: string) =>
     request<{ ok: boolean }>(`/api/admin/modules/${encodeURIComponent(name)}/move`, {
       method: 'PUT',
-      headers: adminHeaders(secret),
+      headers: adminHeaders(),
       body: JSON.stringify({ newLevel }),
     }),
 
   // Levels
-  getLevels: (secret: string) =>
-    request<AdminLevel[]>('/api/admin/levels', { headers: adminHeaders(secret) }),
+  getLevels: (_secret: string) =>
+    request<AdminLevel[]>('/api/admin/levels', { headers: adminHeaders() }),
 
-  createLevel: (secret: string, data: { title: string; slug?: string; order?: number }) =>
+  createLevel: (_secret: string, data: { title: string; slug?: string; order?: number }) =>
     request<AdminLevel>('/api/admin/levels', {
       method: 'POST',
-      headers: adminHeaders(secret),
+      headers: adminHeaders(),
       body: JSON.stringify(data),
     }),
 
-  updateLevel: (secret: string, id: number, data: { title?: string; slug?: string; order: number }) =>
+  updateLevel: (_secret: string, id: number, data: { title?: string; slug?: string; order: number }) =>
     request<AdminLevel>(`/api/admin/levels/${id}`, {
       method: 'PUT',
-      headers: adminHeaders(secret),
+      headers: adminHeaders(),
       body: JSON.stringify(data),
     }),
 
-  deleteLevel: (secret: string, id: number) =>
+  deleteLevel: (_secret: string, id: number) =>
     request<{ ok: boolean }>(`/api/admin/levels/${id}`, {
       method: 'DELETE',
-      headers: adminHeaders(secret),
+      headers: adminHeaders(),
     }),
 
-  uploadImage: async (secret: string, file: File): Promise<string> => {
+  uploadImage: async (_secret: string, file: File): Promise<string> => {
     const formData = new FormData()
     formData.append('file', file)
     const backendUrl = getBackendBaseUrl()
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
     const res = await fetch(`${backendUrl}/api/admin/upload`, {
       method: 'POST',
-      headers: { 'X-Admin-Secret': secret },
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       body: formData,
     })
     if (!res.ok) throw new Error('Upload failed')

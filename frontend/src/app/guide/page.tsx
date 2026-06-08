@@ -132,17 +132,14 @@ function GuideContent() {
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [levels, setLevels] = useState<AdminLevel[]>([])
   const [loading, setLoading] = useState(true)
-  const { isCompleted, loadProgress, token } = useAuthStore()
+  const { isCompleted, loadProgress, token, user } = useAuthStore()
   const searchParams = useSearchParams()
   const isWelcome = searchParams.get('welcome') === '1'
 
   useEffect(() => {
     Promise.all([api.getLessons(), getLevels()])
       .then(([lessonsData, levelsData]) => {
-        const courseOnly = lessonsData.filter(
-          (l) => l.module !== 'core' && l.module !== 'junior' && l.module !== 'bootcamp'
-        )
-        setLessons(courseOnly)
+        setLessons(lessonsData)
         setLevels(levelsData.sort((a, b) => a.order - b.order))
       })
       .finally(() => setLoading(false))
@@ -196,8 +193,12 @@ function GuideContent() {
           </div>
         ) : moduleCards.length === 0 ? (
           <div className="bg-gray-900 border border-gray-800 rounded-2xl px-8 py-12 text-center">
-            <p className="text-gray-500 text-sm">Программа курса ещё не настроена.</p>
-            <Link href="/admin/structure" className="mt-3 inline-block text-violet-300 hover:underline text-sm">Перейти в admin →</Link>
+            <p className="text-gray-500 text-sm">Программа курса ещё не опубликована.</p>
+            {user?.isAdmin && (
+              <Link href="/admin/structure" className="mt-3 inline-block text-violet-300 hover:underline text-sm">
+                Перейти в админку →
+              </Link>
+            )}
           </div>
         ) : (
           <div className="space-y-10">

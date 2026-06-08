@@ -105,6 +105,7 @@ replace_env() {
 replace_env .env.production CORS_ALLOWED_ORIGINS "http://$BASE_DOMAIN,http://www.$BASE_DOMAIN,https://$BASE_DOMAIN,https://www.$BASE_DOMAIN"
 replace_env .env.production FRONTEND_URL "https://$BASE_DOMAIN"
 replace_env .env.production NEXT_PUBLIC_BACKEND_URL "https://api.$BASE_DOMAIN"
+replace_env .env.production ADMIN_LOGIN "admin@$BASE_DOMAIN"
 
 require_non_placeholder() {
   local file="$1"
@@ -120,6 +121,7 @@ require_non_placeholder() {
 
 require_non_placeholder .env.production POSTGRES_PASSWORD
 require_non_placeholder .env.production JWT_SECRET
+require_non_placeholder .env.production ADMIN_LOGIN
 require_non_placeholder .env.production ADMIN_SECRET
 
 nginx_conf="docker/nginx/conf.d/golanger.conf"
