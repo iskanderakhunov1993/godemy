@@ -4,489 +4,501 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
-import { api } from '@/lib/api'
-import type { Exercise, RunResult, TopicExample, TrainerTopic } from '@/lib/api'
+import { api, type Exercise, type RunResult, type TopicExample, type TrainerTopic } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
 import { markActivityToday, saveLastVisited } from '@/lib/streak'
+import {
+  builtInTrainerConcepts,
+  getBuiltInTrainerConcept,
+  isBuiltInExercise,
+} from '@/lib/trainerConcepts'
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
-  loading: () => <div className="h-full w-full bg-[#0b1220] animate-pulse" />,
+  loading: () => <div className="h-full animate-pulse bg-gray-950" />,
 })
 
-const monoClassName = 'font-mono'
-const monoFontFamily = '"JetBrains Mono", "Fira Code", ui-monospace, monospace'
+type WorkspaceMode = 'browser' | 'local'
 
-type TestStatus = 'idle' | 'passed' | 'failed'
-
-type TestCase = {
-  title: string
-  input: string
-  expected: string
-  status: TestStatus
-}
-
-const defaultTests: TestCase[] = [
-  { title: 'Тест 1', input: 'Abs(-5)', expected: '5', status: 'idle' },
-  { title: 'Тест 2', input: 'Abs(7)', expected: '7', status: 'idle' },
-  { title: 'Тест 3', input: 'Abs(0)', expected: '0', status: 'idle' },
-]
-
-const starterTemplate = `package main
+const fallbackCode = `package main
 
 import "fmt"
 
 func main() {
-    // напиши код здесь
-    fmt.Println(Abs(-5))
-}
-
-func Abs(n int) int {
-    // TODO
-    return 0
+	fmt.Println("Hello, Go!")
 }
 `
 
-const fallbackExamples: TopicExample[] = [
-  {
-    title: 'Без параметров',
-    code: 'func Hello() string {\n    return "Hello, Go!"\n}',
-    description: 'Функция возвращает готовое значение.',
-  },
-  {
-    title: 'С параметрами',
-    code: 'func Add(a int, b int) int {\n    return a + b\n}',
-    description: 'Возвращаем сумму двух аргументов.',
-  },
-  {
-    title: 'С логикой (if)',
-    code: 'func Max(a int, b int) int {\n    if a > b {\n        return a\n    }\n    return b\n}',
-    description: 'Функция выбирает большее значение.',
-  },
-]
+function parseExamples(raw: string): TopicExample[] {
+  if (!raw) return []
+  try {
+    return JSON.parse(raw) as TopicExample[]
+  } catch {
+    return []
+  }
+}
+
+function parseHints(raw?: string): string[] {
+  if (!raw) return []
+  try {
+    return JSON.parse(raw) as string[]
+  } catch {
+    return []
+  }
+}
 
 export default function TrainerTopicPage() {
   const { slug } = useParams<{ slug: string }>()
-  const router = useRouter()
-  const { token, loadProgress } = useAuthStore()
 
-  const [topic, setTopic] = useState<TrainerTopic | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [activeExercise, setActiveExercise] = useState<Exercise | null>(null)
-  const [code, setCode] = useState(starterTemplate)
+  return <TrainerTopicContent key={slug} slug={slug} />
+}
+
+function TrainerTopicContent({ slug }: { slug: string }) {
+  const router = useRouter()
+  const { token, loadProgress, isCompleted } = useAuthStore()
+  const builtInTopic = getBuiltInTrainerConcept(slug)
+  const builtInExercise = builtInTopic?.exercises?.[0] || null
+  const [topic, setTopic] = useState<TrainerTopic | null>(builtInTopic || null)
+  const [allTopics, setAllTopics] = useState<TrainerTopic[]>(
+    builtInTopic ? builtInTrainerConcepts : []
+  )
+  const [activeExercise, setActiveExercise] = useState<Exercise | null>(builtInExercise)
+  const [code, setCode] = useState(
+    builtInExercise?.starterCode || builtInTopic?.syntax || fallbackCode
+  )
   const [result, setResult] = useState<RunResult | null>(null)
-  const [tests, setTests] = useState<TestCase[]>(defaultTests)
+  const [loading, setLoading] = useState(!builtInTopic)
   const [running, setRunning] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [fullscreen, setFullscreen] = useState(false)
-  const [hintsOpen, setHintsOpen] = useState<number[]>([1, 2])
+  const [workspaceMode, setWorkspaceMode] = useState<WorkspaceMode>('browser')
+  const [copied, setCopied] = useState(false)
+  const [localCompleted, setLocalCompleted] = useState(
+    () => typeof window !== 'undefined'
+      && window.localStorage.getItem(`trainer-concept-${slug}`) === 'completed'
+  )
 
   useEffect(() => {
-    api.getTrainerTopic(slug)
-      .then((data) => {
-        setTopic(data)
-        saveLastVisited({ href: `/trainer/topic/${slug}`, title: data.title, type: 'lesson' })
+    if (builtInTopic) {
+      saveLastVisited({ href: `/trainer/topic/${slug}`, title: builtInTopic.title, type: 'lesson' })
+      markActivityToday()
+      return
+    }
+
+    Promise.all([api.getTrainerTopic(slug), api.getTrainerTopics('core')])
+      .then(([topicData, topicItems]) => {
+        setTopic(topicData)
+        setAllTopics([...topicItems].sort((a, b) => a.order - b.order))
+        const firstExercise = topicData.exercises?.[0] || null
+        setActiveExercise(firstExercise)
+        setCode(firstExercise?.starterCode || topicData.syntax || fallbackCode)
+        saveLastVisited({ href: `/trainer/topic/${slug}`, title: topicData.title, type: 'lesson' })
         markActivityToday()
-        if (data.exercises?.length) {
-          setActiveExercise(data.exercises[0])
-          setCode(data.exercises[0].starterCode || starterTemplate)
-        }
       })
       .catch(() => router.push('/trainer'))
       .finally(() => setLoading(false))
-  }, [slug, router])
+  }, [slug, router, builtInTopic])
 
-  const examples = useMemo<TopicExample[]>(() => {
-    if (!topic?.examples) return fallbackExamples
-    try {
-      const parsed = JSON.parse(topic.examples) as TopicExample[]
-      return parsed.length ? parsed : fallbackExamples
-    } catch {
-      return fallbackExamples
-    }
-  }, [topic?.examples])
+  const examples = useMemo(() => parseExamples(topic?.examples || ''), [topic])
+  const hints = useMemo(() => parseHints(activeExercise?.hints), [activeExercise])
+  const currentIndex = allTopics.findIndex((item) => item.slug === slug)
+  const nextTopic = currentIndex >= 0 ? allTopics[currentIndex + 1] : undefined
+  const completed = activeExercise
+    ? isBuiltInExercise(activeExercise.id)
+      ? localCompleted
+      : isCompleted('exercise', activeExercise.id)
+    : false
 
-  const syntaxValue = useMemo(() => {
-    if (topic?.syntax?.trim()) return topic.syntax
-    return 'func name(param type) returnType {\n    return value\n}'
-  }, [topic?.syntax])
-
-  const patternValue = useMemo(() => {
-    if (topic?.patterns?.trim()) return topic.patterns
-    return 'func Abs(n int) int {\n    // logic\n    return result\n}'
-  }, [topic?.patterns])
-
-  const activeHints = useMemo(() => {
-    const fromExercise = activeExercise?.hints
-    if (!fromExercise) {
-      return [
-        'Если число >= 0 — верни его.',
-        'Если число < 0 — умножь его на -1 и верни результат.',
-      ]
-    }
-    try {
-      const parsed = JSON.parse(fromExercise) as string[]
-      return parsed.length ? parsed : ['Если число >= 0 — верни его.', 'Если число < 0 — умножь его на -1.']
-    } catch {
-      return ['Если число >= 0 — верни его.', 'Если число < 0 — умножь его на -1.']
-    }
-  }, [activeExercise?.hints])
-
-  const handleSelectExercise = (exercise: Exercise) => {
+  const selectExercise = (exercise: Exercise) => {
     setActiveExercise(exercise)
-    setCode(exercise.starterCode || starterTemplate)
+    setCode(exercise.starterCode || fallbackCode)
     setResult(null)
-    setTests(defaultTests)
   }
 
-  const handleRun = async () => {
+  const runCode = async () => {
     setRunning(true)
     setResult(null)
     try {
-      const res = await api.runCode(code)
-      setResult(res)
-    } catch (e) {
-      setResult({ output: '', error: (e as Error).message, passed: false })
+      setResult(await api.runCode(code))
+    } catch (error) {
+      setResult({ output: '', error: (error as Error).message, passed: false })
     } finally {
       setRunning(false)
     }
   }
 
-  const handleSubmit = async () => {
+  const submitCode = async () => {
+    if (!activeExercise) return
     setSubmitting(true)
     setResult(null)
     try {
-      if (activeExercise) {
-        const res = await api.submitExercise(code, activeExercise.id)
-        setResult(res)
-        setTests((prev) =>
-          prev.map((t, i) => ({
-            ...t,
-            status: res.passed ? 'passed' : i === 0 ? 'failed' : 'idle',
-          }))
-        )
-        if (token && res.passed) await loadProgress()
-      } else {
-        const runRes = await api.runCode(code)
-        setResult(runRes)
-        setTests((prev) =>
-          prev.map((t) => ({ ...t, status: runRes.error ? 'failed' : 'passed' }))
-        )
+      if (isBuiltInExercise(activeExercise.id)) {
+        const response = await api.runCode(code)
+        const expectedOutput = builtInTopic?.expectedOutput.trim()
+        const actualOutput = response.output.trim()
+        const passed = !response.error && (!expectedOutput || actualOutput === expectedOutput)
+        setResult({
+          ...response,
+          passed,
+          error: passed
+            ? response.error
+            : response.error || `Ожидаемый вывод: ${expectedOutput || 'корректный результат'}`,
+        })
+        if (passed) {
+          window.localStorage.setItem(`trainer-concept-${slug}`, 'completed')
+          setLocalCompleted(true)
+        }
+        return
       }
-    } catch (e) {
-      setResult({ output: '', error: (e as Error).message, passed: false })
-      setTests((prev) => prev.map((t, i) => ({ ...t, status: i === 0 ? 'failed' : 'idle' })))
+
+      const response = await api.submitExercise(code, activeExercise.id)
+      setResult(response)
+      if (token && response.passed) await loadProgress()
+    } catch (error) {
+      setResult({ output: '', error: (error as Error).message, passed: false })
     } finally {
       setSubmitting(false)
     }
   }
 
-  const resetCode = () => {
-    setCode(activeExercise?.starterCode || starterTemplate)
-    setResult(null)
-    setTests(defaultTests)
-  }
-
-  const toggleFullscreen = async () => {
-    if (!document.fullscreenElement) {
-      await document.documentElement.requestFullscreen()
-      setFullscreen(true)
-    } else {
-      await document.exitFullscreen()
-      setFullscreen(false)
-    }
-  }
-
-  const copySyntax = async () => {
-    try {
-      await navigator.clipboard.writeText(syntaxValue)
-    } catch {
-      // noop
-    }
+  const copyLocalCommand = async () => {
+    await navigator.clipboard.writeText('mkdir godemy-practice && cd godemy-practice && go mod init practice && touch main.go')
+    setCopied(true)
+    window.setTimeout(() => setCopied(false), 1800)
   }
 
   if (loading || !topic) {
     return (
-      <div className="min-h-screen bg-[#020617] px-6 py-6">
-        <div className="mx-auto max-w-[1500px] space-y-4">
-          <div className="h-14 rounded-2xl bg-[#111827] animate-pulse" />
-          <div className="h-[720px] rounded-2xl bg-[#111827] animate-pulse" />
-        </div>
-      </div>
+      <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+        <div className="h-12 w-64 animate-pulse rounded-xl bg-gray-900" />
+        <div className="mt-6 h-[680px] animate-pulse rounded-3xl bg-gray-900" />
+      </main>
     )
   }
 
-  const leftTitle = topic.title || 'Функции с возвратом значения'
+  const syntax = topic.syntax?.trim() || activeExercise?.starterCode || fallbackCode
+  const pattern = topic.patterns?.trim() || `func Solve(input string) string {
+	// 1. проверь входные данные
+	// 2. выполни основную логику
+	// 3. верни результат
+	return ""
+}`
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white px-6 py-5">
-      <div className="mx-auto max-w-[1500px] min-w-[1200px] space-y-4">
-        <header className="rounded-2xl border border-[#1f2937] bg-[#0b1220]/90 backdrop-blur px-5 py-3 flex items-center justify-between shadow-[0_10px_40px_rgba(0,0,0,0.35)]">
-          <div className="flex items-center gap-6">
-            <Link href="/trainer" className="text-[#22d3ee] font-semibold tracking-wide">{`{ codetrain }`}</Link>
-            <nav className="flex items-center gap-5 text-sm text-gray-400">
-              <span className="hover:text-white transition-colors cursor-pointer">Главная</span>
-              <span className="hover:text-white transition-colors cursor-pointer">Курс</span>
-              <span className="text-[#22d3ee]">Тренажёр</span>
-              <span className="hover:text-white transition-colors cursor-pointer">Задачи</span>
-              <span className="hover:text-white transition-colors cursor-pointer">Сообщество</span>
-            </nav>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="px-3 py-2 rounded-xl bg-[#111827] border border-[#1f2937] text-sm text-gray-400 min-w-[220px]">Поиск...</div>
-            <button className="text-sm text-gray-300 hover:text-white transition-colors">Войти</button>
-            <button className="px-4 py-2 rounded-xl bg-[#22d3ee] text-slate-900 text-sm font-semibold hover:bg-cyan-300 transition-colors">Регистрация</button>
-          </div>
-        </header>
-
-        <div className="grid grid-cols-[55%_45%] gap-4 items-start">
-          <section className="space-y-4">
-            <Card>
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <div className="text-sm text-gray-400 mb-1">Тренажёр / Функции в Go</div>
-                  <h1 className="text-3xl font-bold leading-tight">{leftTitle}</h1>
-                  <p className="text-gray-300 mt-2 max-w-2xl">Функции могут возвращать результат обратно в место вызова с помощью `return`.</p>
-                </div>
-                <span className="px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/40 text-xs font-semibold">easy</span>
-              </div>
-            </Card>
-
-            <Card title="Простой пример">
-              <div className="grid grid-cols-[1fr_220px] gap-3">
-                <CodeBlock code={'func Add(a int, b int) int {\n    return a + b\n}'} />
-                <div className="rounded-2xl border border-[#1f2937] bg-[#0b1220] p-4 text-sm">
-                  <div className="text-gray-400 mb-2">Результат:</div>
-                  <div className="text-white font-medium">Add(2,3) → <span className="text-[#22d3ee]">5</span></div>
-                </div>
-              </div>
-            </Card>
-
-            <Card title="Объяснение">
-              <ul className="space-y-2 text-sm text-gray-300">
-                <li>• `a`, `b` — параметры</li>
-                <li>• `int` — тип возврата</li>
-                <li>• `return` возвращает результат</li>
-              </ul>
-            </Card>
-
-            <Card title="Синтаксис" action={<button onClick={copySyntax} className="px-3 py-1.5 rounded-lg border border-[#1f2937] text-xs text-gray-300 hover:border-cyan-400 hover:text-white transition-colors">Копировать</button>}>
-              <CodeBlock code={syntaxValue} />
-            </Card>
-
-            <Card title="Ключевые моменты">
-              <ul className="space-y-2 text-sm text-gray-300">
-                <li>• `return` завершает функцию</li>
-                <li>• тип возврата обязателен</li>
-                <li>• функция возвращает значение</li>
-              </ul>
-            </Card>
-
-            <Card title="Flow (как работает)">
-              <div className="grid grid-cols-4 gap-2">
-                {[
-                  'вызываем функцию',
-                  'передаём значения',
-                  'выполняется код',
-                  'возвращается результат',
-                ].map((label, idx) => (
-                  <div key={label} className="relative rounded-xl border border-[#1f2937] bg-[#0b1220] p-3 text-center">
-                    <div className="mx-auto mb-2 w-8 h-8 rounded-full bg-cyan-500/15 text-[#22d3ee] border border-cyan-500/40 flex items-center justify-center font-semibold text-sm">{idx + 1}</div>
-                    <p className="text-xs text-gray-300">{label}</p>
-                  </div>
-                ))}
-              </div>
-            </Card>
-
-            <Card title="Паттерн">
-              <CodeBlock code={patternValue} />
-            </Card>
-
-            <Card title="Частая ошибка" className="border-red-500/40 bg-red-950/20">
-              <CodeBlock
-                code={'func Add(a int, b int) int {\n    a + b // ошибка (нет return)\n}'}
-                className="border-red-500/40 bg-[#1a1114] text-red-200"
-              />
-            </Card>
-
-            <Card title="Примеры">
-              <div className="grid grid-cols-3 gap-3">
-                {examples.slice(0, 3).map((ex, i) => (
-                  <div key={ex.title + i} className="rounded-2xl border border-[#1f2937] bg-[#0b1220] p-3 space-y-3 hover:border-cyan-500/40 transition-colors">
-                    <div className="text-sm font-medium">{i + 1}. {ex.title}</div>
-                    <CodeBlock code={ex.code} className="text-xs" />
-                    <button
-                      onClick={() => {
-                        setCode(`package main\n\nimport "fmt"\n\n${ex.code}\n\nfunc main() {\n    fmt.Println("Run")\n}`)
-                        setResult(null)
-                      }}
-                      className="px-3 py-1.5 rounded-lg border border-[#1f2937] text-xs text-gray-300 hover:border-cyan-400 hover:text-white transition-colors"
-                    >
-                      Run
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </Card>
-
-            <Card title="Задача">
-              <p className="text-sm text-gray-200 mb-3">Напиши функцию <span className="font-semibold text-[#22d3ee]">Abs(n int) int</span></p>
-              <ul className="space-y-2 text-sm text-gray-300">
-                <li>• если `n &gt;= 0` → вернуть `n`</li>
-                <li>• если `n &lt; 0` → вернуть `-n`</li>
-              </ul>
-              {topic.exercises?.length ? (
-                <div className="mt-4 grid grid-cols-1 gap-2">
-                  {topic.exercises.map((exercise) => (
-                    <button
-                      key={exercise.id}
-                      onClick={() => handleSelectExercise(exercise)}
-                      className={`text-left px-3 py-2 rounded-xl border transition-colors ${
-                        activeExercise?.id === exercise.id
-                          ? 'border-cyan-400 bg-cyan-500/10'
-                          : 'border-[#1f2937] bg-[#0b1220] hover:border-cyan-500/40'
-                      }`}
-                    >
-                      <div className="text-sm font-medium">{exercise.title}</div>
-                      <div className="text-xs text-gray-400 mt-0.5">{exercise.difficulty}</div>
-                    </button>
-                  ))}
-                </div>
-              ) : null}
-            </Card>
-          </section>
-
-          <section className="space-y-4 sticky top-4">
-            <Card className="p-0 overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-[#1f2937] bg-[#0b1220]">
-                <div className="px-3 py-1.5 rounded-lg border border-[#1f2937] text-xs text-gray-200">Go 1.21</div>
-                <div className="flex items-center gap-2">
-                  <button onClick={resetCode} className="px-3 py-1.5 rounded-lg text-xs border border-[#1f2937] text-gray-300 hover:border-cyan-400 hover:text-white transition-colors">Сбросить код</button>
-                  <button onClick={toggleFullscreen} className="px-3 py-1.5 rounded-lg text-xs border border-[#1f2937] text-gray-300 hover:border-cyan-400 hover:text-white transition-colors">{fullscreen ? 'Exit' : 'Fullscreen'}</button>
-                </div>
-              </div>
-
-              <div className="h-[460px] border-b border-[#1f2937]">
-                <MonacoEditor
-                  height="100%"
-                  language="go"
-                  theme="vs-dark"
-                  value={code}
-                  onChange={(value) => setCode(value ?? '')}
-                  options={{
-                    fontSize: 14,
-                    minimap: { enabled: false },
-                    scrollBeyondLastLine: false,
-                    tabSize: 4,
-                    fontFamily: monoFontFamily,
-                    padding: { top: 12 },
-                  }}
-                />
-              </div>
-
-              <div className="px-4 py-3 flex items-center gap-2 bg-[#0b1220] border-b border-[#1f2937]">
-                <button onClick={resetCode} className="px-4 py-2 rounded-xl border border-[#1f2937] text-sm text-gray-300 hover:border-cyan-400 hover:text-white transition-colors">Сбросить</button>
-                <button onClick={handleRun} disabled={running} className="px-4 py-2 rounded-xl border border-cyan-400/40 text-sm text-cyan-300 hover:bg-cyan-500/10 transition-colors disabled:opacity-60">{running ? 'Run...' : 'Run'}</button>
-                <button onClick={handleSubmit} disabled={submitting} className="px-4 py-2 rounded-xl bg-[#22d3ee] text-slate-900 text-sm font-semibold hover:bg-cyan-300 transition-colors disabled:opacity-60">{submitting ? 'Submit...' : 'Submit'}</button>
-              </div>
-
-              <div className="p-4 bg-[#0a1020]">
-                <div className="text-sm font-semibold mb-2">Вывод</div>
-                <div className={`rounded-2xl border p-3 min-h-[110px] text-sm whitespace-pre-wrap ${monoClassName} ${
-                  result?.error
-                    ? 'border-red-500/40 bg-red-950/20 text-red-200'
-                    : result?.passed
-                    ? 'border-emerald-500/40 bg-emerald-950/20 text-emerald-200'
-                    : 'border-[#1f2937] bg-[#020617] text-gray-300'
-                }`}>
-                  {result ? (result.error || result.output || (result.passed ? 'Тесты пройдены.' : 'Нет вывода')) : 'Нажми Run для запуска кода...'}
-                </div>
-              </div>
-            </Card>
-
-            <div className="grid grid-cols-2 gap-4">
-              <Card title="Тесты">
-                <div className="space-y-2">
-                  {tests.map((test) => (
-                    <div key={test.title} className="rounded-xl border border-[#1f2937] bg-[#0b1220] p-3">
-                      <div className="flex items-center justify-between gap-2 text-sm">
-                        <span>{test.title}: {test.input} → {test.expected}</span>
-                        <span className={`text-xs font-semibold ${
-                          test.status === 'passed'
-                            ? 'text-emerald-400'
-                            : test.status === 'failed'
-                            ? 'text-red-400'
-                            : 'text-gray-500'
-                        }`}>
-                          {test.status === 'passed' ? 'пройден' : test.status === 'failed' ? 'ошибка' : 'ожидает'}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-
-              <Card title="Подсказки">
-                <div className="space-y-2 text-sm">
-                  {[1, 2].map((level, idx) => (
-                    <button
-                      key={level}
-                      onClick={() => setHintsOpen((prev) => (prev.includes(level) ? prev.filter((x) => x !== level) : [...prev, level]))}
-                      className="w-full text-left rounded-xl border border-[#1f2937] bg-[#0b1220] p-3 hover:border-cyan-500/40 transition-colors"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-200">{level}. Уровень {level}</span>
-                        <span className="text-xs text-gray-500">{hintsOpen.includes(level) ? 'Скрыть' : 'Показать'}</span>
-                      </div>
-                      {hintsOpen.includes(level) && (
-                        <p className="mt-2 text-xs text-gray-400">{activeHints[idx] || 'Подсказка пока недоступна.'}</p>
-                      )}
-                    </button>
-                  ))}
-                  <div className="rounded-xl border border-[#1f2937] bg-[#0b1220] p-3 opacity-70">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-300">3. Показать решение</span>
-                      <span className="text-xs text-gray-500">🔒 заблокировано</span>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </div>
-          </section>
-        </div>
+    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+      <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500">
+        <Link href="/trainer" className="transition-colors hover:text-white">Тренажёр</Link>
+        <span>/</span>
+        <span className="text-gray-300">{topic.title}</span>
       </div>
-    </div>
+
+      <header className="mt-6 border-b border-gray-800 pb-8">
+        <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
+          <div className="max-w-3xl">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full border border-violet-500/25 bg-violet-500/10 px-3 py-1 text-xs font-bold text-violet-300">
+                Концепт {Math.max(currentIndex + 1, 1)}
+              </span>
+              <span className="rounded-full border border-gray-700 bg-gray-900 px-3 py-1 text-xs text-gray-500">
+                10–15 минут
+              </span>
+              {completed && (
+                <span className="rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-300">
+                  Выполнено
+                </span>
+              )}
+            </div>
+            <h1 className="mt-5 text-4xl font-black text-white sm:text-5xl">{topic.title}</h1>
+            <p className="mt-4 text-lg leading-relaxed text-gray-400">
+              {topic.explanation || activeExercise?.description || 'Разбери концепт и сразу примени его в коротком упражнении.'}
+            </p>
+          </div>
+          <Link href="/trainer" className="text-sm font-semibold text-violet-300 hover:text-violet-200">
+            Все концепты →
+          </Link>
+        </div>
+      </header>
+
+      <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(420px,0.82fr)] lg:items-start">
+        <article className="space-y-6">
+          <LessonSection number="01" title="Идея">
+            <p className="text-base leading-7 text-gray-300">
+              {topic.explanation || 'В Go простые конструкции специально выглядят предсказуемо. Сначала пойми форму кода, затем меняй данные и поведение.'}
+            </p>
+            {hints.length > 0 && (
+              <ul className="mt-5 space-y-3">
+                {hints.slice(0, 3).map((hint) => (
+                  <li key={hint} className="flex gap-3 text-sm leading-6 text-gray-400">
+                    <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-violet-500/10 text-[10px] text-violet-300">✓</span>
+                    {hint}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </LessonSection>
+
+          <LessonSection number="02" title="Синтаксис">
+            <CodeBlock code={syntax} />
+            <p className="mt-4 text-sm leading-6 text-gray-500">
+              Не запоминай код целиком. Обрати внимание на ключевые слова, типы и место, где возвращается результат.
+            </p>
+          </LessonSection>
+
+          {examples.length > 0 && (
+            <LessonSection number="03" title="Пример">
+              <div className="space-y-4">
+                {examples.slice(0, 2).map((example) => (
+                  <div key={example.title} className="rounded-2xl border border-gray-800 bg-gray-950/60 p-4">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <h3 className="font-bold text-white">{example.title}</h3>
+                      <button
+                        onClick={() => {
+                          setCode(example.code)
+                          setResult(null)
+                          setWorkspaceMode('browser')
+                        }}
+                        className="text-xs font-semibold text-violet-300 hover:text-violet-200"
+                      >
+                        Открыть в песочнице
+                      </button>
+                    </div>
+                    <CodeBlock code={example.code} />
+                    {example.description && <p className="mt-3 text-sm text-gray-500">{example.description}</p>}
+                  </div>
+                ))}
+              </div>
+            </LessonSection>
+          )}
+
+          <LessonSection number={examples.length > 0 ? '04' : '03'} title="Паттерн">
+            <p className="mb-4 text-sm leading-6 text-gray-400">
+              Паттерн — это форма решения, которую можно переиспользовать. Замени входные данные и основную логику под свою задачу.
+            </p>
+            <CodeBlock code={pattern} />
+          </LessonSection>
+
+          <LessonSection number={examples.length > 0 ? '05' : '04'} title="Задание">
+            {topic.exercises?.length ? (
+              <>
+                {topic.exercises.length > 1 && (
+                  <div className="mb-5 flex flex-wrap gap-2">
+                    {topic.exercises.map((exercise, index) => (
+                      <button
+                        key={exercise.id}
+                        onClick={() => selectExercise(exercise)}
+                        className={`rounded-xl border px-3 py-2 text-sm transition-colors ${
+                          activeExercise?.id === exercise.id
+                            ? 'border-violet-500/50 bg-violet-500/10 text-violet-200'
+                            : 'border-gray-800 bg-gray-950 text-gray-500 hover:border-gray-700'
+                        }`}
+                      >
+                        {index + 1}. {exercise.title}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5">
+                  <p className="text-xs font-bold uppercase tracking-widest text-cyan-300">Практика</p>
+                  <h3 className="mt-3 text-xl font-bold text-white">{activeExercise?.title}</h3>
+                  <p className="mt-3 leading-7 text-gray-300">{activeExercise?.description}</p>
+                  {builtInTopic?.expectedOutput && (
+                    <div className="mt-5 rounded-xl border border-gray-800 bg-gray-950 px-4 py-3">
+                      <p className="text-xs uppercase tracking-widest text-gray-600">Ожидаемый вывод</p>
+                      <code className="mt-2 block text-sm text-cyan-200">{builtInTopic.expectedOutput}</code>
+                    </div>
+                  )}
+                  <div className="mt-5 flex flex-wrap gap-2 text-xs">
+                    <span className="rounded-full bg-gray-900 px-3 py-1.5 text-gray-400">{activeExercise?.difficulty}</span>
+                    <span className="rounded-full bg-gray-900 px-3 py-1.5 text-gray-400">{activeExercise?.category}</span>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <p className="text-gray-400">Практическое задание для этого концепта готовится.</p>
+            )}
+          </LessonSection>
+
+          {nextTopic && (
+            <Link
+              href={`/trainer/topic/${nextTopic.slug}`}
+              className="flex items-center justify-between rounded-2xl border border-gray-800 bg-gray-900 p-5 transition-colors hover:border-violet-500/40"
+            >
+              <div>
+                <p className="text-xs uppercase tracking-widest text-gray-600">Следующий концепт</p>
+                <p className="mt-2 font-bold text-white">{nextTopic.title}</p>
+              </div>
+              <span className="text-2xl text-violet-300">→</span>
+            </Link>
+          )}
+        </article>
+
+        <aside className="lg:sticky lg:top-20">
+          <div className="overflow-hidden rounded-3xl border border-gray-700 bg-gray-900 shadow-2xl">
+            <div className="flex border-b border-gray-800 bg-gray-950 p-2">
+              <button
+                onClick={() => setWorkspaceMode('browser')}
+                className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+                  workspaceMode === 'browser' ? 'bg-violet-500 text-white' : 'text-gray-500 hover:text-white'
+                }`}
+              >
+                Песочница
+              </button>
+              <button
+                onClick={() => setWorkspaceMode('local')}
+                className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+                  workspaceMode === 'local' ? 'bg-violet-500 text-white' : 'text-gray-500 hover:text-white'
+                }`}
+              >
+                Локально
+              </button>
+            </div>
+
+            {workspaceMode === 'browser' ? (
+              <>
+                <div className="flex items-center justify-between border-b border-gray-800 px-4 py-3">
+                  <div>
+                    <p className="text-xs font-bold text-white">main.go</p>
+                    <p className="text-[11px] text-gray-600">Код запускается на сервере Godemy</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setCode(activeExercise?.starterCode || syntax)
+                      setResult(null)
+                    }}
+                    className="text-xs text-gray-500 hover:text-white"
+                  >
+                    Сбросить
+                  </button>
+                </div>
+                <div className="h-[460px]">
+                  <MonacoEditor
+                    height="100%"
+                    language="go"
+                    theme="vs-dark"
+                    value={code}
+                    onChange={(value) => setCode(value || '')}
+                    options={{
+                      minimap: { enabled: false },
+                      fontSize: 14,
+                      automaticLayout: true,
+                      scrollBeyondLastLine: false,
+                      tabSize: 4,
+                      padding: { top: 16 },
+                    }}
+                  />
+                </div>
+                <div className="flex flex-wrap items-center gap-2 border-t border-gray-800 bg-gray-950 px-4 py-3">
+                  <button
+                    onClick={() => void runCode()}
+                    disabled={running}
+                    className="rounded-xl border border-violet-500/40 px-4 py-2 text-sm font-bold text-violet-300 transition-colors hover:bg-violet-500/10 disabled:opacity-50"
+                  >
+                    {running ? 'Запуск…' : '▶ Запустить'}
+                  </button>
+                  {activeExercise && (
+                    <button
+                      onClick={() => void submitCode()}
+                      disabled={submitting}
+                      className="rounded-xl bg-cyan-400 px-4 py-2 text-sm font-bold text-gray-950 transition-colors hover:bg-cyan-300 disabled:opacity-50"
+                    >
+                      {submitting ? 'Проверяем…' : 'Проверить решение'}
+                    </button>
+                  )}
+                </div>
+                <div className={`min-h-28 border-t border-gray-800 p-4 font-mono text-sm ${
+                  result?.error
+                    ? 'bg-red-950/20 text-red-200'
+                    : result?.passed
+                      ? 'bg-emerald-950/20 text-emerald-200'
+                      : 'bg-gray-950 text-gray-500'
+                }`}>
+                  <p className="mb-2 font-sans text-xs font-bold uppercase tracking-widest text-gray-600">Результат</p>
+                  {result ? result.error || result.output || (result.passed ? 'Все тесты пройдены ✓' : 'Нет вывода') : 'Нажми «Запустить», чтобы увидеть результат.'}
+                </div>
+              </>
+            ) : (
+              <div className="p-6">
+                <p className="text-xs font-bold uppercase tracking-widest text-violet-300">Работа на компьютере</p>
+                <h2 className="mt-3 text-2xl font-black text-white">Повтори упражнение локально</h2>
+                <ol className="mt-6 space-y-5">
+                  <LocalStep number="1" title="Создай папку проекта">
+                    <code>mkdir godemy-practice && cd godemy-practice</code>
+                  </LocalStep>
+                  <LocalStep number="2" title="Инициализируй Go-модуль">
+                    <code>go mod init practice</code>
+                  </LocalStep>
+                  <LocalStep number="3" title="Создай файл и вставь код">
+                    <code>touch main.go</code>
+                  </LocalStep>
+                  <LocalStep number="4" title="Запусти программу">
+                    <code>go run .</code>
+                  </LocalStep>
+                </ol>
+                <button
+                  onClick={() => void copyLocalCommand()}
+                  className="mt-7 w-full rounded-xl border border-gray-700 bg-gray-950 px-4 py-3 text-sm font-bold text-gray-300 transition-colors hover:border-violet-500/50 hover:text-white"
+                >
+                  {copied ? 'Команда скопирована ✓' : 'Скопировать стартовую команду'}
+                </button>
+                <p className="mt-4 text-xs leading-5 text-gray-600">
+                  После локальной проверки вернись в песочницу и отправь решение, чтобы сохранить прогресс.
+                </p>
+              </div>
+            )}
+          </div>
+        </aside>
+      </div>
+    </main>
   )
 }
 
-function Card({
+function LessonSection({
+  number,
   title,
   children,
-  action,
-  className = '',
 }: {
-  title?: string
+  number: string
+  title: string
   children: React.ReactNode
-  action?: React.ReactNode
-  className?: string
 }) {
   return (
-    <div className={`rounded-2xl border border-[#1f2937] bg-[#111827] p-4 shadow-[0_12px_35px_rgba(0,0,0,0.28)] transition-all hover:shadow-[0_16px_45px_rgba(2,6,23,0.55)] ${className}`}>
-      {title ? (
-        <div className="mb-3 flex items-center justify-between gap-2">
-          <h2 className="text-lg font-semibold">{title}</h2>
-          {action}
-        </div>
-      ) : null}
+    <section className="rounded-3xl border border-gray-800 bg-gray-900 p-6 sm:p-7">
+      <div className="mb-5 flex items-center gap-3">
+        <span className="font-mono text-xs font-black text-violet-400">{number}</span>
+        <h2 className="text-xl font-black text-white">{title}</h2>
+      </div>
       {children}
-    </div>
+    </section>
   )
 }
 
-function CodeBlock({ code, className = '' }: { code: string; className?: string }) {
+function CodeBlock({ code }: { code: string }) {
   return (
-    <pre className={`rounded-2xl border border-[#1f2937] bg-[#020617] p-4 text-sm text-cyan-200 overflow-x-auto whitespace-pre-wrap font-mono leading-relaxed ${className}`}>
-      {code}
+    <pre className="overflow-x-auto rounded-2xl border border-gray-800 bg-gray-950 p-4 text-sm leading-7 text-cyan-100">
+      <code>{code}</code>
     </pre>
+  )
+}
+
+function LocalStep({
+  number,
+  title,
+  children,
+}: {
+  number: string
+  title: string
+  children: React.ReactNode
+}) {
+  return (
+    <li className="flex gap-3">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-violet-500/10 text-xs font-bold text-violet-300">
+        {number}
+      </span>
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-white">{title}</p>
+        <div className="mt-2 overflow-x-auto rounded-xl bg-gray-950 px-3 py-2 font-mono text-xs text-cyan-200">
+          {children}
+        </div>
+      </div>
+    </li>
   )
 }
