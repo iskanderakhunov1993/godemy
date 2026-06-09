@@ -13,11 +13,11 @@ export const metadata: Metadata = {
   icons: {
     icon: "/icon.svg",
   },
-  metadataBase: new URL("https://lavish-eagerness-production-a11a.up.railway.app"),
+  metadataBase: new URL("https://godemy.ru"),
   openGraph: {
     title: "Godemy — Интерактивный курс по Go",
     description: "Изучи Go через практику: бесплатный курс, тренажёр и Bootcamp от Junior до Senior.",
-    url: "https://lavish-eagerness-production-a11a.up.railway.app",
+    url: "https://godemy.ru",
     siteName: "Godemy",
     locale: "ru_RU",
     type: "website",
@@ -36,7 +36,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ru" suppressHydrationWarning>
-      <body className="bg-gray-950 text-gray-100 min-h-screen">
+      <body className="min-h-screen text-gray-100">
         <ThemeProvider>
           <Navbar />
           <div className="flex flex-col min-h-screen">

@@ -37,20 +37,20 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-gray-950/80 backdrop-blur border-b border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
-          <div className="flex items-center gap-6">
+      <nav className="sticky top-0 z-50 border-b border-white/8 bg-[#070b14]/72 backdrop-blur-xl">
+        <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6">
+          <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center">
               <BrandLogo compact />
             </Link>
-            <div className="hidden md:flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-2 rounded-full border border-white/8 bg-white/[0.04] p-1">
               {links.map((l) => (
                 <Link
                   key={l.href}
                   href={l.href}
-                  className={`text-sm font-medium transition-colors ${
+                  className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                     pathname.startsWith(l.href)
-                      ? 'text-cyan-400'
+                      ? 'bg-white text-slate-950 shadow-sm'
                       : 'text-gray-400 hover:text-white'
                   }`}
                 >
@@ -60,12 +60,12 @@ export function Navbar() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             {/* Search button */}
             <button
               onClick={openSearch}
               aria-label="Поиск"
-              className="flex items-center gap-2 h-8 px-3 rounded-lg bg-gray-800/60 border border-gray-700/60 text-gray-400 hover:text-white hover:border-gray-600 transition-colors"
+              className="flex h-10 items-center gap-2 rounded-full border border-white/8 bg-white/[0.04] px-3.5 text-gray-400 hover:border-white/16 hover:text-white"
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -78,7 +78,7 @@ export function Navbar() {
             <button
               onClick={toggleMode}
               aria-label={mode === 'dark' ? 'Светлая тема' : 'Тёмная тема'}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/8 bg-white/[0.04] text-gray-400 hover:border-white/16 hover:text-white"
             >
               {mode === 'dark' ? (
                 /* Sun icon */
@@ -96,13 +96,13 @@ export function Navbar() {
             {user ? (
               <>
                 {user.isPremium ? (
-                  <span className="hidden sm:flex items-center text-sm font-medium text-gray-200 border border-gray-700/70 bg-gray-900/70 rounded-full px-3 py-1">
+                  <span className="hidden sm:flex items-center rounded-full border border-violet-400/18 bg-violet-400/10 px-3 py-2 text-sm font-medium text-violet-200">
                     Godemy Pro
                   </span>
                 ) : (
                   <Link
                     href="/bootcamp/buy"
-                    className="hidden sm:flex items-center text-sm font-medium text-gray-300 hover:text-gray-100 border border-gray-700/70 hover:border-cyan-500/40 bg-gray-900/70 rounded-full px-3 py-1 transition-colors"
+                    className="hidden sm:flex items-center rounded-full border border-white/8 bg-white/[0.04] px-3 py-2 text-sm font-medium text-gray-300 hover:border-violet-400/30 hover:text-white"
                   >
                     Godemy Pro
                   </Link>
@@ -112,17 +112,17 @@ export function Navbar() {
                 <div className="relative">
                   <button
                     onClick={() => setMenuOpen(!menuOpen)}
-                    className="w-9 h-9 rounded-full bg-gray-700 border-2 border-gray-600 hover:border-cyan-500/60 flex items-center justify-center text-white font-bold text-sm transition-colors overflow-hidden"
+                    className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/[0.07] text-sm font-bold text-white hover:border-violet-400/30"
                   >
                     {user.username[0].toUpperCase()}
                   </button>
                   {menuOpen && (
                     <>
                       <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-                      <div className="absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-700/60 rounded-2xl shadow-2xl py-2 z-50">
+                      <div className="absolute right-0 z-50 mt-2 w-56 rounded-3xl border border-white/10 bg-[#0f172a]/95 py-2 shadow-[0_24px_80px_rgba(2,6,23,0.45)] backdrop-blur-xl">
                         <Link
                           href="/profile"
-                          className="block px-5 py-2.5 text-sm text-gray-200 hover:text-white hover:bg-gray-800/60 transition-colors"
+                          className="block px-5 py-2.5 text-sm text-gray-200 hover:bg-white/[0.06] hover:text-white"
                           onClick={() => setMenuOpen(false)}
                         >
                           Профиль
@@ -130,7 +130,7 @@ export function Navbar() {
                         {user.isAdmin && (
                           <Link
                             href="/admin"
-                            className="block px-5 py-2.5 text-sm text-cyan-300 hover:text-white hover:bg-gray-800/60 transition-colors"
+                            className="block px-5 py-2.5 text-sm text-violet-300 hover:bg-white/[0.06] hover:text-white"
                             onClick={() => setMenuOpen(false)}
                           >
                             Админка
@@ -138,14 +138,14 @@ export function Navbar() {
                         )}
                         <Link
                           href="/certificates"
-                          className="block px-5 py-2.5 text-sm text-gray-200 hover:text-white hover:bg-gray-800/60 transition-colors"
+                          className="block px-5 py-2.5 text-sm text-gray-200 hover:bg-white/[0.06] hover:text-white"
                           onClick={() => setMenuOpen(false)}
                         >
                           Сертификаты
                         </Link>
                         <Link
                           href="/feedback"
-                          className="block px-5 py-2.5 text-sm text-gray-200 hover:text-white hover:bg-gray-800/60 transition-colors"
+                          className="block px-5 py-2.5 text-sm text-gray-200 hover:bg-white/[0.06] hover:text-white"
                           onClick={() => setMenuOpen(false)}
                         >
                           Обратная связь
@@ -153,16 +153,16 @@ export function Navbar() {
                         {!user.isPremium && (
                           <Link
                             href="/bootcamp/buy"
-                            className="block px-5 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-gray-800/60 transition-colors"
+                            className="block px-5 py-2.5 text-sm text-gray-300 hover:bg-white/[0.06] hover:text-white"
                             onClick={() => setMenuOpen(false)}
                           >
                             Получить Godemy Pro
                           </Link>
                         )}
-                        <div className="my-1.5 border-t border-gray-700/50" />
+                        <div className="my-1.5 border-t border-white/8" />
                         <button
                           onClick={() => { logout(); setMenuOpen(false) }}
-                          className="w-full text-left px-5 py-2.5 text-sm text-gray-400 hover:text-white hover:bg-gray-800/60 transition-colors"
+                          className="w-full px-5 py-2.5 text-left text-sm text-gray-400 hover:bg-white/[0.06] hover:text-white"
                         >
                           Выйти
                         </button>
@@ -173,10 +173,10 @@ export function Navbar() {
               </>
             ) : (
               <>
-                <Link href="/auth/login" className="text-sm text-gray-400 hover:text-white transition-colors">
+                <Link href="/auth/login" className="text-sm text-gray-400 hover:text-white">
                   Войти
                 </Link>
-                <Link href="/auth/register" className="btn-primary text-sm px-4 py-2">
+                <Link href="/auth/register" className="btn-primary text-sm px-4 py-2.5">
                   Регистрация
                 </Link>
               </>

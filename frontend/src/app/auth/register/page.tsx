@@ -31,52 +31,53 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-56px)] flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-md card">
-        <h1 className="text-2xl font-bold text-white mb-2">Регистрация</h1>
-        <p className="text-sm text-gray-500 mb-6">Создай аккаунт для сохранения прогресса</p>
+    <div className="auth-shell">
+      <div className="auth-card">
+        <p className="eyebrow">Create Account</p>
+        <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-white">Регистрация</h1>
+        <p className="mt-3 text-sm leading-6 text-slate-400">Создай аккаунт, чтобы сохранять прогресс, получать доступ к сертификатам и двигаться по спринтам без потерь.</p>
 
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form onSubmit={onSubmit} className="mt-8 space-y-4">
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Username</label>
+            <label className="app-label">Username</label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
               minLength={3}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-gray-100 focus:outline-none focus:border-cyan-500"
+              className="app-input"
               placeholder="gopher_dev"
             />
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Email</label>
+            <label className="app-label">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-gray-100 focus:outline-none focus:border-cyan-500"
+              className="app-input"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Пароль</label>
+            <label className="app-label">Пароль</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-gray-100 focus:outline-none focus:border-cyan-500"
+              className="app-input"
               placeholder="минимум 6 символов"
             />
           </div>
 
           {error && (
-            <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+            <div className="app-alert">
               {error}
             </div>
           )}
@@ -84,32 +85,27 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full btn-primary py-2.5 disabled:opacity-50"
+            className="btn-primary w-full py-3 disabled:opacity-50"
           >
             {loading ? 'Создаём аккаунт...' : 'Зарегистрироваться'}
           </button>
         </form>
 
-        <p className="mt-5 text-sm text-gray-500">
+        <p className="mt-6 text-sm text-slate-400">
           Уже есть аккаунт?{' '}
-          <Link href="/auth/login" className="text-cyan-400 hover:text-cyan-300">
+          <Link href="/auth/login" className="font-medium text-violet-300 transition hover:text-white">
             Войти
           </Link>
         </p>
 
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-700" />
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="px-3 bg-gray-900 text-gray-500">или зарегистрируйся через</span>
-            </div>
+        <div className="mt-8">
+          <div className="auth-divider">
+            <span>или зарегистрируйся через</span>
           </div>
           <div className="mt-4">
             <a
               href="/api/auth/yandex"
-              className="w-full flex items-center justify-center gap-3 bg-[#FC3F1D] hover:bg-[#e0361a] text-white font-medium py-2.5 px-4 rounded-lg transition-colors"
+              className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#FC3F1D] px-4 py-3 font-medium text-white transition hover:bg-[#e0361a]"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M14.341 13.56L9.506 24H6.65l5.12-11.064L7.028 0h2.905l4.408 10.63L18.76 0H21.6l-7.259 13.56z" />
@@ -118,7 +114,7 @@ export default function RegisterPage() {
             </a>
             <a
               href="/api/auth/google"
-              className="mt-3 w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-gray-900 font-medium py-2.5 px-4 rounded-lg transition-colors"
+              className="mt-3 flex w-full items-center justify-center gap-3 rounded-2xl bg-white px-4 py-3 font-medium text-slate-900 transition hover:bg-slate-100"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
                 <path fill="#EA4335" d="M12 10.2v3.92h5.57c-.24 1.24-1.47 3.64-5.57 3.64A6.53 6.53 0 0 1 5.5 11a6.53 6.53 0 0 1 6.5-6.76 5.93 5.93 0 0 1 4.16 1.6l2.84-2.73A9.64 9.64 0 0 0 12 1C6.48 1 2 5.48 2 11s4.48 10 10 10c5.76 0 9.59-4.05 9.59-9.76 0-.66-.07-1.16-.16-1.67H12z" />

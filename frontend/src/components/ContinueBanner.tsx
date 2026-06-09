@@ -13,23 +13,23 @@ export default function ContinueBanner() {
   const label = last.type === 'lesson' ? 'Урок' : 'Задача'
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
+    <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6">
       <Link
         href={last.href}
-        className="surface-highlight flex items-center gap-4 hover:border-cyan-500/40 rounded-2xl px-5 py-4 transition-all group"
+        className="surface-highlight group flex items-center gap-4 rounded-[26px] px-5 py-4 hover:-translate-y-0.5 hover:border-violet-400/30"
       >
-        <div className="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-500/25 flex items-center justify-center text-xl flex-shrink-0">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-violet-400/16 bg-violet-400/10 text-xl text-violet-200">
           {icon}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="text-xs text-cyan-400 font-semibold uppercase tracking-wide mb-0.5">
+          <div className="mb-0.5 text-xs font-semibold uppercase tracking-[0.18em] text-violet-300">
             Продолжить с того места
           </div>
-          <div className="text-gray-100 font-medium truncate">
+          <div className="truncate font-medium text-gray-100">
             {label}: {last.title}
           </div>
         </div>
-        <div className="flex-shrink-0 text-cyan-500 group-hover:translate-x-1 transition-transform text-lg">
+        <div className="shrink-0 text-lg text-violet-300 transition-transform group-hover:translate-x-1">
           →
         </div>
       </Link>
