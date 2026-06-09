@@ -14,6 +14,12 @@ const included = [
   'PDF-сертификаты без доплаты',
 ]
 
+const outcomes = [
+  ['Junior', 'Начинаешь сам собирать backend-фичи и уверенно проходишь базовый production-flow.'],
+  ['Middle', 'Понимаешь интеграции, очереди, устойчивость систем и архитектурные компромиссы.'],
+  ['Senior', 'Мыслишь системой целиком: нагрузка, безопасность, производительность и лидерство решений.'],
+]
+
 export default function BuyPage() {
   return (
     <main className="mx-auto max-w-5xl px-4 py-14 sm:px-6">
@@ -35,6 +41,14 @@ export default function BuyPage() {
             Подписка открывает Bootcamp, проекты уровней и сертификаты.
           </p>
 
+          <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-5">
+            <p className="text-[11px] uppercase tracking-[0.24em] text-violet-300">Что ты покупаешь по сути</p>
+            <p className="mt-2 text-sm leading-6 text-gray-300">
+              Не “доступ к урокам”, а следующий слой роста после бесплатных 3 проектов:
+              длинные инженерные задачи, уровни развития и более взрослые backend-сценарии.
+            </p>
+          </div>
+
           <div className="mt-10 space-y-3">
             {included.map((item) => (
               <div key={item} className="flex items-center gap-3 rounded-2xl border border-gray-800 bg-gray-900 p-4">
@@ -52,6 +66,18 @@ export default function BuyPage() {
             <Link href="/guide" className="mt-4 inline-flex text-sm font-bold text-cyan-300 hover:text-cyan-200">
               Начать бесплатно →
             </Link>
+          </div>
+
+          <div className="mt-8 rounded-2xl border border-gray-800 bg-gray-900/70 p-5">
+            <p className="text-sm font-semibold text-white">Что меняется после подписки</p>
+            <div className="mt-4 space-y-3">
+              {outcomes.map(([level, description]) => (
+                <div key={level} className="rounded-xl border border-gray-800 bg-gray-950/70 p-4">
+                  <p className="font-semibold text-violet-300">{level}</p>
+                  <p className="mt-2 text-sm leading-6 text-gray-400">{description}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -77,6 +103,14 @@ export default function BuyPage() {
           >
             Оставить заявку
           </a>
+          <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4">
+            <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Подходит, если</p>
+            <ul className="mt-3 space-y-2 text-sm leading-6 text-gray-300">
+              <li>• ты уже понял, что хочешь расти в Go дальше бесплатной базы;</li>
+              <li>• тебе нужны проекты сильнее, чем стартовые CLI/API-задачи;</li>
+              <li>• ты хочешь дойти до сертификатов и уровневой системы роста.</li>
+            </ul>
+          </div>
           <p className="mt-4 text-center text-xs text-gray-600">Не вводи данные карты на сайте — оплата пока проходит вручную.</p>
         </aside>
       </div>

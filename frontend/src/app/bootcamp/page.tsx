@@ -43,6 +43,18 @@ const included = [
   ['Сертификаты', 'PDF-сертификат включён после выполнения требований уровня.'],
 ]
 
+const fitChecks = [
+  'Ты уже прошёл бесплатный путь и хочешь не “ещё уроков”, а рост до рабочего уровня.',
+  'Тебе нужен следующий слой сложности: архитектура, интеграции, production-мышление.',
+  'Ты хочешь собирать проекты, которые уже можно показывать как взрослую работу.',
+]
+
+const notFitChecks = [
+  'Если ты ещё не прошёл бесплатные 3 проекта, сначала лучше идти через них.',
+  'Если нужен только “вводный старт”, подписка будет преждевременной.',
+  'Если не хочется много практики и длинных задач, формат Bootcamp покажется тяжёлым.',
+]
+
 export default function BootcampPage() {
   return (
     <main>
@@ -53,13 +65,30 @@ export default function BootcampPage() {
             Godemy Pro · одна подписка
           </span>
           <h1 className="mx-auto mt-7 max-w-4xl text-5xl font-black leading-tight text-white sm:text-6xl">
-            Расти от Junior до Senior
-            <span className="block text-violet-400">через реальные проекты</span>
+            Понятный апгрейд после бесплатного курса
+            <span className="block text-violet-400">от Junior до Senior через практику</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-400">
-            Bootcamp начинается там, где заканчивается бесплатный курс:
-            больше практики, сложнее системы и последовательное подтверждение навыков.
+            Бесплатный курс доказывает, что тебе заходит backend-путь. Bootcamp начинается после него:
+            больше глубины, длиннее проекты, взрослее инженерные решения и один последовательный маршрут роста.
           </p>
+          <div className="mx-auto mt-8 grid max-w-4xl gap-3 md:grid-cols-3">
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-left">
+              <p className="text-[11px] uppercase tracking-[0.24em] text-violet-300">После базы</p>
+              <p className="mt-2 text-sm font-semibold text-white">Не для старта, а для роста</p>
+              <p className="mt-2 text-sm leading-6 text-gray-400">Сначала человек проходит 3 бесплатных проекта и только потом понимает, нужен ли ему Pro-слой.</p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-left">
+              <p className="text-[11px] uppercase tracking-[0.24em] text-violet-300">Одна подписка</p>
+              <p className="mt-2 text-sm font-semibold text-white">Без дробления на пакеты</p>
+              <p className="mt-2 text-sm leading-6 text-gray-400">Один доступ ко всем уровням, тренажёру Pro, проектам и сертификатам.</p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-left">
+              <p className="text-[11px] uppercase tracking-[0.24em] text-violet-300">Логика продукта</p>
+              <p className="mt-2 text-sm font-semibold text-white">Junior → Middle → Senior</p>
+              <p className="mt-2 text-sm leading-6 text-gray-400">Каждый следующий уровень открывается после подтверждения предыдущего.</p>
+            </div>
+          </div>
           <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
             <Link href="/bootcamp/buy" className="rounded-xl bg-violet-500 px-7 py-3.5 font-bold text-white transition-colors hover:bg-violet-400">
               Получить доступ →
@@ -74,8 +103,8 @@ export default function BootcampPage() {
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <div className="mb-10 max-w-2xl">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-violet-400">Три уровня мастерства</p>
-          <h2 className="mt-3 text-3xl font-black text-white sm:text-4xl">Каждый следующий уровень открывается после предыдущего</h2>
-          <p className="mt-4 text-gray-400">Так программа не перегружает и всегда показывает ближайшую цель.</p>
+          <h2 className="mt-3 text-3xl font-black text-white sm:text-4xl">Один маршрут, а не хаос из десятка курсов</h2>
+          <p className="mt-4 text-gray-400">Пользователь видит только ближайшую цель и не тонет в выборе. Это делает продукт проще и понятнее.</p>
         </div>
 
         <div className="space-y-5">
@@ -128,7 +157,7 @@ export default function BootcampPage() {
         <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
           <div className="mb-10 text-center">
             <h2 className="text-3xl font-black text-white">Что входит в подписку</h2>
-            <p className="mt-3 text-gray-400">Без скрытых доплат за сертификаты или отдельные части программы.</p>
+            <p className="mt-3 text-gray-400">Без скрытых доплат за сертификаты или отдельные куски программы.</p>
           </div>
           <div className="grid gap-4 md:grid-cols-4">
             {included.map(([title, desc]) => (
@@ -142,13 +171,44 @@ export default function BootcampPage() {
         </div>
       </section>
 
+      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+        <div className="grid gap-5 lg:grid-cols-2">
+          <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/5 p-6 sm:p-8">
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-300">Кому подходит</p>
+            <ul className="mt-5 space-y-3 text-sm leading-6 text-gray-300">
+              {fitChecks.map((item) => (
+                <li key={item} className="flex gap-3">
+                  <span className="mt-1 text-emerald-300">✓</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="rounded-3xl border border-amber-500/20 bg-amber-500/5 p-6 sm:p-8">
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-amber-300">Кому пока рано</p>
+            <ul className="mt-5 space-y-3 text-sm leading-6 text-gray-300">
+              {notFitChecks.map((item) => (
+                <li key={item} className="flex gap-3">
+                  <span className="mt-1 text-amber-300">•</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            <Link href="/guide" className="mt-6 inline-flex text-sm font-semibold text-amber-200 hover:text-white">
+              Сначала пройти бесплатный путь →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="mx-auto max-w-4xl px-4 py-20 sm:px-6">
         <div className="rounded-[32px] border border-violet-500/25 bg-gradient-to-br from-violet-500/10 to-cyan-500/5 p-8 sm:p-12">
           <div className="grid gap-8 sm:grid-cols-[1fr_auto] sm:items-center">
             <div>
               <p className="text-sm font-bold uppercase tracking-widest text-violet-300">Godemy Pro</p>
-              <h2 className="mt-3 text-3xl font-black text-white">Один доступ ко всему Bootcamp</h2>
-              <p className="mt-3 text-gray-400">Junior, Middle, Senior, проекты, тренажёр и сертификаты — в одной понятной подписке.</p>
+              <h2 className="mt-3 text-3xl font-black text-white">Один доступ ко всему пути роста</h2>
+              <p className="mt-3 text-gray-400">Junior, Middle, Senior, проекты, тренажёр Pro и сертификаты — в одной подписке без лишних решений.</p>
             </div>
             <Link href="/bootcamp/buy" className="rounded-xl bg-violet-500 px-7 py-3.5 text-center font-bold text-white transition-colors hover:bg-violet-400">
               Выбрать подписку →
