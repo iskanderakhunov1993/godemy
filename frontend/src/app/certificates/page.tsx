@@ -3,348 +3,244 @@
 import Link from 'next/link'
 import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { api } from '@/lib/api'
-import { getPratkorExercises, getPratkorProgress } from '@/lib/pratkor'
+import { api, type CertificateStatus, type UserProfile } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
+
+function formatEarnedDate(value?: string) {
+  if (!value) return '—'
+  return new Intl.DateTimeFormat('ru-RU', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(value))
+}
 
 function CertificatesContent() {
   const router = useRouter()
-  const { user, token, progress, loadProgress, setAuth } = useAuthStore()
-  const [courseLessonIds, setCourseLessonIds] = useState<number[]>([])
-  const [trainerExerciseIds, setTrainerExerciseIds] = useState<number[]>([])
-  const [trainerLocalTotal, setTrainerLocalTotal] = useState(0)
-  const [trainerLocalCompleted, setTrainerLocalCompleted] = useState(0)
-  const [flashcardsLearned] = useState(() => {
-    if (typeof window === 'undefined') return 0
-    try {
-      const raw = localStorage.getItem('go-flashcards-v1')
-      if (!raw) return 0
-      const data = JSON.parse(raw) as Record<string, string>
-      return Object.values(data).filter((v) => v === 'learned').length
-    } catch {
-      return 0
-    }
-  })
-  const [fullNameDraft, setFullNameDraft] = useState<string | null>(null)
+  const { user, token, setAuth } = useAuthStore()
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const [fullNameDraft, setFullNameDraft] = useState('')
   const [savingName, setSavingName] = useState(false)
+  const [emailingId, setEmailingId] = useState<string | null>(null)
+  const [flashMessage, setFlashMessage] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!token) { router.push('/auth/login'); return }
-    loadProgress()
-  }, [token, router, loadProgress])
+    if (!token) {
+      router.push('/auth/login')
+      return
+    }
 
-  useEffect(() => {
-    Promise.all([
-      api.getLessons(),
-      api.getExercises({ module: 'core' }),
-    ]).then(([allLessons, syntaxExercises]) => {
-      const freeCourseLessons = allLessons.filter((lesson) => lesson.module !== 'bootcamp')
-      setCourseLessonIds(freeCourseLessons.map((lesson) => lesson.id))
-      setTrainerExerciseIds(syntaxExercises.map((exercise) => exercise.id))
+    api.getUserProfile()
+      .then((profile) => {
+        setUserProfile(profile)
+        setFullNameDraft(profile.user.fullName || '')
+      })
+      .catch(() => {
+        setUserProfile(null)
+      })
+  }, [token, router])
 
-      const pratkorExercises = getPratkorExercises()
-      const pratkorProgress = getPratkorProgress()
-      setTrainerLocalTotal(pratkorExercises.length)
-      setTrainerLocalCompleted(pratkorProgress.completedSlugs.length)
-    }).catch(() => {
-      // leave empty stats on API failure
-    })
-  }, [])
-
-  const fullName = fullNameDraft ?? (user?.fullName || '')
+  const certificates = userProfile?.certificates ?? []
+  const earnedCount = useMemo(() => certificates.filter((cert) => cert.earned).length, [certificates])
 
   const saveFullName = async () => {
     if (!token || !user) return
-    const trimmed = fullName.trim()
-    if (trimmed.length < 3) return
+    const trimmed = fullNameDraft.trim()
+    if (trimmed.length < 5) return
+
     setSavingName(true)
     try {
       const updated = await api.updateMe({ fullName: trimmed })
       setAuth(token, updated)
-      setFullNameDraft(null)
+      const profile = await api.getUserProfile()
+      setUserProfile(profile)
+      setFlashMessage('ФИО сохранено. Сертификаты обновлены.')
     } finally {
       setSavingName(false)
     }
   }
 
-  const courseLessonSet = useMemo(() => new Set(courseLessonIds), [courseLessonIds])
-  const trainerExerciseSet = useMemo(() => new Set(trainerExerciseIds), [trainerExerciseIds])
-
-  const completedExercises = useMemo(() => {
-    if (trainerExerciseSet.size === 0) return 0
-    return progress.filter(
-      (p) => p.entityType === 'exercise' && p.status === 'completed' && trainerExerciseSet.has(p.entityId)
-    ).length
-  }, [progress, trainerExerciseSet])
-
-  const completedLessons = useMemo(() => {
-    if (courseLessonSet.size === 0) return 0
-    return progress.filter(
-      (p) => p.entityType === 'lesson' && p.status === 'completed' && courseLessonSet.has(p.entityId)
-    ).length
-  }, [progress, courseLessonSet])
-
-  const totalTrainerTasksRaw = trainerExerciseIds.length + trainerLocalTotal
-  const totalTrainerTasks = totalTrainerTasksRaw > 0 ? totalTrainerTasksRaw : null
-  const completedTrainerTasks = completedExercises + trainerLocalCompleted
-  const totalCourseLessons = courseLessonIds.length > 0 ? courseLessonIds.length : null
-
-  const certificates = useMemo(() => [
-    {
-      id: 'trainer',
-      title: 'Практик Go',
-      subtitle: 'Тренажёр пройден',
-      desc: 'Выдаётся за полное прохождение синтаксиса тренажёра и всех задач Практера',
-      icon: '⚡',
-      gradient: 'from-cyan-500/20 to-blue-600/20',
-      border: 'border-cyan-500/40',
-      glow: 'shadow-cyan-500/10',
-      earned: totalTrainerTasks !== null && completedTrainerTasks >= totalTrainerTasks,
-      progress: totalTrainerTasks !== null ? Math.min(completedTrainerTasks, totalTrainerTasks) : 0,
-      total: totalTrainerTasks,
-      earnedDate: totalTrainerTasks !== null && completedTrainerTasks >= totalTrainerTasks
-        ? progress
-        .filter((p) => p.entityType === 'exercise' && p.status === 'completed' && trainerExerciseSet.has(p.entityId))
-            .sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime())[0]
-            ?.updatedAt
-        : null,
-    },
-    {
-      id: 'flashcards',
-      title: 'Знаток Go',
-      subtitle: 'Карточки пройдены',
-      desc: 'Выдаётся за изучение всех 20 тематических карточек',
-      icon: '🃏',
-      gradient: 'from-violet-500/20 to-purple-600/20',
-      border: 'border-violet-500/40',
-      glow: 'shadow-violet-500/10',
-      earned: flashcardsLearned >= 20,
-      progress: Math.min(flashcardsLearned, 20),
-      total: 20,
-      earnedDate: null,
-    },
-    {
-      id: 'course',
-      title: 'Выпускник курса',
-      subtitle: 'Курс Go завершён',
-      desc: 'Выдаётся за полное прохождение бесплатного курса',
-      icon: '🎓',
-      gradient: 'from-emerald-500/20 to-teal-600/20',
-      border: 'border-emerald-500/40',
-      glow: 'shadow-emerald-500/10',
-      earned: totalCourseLessons !== null && completedLessons >= totalCourseLessons,
-      progress: totalCourseLessons !== null ? Math.min(completedLessons, totalCourseLessons) : 0,
-      total: totalCourseLessons,
-      earnedDate: totalCourseLessons !== null && completedLessons >= totalCourseLessons
-        ? progress
-        .filter((p) => p.entityType === 'lesson' && p.status === 'completed' && courseLessonSet.has(p.entityId))
-            .sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime())[0]
-            ?.updatedAt
-        : null,
-    },
-    {
-      id: 'bootcamp',
-      title: 'Agile-практик',
-      subtitle: 'Буткемп & Agile',
-      desc: 'Выдаётся после выполнения обязательных материалов и итогового проекта уровня Junior',
-      icon: '🏆',
-      gradient: 'from-amber-500/20 to-orange-600/20',
-      border: 'border-amber-500/40',
-      glow: 'shadow-amber-500/10',
-      earned: false,
-      progress: 0,
-      total: null,
-      earnedDate: null,
-      comingSoon: true,
-    },
-  ], [completedLessons, flashcardsLearned, progress, totalTrainerTasks, completedTrainerTasks, totalCourseLessons, trainerExerciseSet, courseLessonSet])
-
-  const earnedCount = certificates.filter((c) => c.earned).length
+  const sendToEmail = async (type: CertificateStatus['id']) => {
+    setEmailingId(type)
+    setFlashMessage(null)
+    try {
+      const response = await api.emailCertificate(type)
+      setFlashMessage(response.message)
+    } catch (error) {
+      setFlashMessage(error instanceof Error ? error.message : 'Не удалось отправить письмо')
+    } finally {
+      setEmailingId(null)
+    }
+  }
 
   if (!token || !user) return null
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
-      {/* Header */}
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
       <div className="mb-8">
         <Link
           href="/profile"
           className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-300 mb-5 transition-colors"
         >
-          ← Назад к профилю
+          ← Назад в профиль
         </Link>
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-4xl font-black text-white">Сертификаты</h1>
-            <p className="text-gray-400 mt-2">
-              Подтверди свои знания и получи сертификаты за прохождение курсов
+            <p className="text-gray-400 mt-2 max-w-3xl">
+              Сертификат появляется только после полного завершения трека. Открыть его можно сразу,
+              а скачать PDF или отправить себе на почту — только с подпиской Godemy Pro.
             </p>
           </div>
-          {earnedCount > 0 && (
-            <div className="flex items-center gap-2.5 bg-amber-500/10 border border-amber-500/20 rounded-full px-5 py-2">
-              <span className="text-amber-400 text-xl">🏅</span>
-              <span className="text-amber-300 font-bold">{earnedCount} из {certificates.length} получено</span>
-            </div>
-          )}
+          <div className="flex items-center gap-2.5 bg-amber-500/10 border border-amber-500/20 rounded-full px-5 py-2">
+            <span className="text-amber-400 text-xl">🏅</span>
+            <span className="text-amber-300 font-bold">{earnedCount} из {certificates.length} получено</span>
+          </div>
         </div>
 
         <div className="mt-5 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-4">
-          <p className="text-sm text-cyan-200 font-semibold mb-2">Имя в сертификате (ФИО)</p>
+          <p className="text-sm text-cyan-200 font-semibold mb-2">ФИО для сертификата</p>
           <div className="flex flex-col sm:flex-row gap-2">
             <input
-              value={fullName}
+              value={fullNameDraft}
               onChange={(e) => setFullNameDraft(e.target.value)}
               placeholder="Например: Иванов Иван Иванович"
               className="flex-1 rounded-xl border border-gray-700 bg-gray-900 px-4 py-2.5 text-sm text-white outline-none focus:border-cyan-500"
             />
             <button
               onClick={saveFullName}
-              disabled={savingName || fullName.trim().length < 3}
+              disabled={savingName || fullNameDraft.trim().length < 5}
               className="rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold px-4 py-2.5 text-sm"
             >
               {savingName ? 'Сохраняем...' : 'Сохранить ФИО'}
             </button>
           </div>
-          <p className="mt-2 text-xs text-gray-500">Это имя автоматически будет отображаться на PDF сертификате.</p>
+          <p className="mt-2 text-xs text-gray-500">
+            Для выпуска сертификата нужно указать минимум имя и фамилию.
+          </p>
         </div>
+
+        {flashMessage && (
+          <div className="mt-4 rounded-2xl border border-violet-500/20 bg-violet-500/10 px-4 py-3 text-sm text-violet-100">
+            {flashMessage}
+          </div>
+        )}
       </div>
 
-      {/* Certificates grid */}
-      <div className="grid sm:grid-cols-2 gap-6">
+      <div className="grid gap-6 md:grid-cols-3">
         {certificates.map((cert) => (
-          <div
+          <article
             key={cert.id}
-            className={`relative rounded-[28px] border bg-gradient-to-br ${
+            className={`rounded-[28px] border p-6 transition-all ${
               cert.earned
-                ? `${cert.gradient} ${cert.border} shadow-lg ${cert.glow}`
-                : 'border-gray-700/60 bg-gray-800/30'
-            } p-6 overflow-hidden transition-all`}
+                ? 'border-violet-500/30 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.18),rgba(17,24,39,0.96)_42%)] shadow-[0_16px_50px_rgba(76,29,149,0.18)]'
+                : 'border-gray-800 bg-gray-900/70'
+            }`}
           >
-            {cert.earned && (
-              <div
-                className="absolute inset-0 opacity-5 pointer-events-none"
-                style={{
-                  backgroundImage:
-                    'repeating-linear-gradient(45deg, currentColor 0, currentColor 1px, transparent 0, transparent 50%)',
-                  backgroundSize: '20px 20px',
-                }}
-              />
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-violet-300">{cert.subtitle}</p>
+                <h2 className="mt-2 text-2xl font-black text-white">{cert.title}</h2>
+              </div>
+              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                cert.earned ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20' : 'bg-gray-800 text-gray-400 border border-gray-700'
+              }`}>
+                {cert.earned ? 'Доступен' : 'В процессе'}
+              </span>
+            </div>
+
+            <p className="mt-3 text-sm leading-7 text-gray-400">{cert.description}</p>
+
+            <div className="mt-5 rounded-2xl border border-gray-800 bg-black/20 p-4">
+              <div className="flex items-center justify-between text-xs text-gray-500">
+                <span>Прогресс</span>
+                <span>{cert.progress} / {cert.total}</span>
+              </div>
+              <div className="mt-2 h-2 rounded-full bg-gray-800 overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all ${cert.earned ? 'bg-emerald-400' : 'bg-violet-400'}`}
+                  style={{ width: `${cert.total > 0 ? (cert.progress / cert.total) * 100 : 0}%` }}
+                />
+              </div>
+            </div>
+
+            <dl className="mt-5 space-y-2 text-sm">
+              <div className="flex items-center justify-between gap-3">
+                <dt className="text-gray-500">Курс</dt>
+                <dd className="text-white text-right">{cert.courseName}</dd>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <dt className="text-gray-500">Дата выдачи</dt>
+                <dd className="text-white text-right">{formatEarnedDate(cert.earnedAt)}</dd>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <dt className="text-gray-500">Номер</dt>
+                <dd className="text-white text-right">{cert.certificateNumber || '—'}</dd>
+              </div>
+            </dl>
+
+            {cert.lockedReason && (
+              <div className="mt-4 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+                {cert.lockedReason}
+              </div>
             )}
 
-            <div className="relative">
-              {/* Top row */}
-              <div className="flex items-start justify-between mb-4">
-                <div
-                  className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0 ${
-                    cert.earned ? 'bg-white/10' : 'bg-gray-700/50'
-                  }`}
+            <div className="mt-5 space-y-3">
+              {cert.previewAllowed ? (
+                <Link
+                  href={`/certificate?type=${cert.id}`}
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-violet-500 hover:bg-violet-400 text-white font-bold px-4 py-3 transition-colors"
                 >
-                  {cert.earned ? cert.icon : '🔒'}
-                </div>
-                {cert.earned ? (
-                  <span className="flex items-center gap-1 text-xs font-semibold text-emerald-400 bg-emerald-500/15 border border-emerald-500/25 rounded-full px-3 py-1">
-                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                    </svg>
-                    Получен
-                  </span>
-                ) : cert.comingSoon ? (
-                  <span className="text-xs text-gray-600 bg-gray-800 border border-gray-700 rounded-full px-2.5 py-1">
-                    Скоро
-                  </span>
-                ) : (
-                  <span className="text-xs text-gray-500 bg-gray-800 border border-gray-700 rounded-full px-2.5 py-1">
-                    Не получен
-                  </span>
-                )}
-              </div>
-
-              <h3 className={`font-bold text-xl mb-0.5 ${cert.earned ? 'text-white' : 'text-gray-400'}`}>
-                {cert.title}
-              </h3>
-              <p className={`text-sm font-medium mb-3 ${cert.earned ? 'text-cyan-400' : 'text-gray-600'}`}>
-                {cert.subtitle}
-              </p>
-              <p className="text-sm text-gray-500 mb-5 leading-relaxed">{cert.desc}</p>
-
-              {/* Progress bar */}
-              {cert.total !== null && !cert.earned && (
-                <div className="mb-4">
-                  <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
-                    <span>Прогресс</span>
-                    <span>{cert.progress} / {cert.total}</span>
-                  </div>
-                  <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gray-500 rounded-full transition-all"
-                      style={{ width: `${(cert.progress / cert.total) * 100}%` }}
-                    />
-                  </div>
-                </div>
+                  Открыть сертификат
+                </Link>
+              ) : (
+                <Link
+                  href={cert.ctaHref}
+                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-semibold px-4 py-3 transition-colors"
+                >
+                  {cert.ctaLabel}
+                </Link>
               )}
 
-              {cert.earned && cert.earnedDate && (
-                <p className="text-xs text-gray-500 mb-4">
-                  Получен{' '}
-                  {new Intl.DateTimeFormat('ru-RU', {
-                    day: '2-digit',
-                    month: 'long',
-                    year: 'numeric',
-                  }).format(new Date(cert.earnedDate))}
-                </p>
-              )}
-
-              {cert.earned && !cert.earnedDate && (
-                <p className="text-xs text-gray-500 mb-4">Получен</p>
-              )}
-
-              {/* Action button */}
-              {cert.earned ? (
-                user.isPremium ? (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {cert.downloadAllowed ? (
                   <a
                     href={`/certificate?type=${cert.id}&print=1`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full flex items-center justify-center gap-2 text-sm font-bold text-black bg-amber-400 hover:bg-amber-300 px-4 py-2.5 rounded-xl transition-colors"
+                    className="flex items-center justify-center rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-bold px-4 py-2.5 transition-colors"
                   >
-                    ⬇ Скачать PDF
+                    Скачать PDF
                   </a>
                 ) : (
                   <Link
                     href="/bootcamp/buy"
-                    className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 px-4 py-2.5 rounded-xl transition-colors"
+                    className="flex items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-semibold px-4 py-2.5 transition-colors"
                   >
-                    🔒 Godemy Pro — скачать PDF
+                    Godemy Pro
                   </Link>
-                )
-              ) : !cert.comingSoon ? (
-                <Link
-                  href={
-                    cert.id === 'trainer'
-                      ? '/trainer'
-                      : cert.id === 'flashcards'
-                        ? '/trainer'
-                        : '/guide'
-                  }
-                  className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 hover:bg-cyan-500/20 px-4 py-2.5 rounded-xl transition-colors"
-                >
-                  Начать →
-                </Link>
-              ) : null}
-            </div>
-          </div>
-        ))}
-      </div>
+                )}
 
-      {/* Info block */}
-      <div className="mt-8 rounded-2xl border border-gray-800 bg-gray-900/50 px-6 py-5">
-        <p className="text-sm text-gray-400 leading-relaxed">
-          <span className="text-white font-semibold">Как скачать сертификат?</span>{' '}
-          Просматривать прогресс сертификатов могут все пользователи. Скачивание PDF входит в подписку Godemy Pro.{' '}
-          <Link href="/bootcamp/buy" className="text-cyan-400 hover:text-cyan-300 transition-colors">
-            Получить Godemy Pro →
-          </Link>
-        </p>
+                {cert.emailAllowed ? (
+                  <button
+                    onClick={() => sendToEmail(cert.id)}
+                    disabled={emailingId === cert.id}
+                    className="rounded-xl border border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/20 disabled:opacity-50 text-violet-200 font-semibold px-4 py-2.5 transition-colors"
+                  >
+                    {emailingId === cert.id ? 'Отправляем...' : 'Выслать на почту'}
+                  </button>
+                ) : (
+                  <button
+                    disabled
+                    className="rounded-xl border border-gray-800 bg-gray-900 text-gray-500 font-semibold px-4 py-2.5 cursor-not-allowed"
+                  >
+                    Выслать на почту
+                  </button>
+                )}
+              </div>
+            </div>
+          </article>
+        ))}
       </div>
     </div>
   )

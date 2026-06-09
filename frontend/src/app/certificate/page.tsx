@@ -1,216 +1,224 @@
 'use client'
 
-import { useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
-import { useAuthStore } from '@/lib/store'
 import Link from 'next/link'
+import { Suspense, useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { api, type CertificateStatus, type UserProfile } from '@/lib/api'
+import { useAuthStore } from '@/lib/store'
 
-const CERT_CONFIG: Record<string, {
-  title: string
-  subtitle: string
-  desc: string
-  color: string
-  icon: string
-  accentFrom: string
-  accentTo: string
-}> = {
-  trainer: {
-    title: 'Практик Go',
-    subtitle: 'Тренажёр пройден',
-    desc: 'Успешно выполнил практические задачи в интерактивном тренажёре Godemy, подтвердив навыки написания Go-кода',
-    color: '#22d3ee',
-    icon: '⚡',
-    accentFrom: '#06b6d4',
-    accentTo: '#2563eb',
-  },
-  flashcards: {
-    title: 'Знаток Go',
-    subtitle: 'Карточки пройдены',
-    desc: 'Изучил все тематические карточки Godemy, освоив ключевые концепции языка программирования Go',
-    color: '#a78bfa',
-    icon: '🃏',
-    accentFrom: '#7c3aed',
-    accentTo: '#9333ea',
-  },
-  course: {
-    title: 'Выпускник курса',
-    subtitle: 'Курс Go завершён',
-    desc: 'Прошёл полный курс Godemy, освоив основы, структуры данных, горутины и обработку ошибок',
-    color: '#34d399',
-    icon: '🎓',
-    accentFrom: '#059669',
-    accentTo: '#0d9488',
-  },
-  bootcamp: {
-    title: 'Agile-практик',
-    subtitle: 'Bootcamp · Junior',
-    desc: 'Завершил уровень Junior в Bootcamp Godemy и подтвердил навыки Go, REST API, PostgreSQL и разработки backend-сервисов',
-    color: '#fbbf24',
-    icon: '🏆',
-    accentFrom: '#d97706',
-    accentTo: '#ea580c',
-  },
+const CERT_THEME: Record<CertificateStatus['id'], { accent: string; glow: string; ribbon: string }> = {
+  course: { accent: '#8b5cf6', glow: 'rgba(139,92,246,0.28)', ribbon: 'Основы Go' },
+  trainer: { accent: '#06b6d4', glow: 'rgba(6,182,212,0.28)', ribbon: 'Тренажёр Go' },
+  bootcamp: { accent: '#f59e0b', glow: 'rgba(245,158,11,0.26)', ribbon: 'Bootcamp Junior' },
+}
+
+function formatDate(value?: string) {
+  const source = value ? new Date(value) : new Date()
+  return new Intl.DateTimeFormat('ru-RU', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(source)
 }
 
 function CertificateContent() {
   const searchParams = useSearchParams()
-  const { user } = useAuthStore()
-  const type = searchParams.get('type') || 'course'
+  const { token, user } = useAuthStore()
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  const type = (searchParams.get('type') || 'course') as CertificateStatus['id']
   const autoprint = searchParams.get('print') === '1'
 
-  const cfg = CERT_CONFIG[type] || CERT_CONFIG.course
-  const certificateName = user?.fullName?.trim() || user?.username || ''
+  useEffect(() => {
+    if (!token) {
+      setLoading(false)
+      return
+    }
 
-  const today = new Date().toLocaleDateString('ru-RU', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
+    api.getUserProfile()
+      .then(setUserProfile)
+      .finally(() => setLoading(false))
+  }, [token])
+
+  const certificate = useMemo(
+    () => userProfile?.certificates.find((item) => item.id === type) ?? null,
+    [userProfile, type]
+  )
+
+  const theme = CERT_THEME[type] || CERT_THEME.course
 
   useEffect(() => {
-    if (autoprint) {
-      const t = setTimeout(() => window.print(), 800)
-      return () => clearTimeout(t)
+    if (autoprint && certificate?.downloadAllowed) {
+      const timer = setTimeout(() => window.print(), 700)
+      return () => clearTimeout(timer)
     }
-  }, [autoprint])
+  }, [autoprint, certificate?.downloadAllowed])
 
-  if (!user) {
+  if (!token || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-400 mb-4">Войди, чтобы просмотреть сертификат</p>
-          <Link href="/auth/login" className="btn-primary">Войти</Link>
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="rounded-3xl border border-gray-800 bg-gray-900 p-8 text-center max-w-lg">
+          <h1 className="text-2xl font-black text-white">Нужен вход</h1>
+          <p className="mt-3 text-gray-400">Войди в аккаунт, чтобы открыть свои сертификаты.</p>
+          <Link href="/auth/login" className="mt-6 inline-flex rounded-xl bg-violet-500 px-5 py-3 font-bold text-white hover:bg-violet-400 transition-colors">
+            Войти
+          </Link>
         </div>
       </div>
     )
   }
 
+  if (loading) {
+    return <div className="min-h-screen bg-[#090b14]" />
+  }
+
+  if (!certificate) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="rounded-3xl border border-gray-800 bg-gray-900 p-8 text-center max-w-lg">
+          <h1 className="text-2xl font-black text-white">Сертификат не найден</h1>
+          <Link href="/certificates" className="mt-6 inline-flex rounded-xl border border-gray-700 px-5 py-3 font-semibold text-gray-200 hover:border-gray-500 transition-colors">
+            Вернуться к сертификатам
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  if (!certificate.previewAllowed) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="rounded-3xl border border-gray-800 bg-gray-900 p-8 max-w-xl">
+          <h1 className="text-3xl font-black text-white">Сертификат пока недоступен</h1>
+          <p className="mt-4 text-gray-400 leading-7">{certificate.lockedReason || 'Сначала заверши программу.'}</p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link href="/certificates" className="rounded-xl border border-gray-700 px-5 py-3 font-semibold text-gray-200 hover:border-gray-500 transition-colors">
+              Назад
+            </Link>
+            <Link href={certificate.ctaHref} className="rounded-xl bg-violet-500 px-5 py-3 font-bold text-white hover:bg-violet-400 transition-colors">
+              {certificate.ctaLabel}
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const certificateName = userProfile?.user.fullName?.trim() || user.fullName || user.username
+
   return (
     <>
-      {/* Print styles */}
       <style>{`
         @media print {
           body * { visibility: hidden !important; }
           #certificate-printable, #certificate-printable * { visibility: visible !important; }
-          #certificate-printable { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; margin: 0 !important; padding: 0 !important; }
+          #certificate-printable { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; margin: 0 !important; padding: 32px !important; }
           .no-print { display: none !important; }
+          body { background: #090b14 !important; }
         }
       `}</style>
 
-      {/* Toolbar */}
-      <div className="no-print max-w-3xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-        <Link href="/profile" className="text-sm text-gray-500 hover:text-gray-300 transition-colors">
-          ← Назад в профиль
+      <div className="no-print max-w-6xl mx-auto px-4 py-5 flex flex-wrap items-center justify-between gap-3">
+        <Link href="/certificates" className="text-sm text-gray-500 hover:text-gray-300 transition-colors">
+          ← Назад к сертификатам
         </Link>
-        <button
-          onClick={() => window.print()}
-          className="flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-black font-bold px-5 py-2 rounded-xl text-sm transition-colors"
-        >
-          ⬇ Сохранить PDF
-        </button>
+        <div className="flex flex-wrap gap-3">
+          {certificate.downloadAllowed ? (
+            <button
+              onClick={() => window.print()}
+              className="rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-bold px-5 py-2.5 text-sm transition-colors"
+            >
+              Скачать PDF
+            </button>
+          ) : (
+            <Link
+              href="/bootcamp/buy"
+              className="rounded-xl border border-amber-500/20 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-semibold px-5 py-2.5 text-sm transition-colors"
+            >
+              Godemy Pro для скачивания
+            </Link>
+          )}
+        </div>
       </div>
 
-      {/* Certificate */}
-      <div className="flex items-center justify-center px-4 py-6 min-h-[80vh]">
+      <div className="min-h-[80vh] flex items-center justify-center px-4 py-6 bg-[#090b14]">
         <div
           id="certificate-printable"
+          className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#090b14]"
           style={{
-            width: '794px',
-            minHeight: '562px',
-            background: '#0f1117',
-            border: `2px solid ${cfg.color}33`,
-            borderRadius: '24px',
-            padding: '56px 64px',
-            position: 'relative',
-            overflow: 'hidden',
-            fontFamily: 'Georgia, serif',
-            boxShadow: `0 0 80px ${cfg.color}14`,
+            width: '1024px',
+            minHeight: '640px',
+            boxShadow: `0 30px 120px ${theme.glow}`,
           }}
         >
-          {/* Background decoration */}
-          <div style={{
-            position: 'absolute',
-            top: 0, left: 0, right: 0, bottom: 0,
-            background: `radial-gradient(ellipse at top right, ${cfg.color}0a 0%, transparent 60%)`,
-            pointerEvents: 'none',
-          }} />
-          <div style={{
-            position: 'absolute',
-            bottom: '-40px', left: '-40px',
-            width: '300px', height: '300px',
-            borderRadius: '50%',
-            background: `radial-gradient(circle, ${cfg.color}07 0%, transparent 70%)`,
-            pointerEvents: 'none',
-          }} />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.12),transparent_38%),radial-gradient(circle_at_bottom_left,rgba(139,92,246,0.08),transparent_36%)]" />
 
-          {/* Top bar */}
-          <div style={{
-            height: '4px',
-            background: `linear-gradient(90deg, ${cfg.accentFrom}, ${cfg.accentTo})`,
-            borderRadius: '2px',
-            marginBottom: '40px',
-          }} />
-
-          {/* Header row */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '32px' }}>
-            <div>
-              <div style={{ color: cfg.color, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '8px' }}>
-                Godemy
+          <div className="relative grid min-h-[640px] grid-cols-[220px_minmax(0,1fr)]">
+            <aside className="relative border-r border-white/10 bg-[linear-gradient(180deg,#16112f_0%,#120d27_100%)] px-8 py-10">
+              <div className="rounded-2xl border border-violet-500/20 bg-white/5 px-5 py-4 text-violet-200">
+                <div className="text-3xl font-black tracking-tight">[ godemy ]</div>
+                <p className="mt-4 text-xs leading-6 text-violet-100/70">
+                  Практическое обучение
+                  <br />
+                  для разработчиков
+                </p>
               </div>
-              <div style={{ color: '#9ca3af', fontSize: '14px', fontFamily: 'sans-serif', letterSpacing: '2px', textTransform: 'uppercase' }}>
-                Сертификат об окончании
-              </div>
-            </div>
-            <div style={{ fontSize: '48px', lineHeight: 1 }}>{cfg.icon}</div>
-          </div>
 
-          {/* Name */}
-          <div style={{ marginBottom: '20px' }}>
-            <div style={{ color: '#6b7280', fontSize: '13px', fontFamily: 'sans-serif', marginBottom: '6px' }}>Выдан</div>
-            <div style={{ color: '#ffffff', fontSize: '38px', fontWeight: 'bold', letterSpacing: '1px' }}>
-              {certificateName}
-            </div>
-          </div>
-
-          {/* Description */}
-          <div style={{ marginBottom: '32px' }}>
-            <div style={{ color: '#6b7280', fontSize: '13px', fontFamily: 'sans-serif', marginBottom: '6px' }}>За то, что</div>
-            <div style={{ color: '#d1d5db', fontSize: '16px', fontFamily: 'sans-serif', lineHeight: '1.6', maxWidth: '540px' }}>
-              {cfg.desc}
-            </div>
-          </div>
-
-          {/* Bottom row */}
-          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-            <div>
-              <div style={{
-                display: 'inline-block',
-                background: `linear-gradient(135deg, ${cfg.accentFrom}, ${cfg.accentTo})`,
-                borderRadius: '12px',
-                padding: '10px 20px',
-              }}>
-                <div style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold', fontFamily: 'sans-serif' }}>
-                  {cfg.title}
-                </div>
-                <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: '12px', fontFamily: 'sans-serif' }}>
-                  {cfg.subtitle}
+              <div
+                className="mt-12 rounded-b-[28px] rounded-t-xl px-5 py-10 text-center text-white"
+                style={{ background: `linear-gradient(180deg, ${theme.accent}88 0%, ${theme.accent}44 100%)` }}
+              >
+                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-white/20 bg-black/20 text-4xl">
+                  📘
                 </div>
               </div>
-            </div>
-            <div style={{ textAlign: 'right', fontFamily: 'sans-serif' }}>
-              <div style={{ color: '#6b7280', fontSize: '12px', marginBottom: '2px' }}>Дата выдачи</div>
-              <div style={{ color: '#9ca3af', fontSize: '14px' }}>{today}</div>
-            </div>
-          </div>
 
-          {/* Bottom bar */}
-          <div style={{
-            height: '2px',
-            background: `linear-gradient(90deg, ${cfg.accentFrom}60, transparent)`,
-            borderRadius: '1px',
-            marginTop: '32px',
-          }} />
+              <div className="mt-12 space-y-6 text-sm">
+                <div>
+                  <p className="text-white/40">ID сертификата</p>
+                  <p className="mt-2 font-semibold text-white">{certificate.certificateNumber}</p>
+                  <div className="mt-3 h-[2px] w-20 rounded-full" style={{ backgroundColor: theme.accent }} />
+                </div>
+                <div>
+                  <p className="text-white/40">Дата выдачи</p>
+                  <p className="mt-2 font-semibold text-white">{formatDate(certificate.earnedAt)}</p>
+                </div>
+              </div>
+            </aside>
+
+            <main className="relative px-12 py-12 text-white">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h1 className="text-6xl font-black tracking-tight" style={{ color: theme.accent }}>
+                    СЕРТИФИКАТ
+                  </h1>
+                  <p className="mt-6 text-lg text-white/60">подтверждает, что</p>
+                  <p className="mt-4 text-6xl font-black tracking-tight">{certificateName}</p>
+                  <p className="mt-5 text-xl text-white/70">успешно завершил(а) курс</p>
+                  <p className="mt-2 text-5xl font-black">{certificate.courseName}</p>
+                </div>
+                <div className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-300">
+                  Курс завершён
+                </div>
+              </div>
+
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-white/65">
+                и получил(а) практические знания и навыки для разработки современных и надёжных продуктов на Go.
+              </p>
+
+              <div className="mt-16 flex items-end justify-between gap-6">
+                <div>
+                  <div className="text-6xl leading-none text-white/90">∿</div>
+                  <div className="mt-3 h-px w-56 bg-white/20" />
+                  <p className="mt-4 text-xl font-semibold">Команда godemy</p>
+                  <p className="text-sm text-white/50">Онлайн-школа для разработчиков</p>
+                </div>
+              </div>
+
+              <div className="absolute bottom-0 right-0 h-64 w-64 rounded-full border border-violet-500/10 opacity-40" />
+            </main>
+          </div>
         </div>
       </div>
     </>

@@ -1,10 +1,16 @@
 package http
 
 import (
+	"crypto/sha1"
+	"encoding/hex"
 	"errors"
+	"fmt"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"golanger/backend/models"
 	"golanger/backend/usecase"
 )
 
@@ -17,6 +23,7 @@ type ProfileResponse struct {
 	CompletedSprints  int                      `json:"completedSprints"`
 	TotalLessonsCount int                      `json:"totalLessonsCount"`
 	CompletedLessons  int                      `json:"completedLessons"`
+	Certificates      []certificateDTO         `json:"certificates"`
 }
 
 type profileUserDTO struct {
@@ -33,6 +40,27 @@ type skillDTO struct {
 	Category    string `json:"category"`
 	Icon        string `json:"icon"`
 	Proficiency int    `json:"proficiency"` // 0-100%
+}
+
+type certificateDTO struct {
+	ID                string `json:"id"`
+	Title             string `json:"title"`
+	Subtitle          string `json:"subtitle"`
+	CourseName        string `json:"courseName"`
+	Description       string `json:"description"`
+	Earned            bool   `json:"earned"`
+	Progress          int    `json:"progress"`
+	Total             int    `json:"total"`
+	EarnedAt          string `json:"earnedAt,omitempty"`
+	CertificateNumber string `json:"certificateNumber,omitempty"`
+	PreviewAllowed    bool   `json:"previewAllowed"`
+	DownloadAllowed   bool   `json:"downloadAllowed"`
+	EmailAllowed      bool   `json:"emailAllowed"`
+	RequiresPremium   bool   `json:"requiresPremium"`
+	FullNameRequired  bool   `json:"fullNameRequired"`
+	LockedReason      string `json:"lockedReason,omitempty"`
+	CtaLabel          string `json:"ctaLabel"`
+	CtaHref           string `json:"ctaHref"`
 }
 
 // GetProfile возвращает полный профиль пользователя с информацией о скилах, курсах и готовности
@@ -89,6 +117,24 @@ func (h *Handler) GetProfile() gin.HandlerFunc {
 			return
 		}
 
+		allProgress, err := h.content.GetProgress(userID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch certificate progress"})
+			return
+		}
+
+		allLessons, err := h.content.GetLessons("")
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch lessons for certificates"})
+			return
+		}
+
+		allExercises, err := h.content.GetExercises("", "", "")
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch exercises for certificates"})
+			return
+		}
+
 		// Если пользовательские скилы еще не заполнены, выводим производные навыки из прогресса.
 		if len(skillDTOs) == 0 && totalLessons > 0 {
 			derivedSkills, derivedReadiness := buildDerivedSkills(completedLessons, totalLessons, completedSprints)
@@ -116,10 +162,223 @@ func (h *Handler) GetProfile() gin.HandlerFunc {
 			CompletedSprints:  completedSprints,
 			TotalLessonsCount: totalLessons,
 			CompletedLessons:  completedLessons,
+			Certificates:      buildCertificates(user, allProgress, allLessons, allExercises),
 		}
 
 		c.JSON(http.StatusOK, profile)
 	}
+}
+
+func buildCertificates(user *models.User, progresses []models.Progress, lessons []models.Lesson, exercises []models.Exercise) []certificateDTO {
+	completedLessons := make(map[uint]time.Time)
+	completedExercises := make(map[uint]time.Time)
+
+	for _, progress := range progresses {
+		if progress.Status != "completed" {
+			continue
+		}
+
+		timestamp := progress.UpdatedAt
+		if timestamp.IsZero() {
+			timestamp = progress.CreatedAt
+		}
+
+		switch progress.EntityType {
+		case "lesson":
+			completedLessons[progress.EntityID] = timestamp
+		case "exercise":
+			completedExercises[progress.EntityID] = timestamp
+		}
+	}
+
+	freeLessonIDs := make([]uint, 0)
+	bootcampLessonIDs := make([]uint, 0)
+	for _, lesson := range lessons {
+		if lesson.Module == "bootcamp" {
+			bootcampLessonIDs = append(bootcampLessonIDs, lesson.ID)
+			continue
+		}
+		freeLessonIDs = append(freeLessonIDs, lesson.ID)
+	}
+
+	trainerExerciseIDs := make([]uint, 0)
+	bootcampExerciseIDs := make([]uint, 0)
+	for _, exercise := range exercises {
+		switch exercise.Module {
+		case "bootcamp":
+			bootcampExerciseIDs = append(bootcampExerciseIDs, exercise.ID)
+		case "core":
+			trainerExerciseIDs = append(trainerExerciseIDs, exercise.ID)
+		}
+	}
+
+	fullNameReady := hasCertificateFullName(user.FullName)
+
+	return []certificateDTO{
+		buildCertificateRecord(
+			user,
+			"course",
+			"Сертификат курса",
+			"Бесплатный курс завершён",
+			"Основы Go",
+			"Выдаётся за полное прохождение бесплатного курса целиком.",
+			countCompletedIDs(freeLessonIDs, completedLessons),
+			len(freeLessonIDs),
+			latestCompletionFromLessons(freeLessonIDs, completedLessons),
+			fullNameReady,
+			"/guide",
+			"Продолжить курс",
+		),
+		buildCertificateRecord(
+			user,
+			"trainer",
+			"Сертификат тренажёра",
+			"Все задачи тренажёра решены",
+			"Тренажёр Go",
+			"Выдаётся за прохождение всех задач тренажёра Go.",
+			countCompletedIDs(trainerExerciseIDs, completedExercises),
+			len(trainerExerciseIDs),
+			latestCompletionFromExercises(trainerExerciseIDs, completedExercises),
+			fullNameReady,
+			"/trainer",
+			"Открыть тренажёр",
+		),
+		buildCertificateRecord(
+			user,
+			"bootcamp",
+			"Сертификат буткемпа",
+			"Bootcamp Junior завершён",
+			"Bootcamp Junior Go",
+			"Выдаётся за прохождение всех материалов и практики уровня Junior в буткемпе.",
+			countCompletedIDs(bootcampLessonIDs, completedLessons)+countCompletedIDs(bootcampExerciseIDs, completedExercises),
+			len(bootcampLessonIDs)+len(bootcampExerciseIDs),
+			maxTime(
+				latestCompletionFromLessons(bootcampLessonIDs, completedLessons),
+				latestCompletionFromExercises(bootcampExerciseIDs, completedExercises),
+			),
+			fullNameReady,
+			bootcampCTAHref(user.IsPremium),
+			userPremiumOrBuyLabel(user.IsPremium),
+		),
+	}
+}
+
+func buildCertificateRecord(
+	user *models.User,
+	id string,
+	title string,
+	subtitle string,
+	courseName string,
+	description string,
+	progress int,
+	total int,
+	earnedAt time.Time,
+	fullNameReady bool,
+	ctaHref string,
+	ctaLabel string,
+) certificateDTO {
+	earned := total > 0 && progress >= total
+	previewAllowed := earned && fullNameReady
+	downloadAllowed := previewAllowed && user.IsPremium
+	emailAllowed := downloadAllowed
+
+	lockedReason := ""
+	switch {
+	case id == "bootcamp" && !user.IsPremium && !earned:
+		lockedReason = "Буткемп Junior открывается только по подписке Godemy Pro."
+	case !earned:
+		lockedReason = "Сначала заверши программу полностью."
+	case !fullNameReady:
+		lockedReason = "Добавь ФИО в профиле, чтобы выпустить сертификат."
+	case !user.IsPremium:
+		lockedReason = "Скачивание и отправка на почту доступны только с подпиской Godemy Pro."
+	}
+
+	earnedAtValue := ""
+	certificateNumber := ""
+	if earned && !earnedAt.IsZero() {
+		earnedAtValue = earnedAt.Format(time.RFC3339)
+		certificateNumber = makeCertificateNumber(user.ID, id, earnedAt)
+	}
+
+	return certificateDTO{
+		ID:                id,
+		Title:             title,
+		Subtitle:          subtitle,
+		CourseName:        courseName,
+		Description:       description,
+		Earned:            earned,
+		Progress:          progress,
+		Total:             total,
+		EarnedAt:          earnedAtValue,
+		CertificateNumber: certificateNumber,
+		PreviewAllowed:    previewAllowed,
+		DownloadAllowed:   downloadAllowed,
+		EmailAllowed:      emailAllowed,
+		RequiresPremium:   true,
+		FullNameRequired:  !fullNameReady,
+		LockedReason:      lockedReason,
+		CtaHref:           ctaHref,
+		CtaLabel:          ctaLabel,
+	}
+}
+
+func hasCertificateFullName(value string) bool {
+	parts := strings.Fields(strings.TrimSpace(value))
+	return len(parts) >= 2
+}
+
+func countCompletedIDs[T comparable](ids []T, completed map[T]time.Time) int {
+	count := 0
+	for _, id := range ids {
+		if _, ok := completed[id]; ok {
+			count++
+		}
+	}
+	return count
+}
+
+func latestCompletionFromLessons(ids []uint, completed map[uint]time.Time) time.Time {
+	var latest time.Time
+	for _, id := range ids {
+		latest = maxTime(latest, completed[id])
+	}
+	return latest
+}
+
+func latestCompletionFromExercises(ids []uint, completed map[uint]time.Time) time.Time {
+	var latest time.Time
+	for _, id := range ids {
+		latest = maxTime(latest, completed[id])
+	}
+	return latest
+}
+
+func maxTime(a time.Time, b time.Time) time.Time {
+	if a.Before(b) {
+		return b
+	}
+	return a
+}
+
+func makeCertificateNumber(userID uint, certType string, issuedAt time.Time) string {
+	raw := fmt.Sprintf("%d:%s:%s", userID, certType, issuedAt.Format("2006-01-02"))
+	sum := sha1.Sum([]byte(raw))
+	return fmt.Sprintf("GDMY-%d-%s", issuedAt.Year(), strings.ToUpper(hex.EncodeToString(sum[:3])))
+}
+
+func userPremiumOrBuyLabel(isPremium bool) string {
+	if isPremium {
+		return "Открыть буткемп"
+	}
+	return "Оформить подписку"
+}
+
+func bootcampCTAHref(isPremium bool) string {
+	if isPremium {
+		return "/junior"
+	}
+	return "/bootcamp/buy"
 }
 
 func buildDerivedSkills(completedLessons, totalLessons, completedSprints int) ([]skillDTO, int) {

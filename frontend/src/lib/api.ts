@@ -116,6 +116,27 @@ export interface UserCourseProgress {
   totalLessons: number
 }
 
+export interface CertificateStatus {
+  id: 'course' | 'trainer' | 'bootcamp'
+  title: string
+  subtitle: string
+  courseName: string
+  description: string
+  earned: boolean
+  progress: number
+  total: number
+  earnedAt?: string
+  certificateNumber?: string
+  previewAllowed: boolean
+  downloadAllowed: boolean
+  emailAllowed: boolean
+  requiresPremium: boolean
+  fullNameRequired: boolean
+  lockedReason?: string
+  ctaLabel: string
+  ctaHref: string
+}
+
 export interface UserProfile {
   user: {
     id: number
@@ -132,6 +153,7 @@ export interface UserProfile {
   completedSprints: number
   totalLessonsCount: number
   completedLessons: number
+  certificates: CertificateStatus[]
 }
 
 export interface RunResult {
@@ -336,6 +358,10 @@ export const api = {
     request<Progress>('/api/progress', {
       method: 'POST',
       body: JSON.stringify({ entityType, entityId, status, payload }),
+    }),
+  emailCertificate: (type: CertificateStatus['id']) =>
+    request<{ ok: boolean; message: string }>(`/api/certificates/${type}/email`, {
+      method: 'POST',
     }),
 }
 

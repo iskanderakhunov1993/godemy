@@ -149,6 +149,7 @@ func main() {
 	protected.GET("/progress", h.GetProgress())
 	protected.POST("/progress", h.UpdateProgress())
 	protected.GET("/user/profile", h.GetProfile())
+	protected.POST("/certificates/:type/email", h.EmailCertificate())
 
 	// Admin (protected by authenticated admin role)
 	admin := api.Group("/admin")

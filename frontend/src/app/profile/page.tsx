@@ -105,6 +105,19 @@ function trainerExerciseHref(exercise: Exercise): string {
   return `/trainer/${exercise.id}`
 }
 
+function certificateIcon(id: string): string {
+  switch (id) {
+    case 'course':
+      return '🎓'
+    case 'trainer':
+      return '⚡'
+    case 'bootcamp':
+      return '🏆'
+    default:
+      return '📘'
+  }
+}
+
 export default function ProfilePage() {
   return (
     <Suspense>
@@ -117,16 +130,6 @@ function ProfileContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user, token, progress, loadProgress, setAuth } = useAuthStore()
-  const [flashcardsLearned] = useState(() => {
-    try {
-      const raw = localStorage.getItem('go-flashcards-v1')
-      if (!raw) return 0
-      const data = JSON.parse(raw) as Record<string, string>
-      return Object.values(data).filter((v) => v === 'learned').length
-    } catch {
-      return 0
-    }
-  })
   const [courseLessons, setCourseLessons] = useState<Lesson[]>([])
   const [trainerExercises, setTrainerExercises] = useState<Exercise[]>([])
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
@@ -242,77 +245,7 @@ function ProfileContent() {
   const continueTrainerTitle = lastVisitedTrainer?.title || nextTrainerExercise?.title || 'Продолжить тренажер'
 
   const cells = useMemo(() => buildHeatmapCells(progress), [progress])
-
-  const certificates = useMemo(() => [
-    {
-      id: 'trainer',
-      title: 'Практик Go',
-      subtitle: 'Тренажёр пройден',
-      desc: 'Выдаётся за выполнение 5 и более задач в тренажёре',
-      icon: '⚡',
-      gradient: 'from-cyan-500/20 to-blue-600/20',
-      border: 'border-cyan-500/40',
-      glow: 'shadow-cyan-500/10',
-      earned: completedExercises >= 5,
-      progress: Math.min(completedExercises, 5),
-      total: 5,
-      earnedDate: completedExercises >= 5
-        ? progress
-            .filter((p) => p.entityType === 'exercise' && p.status === 'completed')
-            .sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime())[0]
-            ?.updatedAt
-        : null,
-    },
-    {
-      id: 'flashcards',
-      title: 'Знаток Go',
-      subtitle: 'Карточки пройдены',
-      desc: 'Выдаётся за изучение всех 20 тематических карточек',
-      icon: '🃏',
-      gradient: 'from-violet-500/20 to-purple-600/20',
-      border: 'border-violet-500/40',
-      glow: 'shadow-violet-500/10',
-      earned: flashcardsLearned >= 20,
-      progress: Math.min(flashcardsLearned, 20),
-      total: 20,
-      earnedDate: null,
-    },
-    {
-      id: 'course',
-      title: 'Выпускник курса',
-      subtitle: 'Курс Go завершён',
-      desc: 'Выдаётся за прохождение всех 8 уроков основного курса',
-      icon: '🎓',
-      gradient: 'from-emerald-500/20 to-teal-600/20',
-      border: 'border-emerald-500/40',
-      glow: 'shadow-emerald-500/10',
-      earned: completedLessons >= Math.max(courseLessons.length, 1),
-      progress: Math.min(completedLessons, Math.max(courseLessons.length, 1)),
-      total: Math.max(courseLessons.length, 1),
-      earnedDate: completedLessons >= Math.max(courseLessons.length, 1)
-        ? progress
-            .filter((p) => p.entityType === 'lesson' && p.status === 'completed')
-            .sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime())[0]
-            ?.updatedAt
-        : null,
-    },
-    {
-      id: 'bootcamp',
-      title: 'Agile-практик',
-      subtitle: 'Буткемп & Agile',
-      desc: 'Выдаётся за прохождение буткемпа и освоение Agile-методологии',
-      icon: '🏆',
-      gradient: 'from-amber-500/20 to-orange-600/20',
-      border: 'border-amber-500/40',
-      glow: 'shadow-amber-500/10',
-      earned: false,
-      progress: 0,
-      total: null,
-      earnedDate: null,
-      comingSoon: true,
-    },
-  ], [completedExercises, completedLessons, flashcardsLearned, progress, courseLessons.length])
-
+  const certificates = userProfile?.certificates ?? []
   const earnedCount = certificates.filter((c) => c.earned).length
   const weeks = useMemo(() => groupByWeek(cells), [cells])
   const maxCount = useMemo(() => Math.max(...cells.map((cell) => cell.count), 0), [cells])
@@ -587,7 +520,7 @@ function ProfileContent() {
                       : 'bg-gray-800/50 border-gray-700/50 text-gray-500'
                   }`}
                 >
-                  <span>{cert.earned ? cert.icon : '🔒'}</span>
+                  <span>{cert.earned ? certificateIcon(cert.id) : '🔒'}</span>
                   <span className="text-xs font-medium">{cert.title}</span>
                 </div>
               ))}
