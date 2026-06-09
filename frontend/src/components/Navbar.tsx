@@ -30,9 +30,9 @@ export function Navbar() {
   }, [openSearch])
 
   const links = [
-    { href: '/guide', label: 'Курс' },
+    { href: '/guide', label: 'Бесплатный курс' },
     { href: '/trainer', label: 'Тренажёр' },
-    { href: '/bootcamp', label: 'Bootcamp' },
+    { href: '/bootcamp', label: 'Bootcamp Pro' },
   ]
 
   return (

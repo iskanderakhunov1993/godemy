@@ -61,9 +61,14 @@ export default function TrainerPage() {
           </div>
           <h1 className="text-4xl font-black text-white sm:text-5xl">Тренажёр Go</h1>
           <p className="mt-4 text-lg leading-relaxed text-gray-400">
-            Выбери концепт, прочитай короткое объяснение и сразу закрепи его кодом.
-            Можно работать в песочнице на странице или повторить упражнение локально.
+            Это отдельная рабочая зона от курса: здесь нет сюжетных спринтов, только короткая теория,
+            паттерны, советы и практика по темам. Можно работать в песочнице на странице или повторять локально.
           </p>
+          <div className="mt-5 flex flex-wrap gap-2 text-xs text-gray-400">
+            <span className="rounded-full border border-gray-700 bg-gray-900 px-3 py-1">Курс = путь и проекты</span>
+            <span className="rounded-full border border-gray-700 bg-gray-900 px-3 py-1">Тренажёр = темы и drills</span>
+            <span className="rounded-full border border-gray-700 bg-gray-900 px-3 py-1">Bootcamp = подписка и уровни</span>
+          </div>
         </div>
 
         <div className="rounded-2xl border border-gray-800 bg-gray-900 px-5 py-4">

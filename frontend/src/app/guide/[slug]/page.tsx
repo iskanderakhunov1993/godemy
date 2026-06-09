@@ -7,6 +7,7 @@ import { api, Lesson, getLevels, AdminLevel } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
 import { markActivityToday, saveLastVisited } from '@/lib/streak'
 import { LessonContentRenderer, hasGateableTasks, TasksStatus } from '@/components/LessonContent'
+import { getStoryCourseLesson, storyCourseLessons, storyCourseLevels } from '@/lib/storyCourse'
 
 export default function LessonPage() {
   return (
@@ -22,14 +23,25 @@ function LessonContent() {
   const searchParams = useSearchParams()
   const moduleSlug = searchParams.get('module') ?? ''
   const topicParam = searchParams.get('topic') ?? ''
-  const [lesson, setLesson] = useState<Lesson | null>(null)
-  const [allLessons, setAllLessons] = useState<Lesson[]>([])
-  const [levels, setLevels] = useState<AdminLevel[]>([])
-  const [loading, setLoading] = useState(true)
+  const storyLesson = getStoryCourseLesson(slug)
+  const [lesson, setLesson] = useState<Lesson | null>(storyLesson)
+  const [allLessons, setAllLessons] = useState<Lesson[]>(storyLesson ? storyCourseLessons : [])
+  const [levels, setLevels] = useState<AdminLevel[]>(storyLesson ? storyCourseLevels : [])
+  const [loading, setLoading] = useState(!storyLesson)
   const { token, isCompleted, loadProgress } = useAuthStore()
   const [tasksStatus, setTasksStatus] = useState<TasksStatus | null>(null)
 
   useEffect(() => {
+    if (token) loadProgress()
+  }, [token, loadProgress])
+
+  useEffect(() => {
+    if (storyLesson) {
+      saveLastVisited({ href: `/guide/${slug}`, title: storyLesson.title, type: 'lesson' })
+      markActivityToday()
+      return
+    }
+
     Promise.all([
       api.getLesson(slug),
       api.getLessons(),
@@ -44,8 +56,7 @@ function LessonContent() {
       })
       .catch(() => router.push('/guide'))
       .finally(() => setLoading(false))
-    if (token) loadProgress()
-  }, [slug, token, router, loadProgress])
+  }, [slug, router, storyLesson])
 
   const markComplete = async () => {
     if (!token || !lesson) return

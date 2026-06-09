@@ -340,7 +340,10 @@ export const api = {
 }
 
 function adminHeaders(): HeadersInit {
-  return { 'Content-Type': 'application/json' }
+  return {
+    'Content-Type': 'application/json',
+    ...authHeaders(),
+  }
 }
 
 export interface AdminLesson {
@@ -406,8 +409,10 @@ export interface AdminLevel {
 
 export const adminApi = {
   // Lessons
-  getLessons: (_secret?: string) =>
-    request<AdminLesson[]>('/api/admin/lessons', { headers: adminHeaders() }),
+  getLessons: (secret = '') => {
+    void secret
+    return request<AdminLesson[]>('/api/admin/lessons', { headers: adminHeaders() })
+  },
 
   getLesson: (_secret: string, id: number) =>
     request<AdminLesson>(`/api/admin/lessons/${id}`, { headers: adminHeaders() }),
@@ -433,8 +438,10 @@ export const adminApi = {
     }),
 
   // Exercises
-  getExercises: (_secret?: string) =>
-    request<AdminExercise[]>('/api/admin/exercises', { headers: adminHeaders() }),
+  getExercises: (secret = '') => {
+    void secret
+    return request<AdminExercise[]>('/api/admin/exercises', { headers: adminHeaders() })
+  },
 
   getExercise: (_secret: string, id: number) =>
     request<AdminExercise>(`/api/admin/exercises/${id}`, { headers: adminHeaders() }),
@@ -485,8 +492,10 @@ export const adminApi = {
     }),
 
   // Modules
-  getModules: (_secret: string) =>
-    request<AdminCourseModule[]>('/api/admin/modules', { headers: adminHeaders() }),
+  getModules: (secret = '') => {
+    void secret
+    return request<AdminCourseModule[]>('/api/admin/modules', { headers: adminHeaders() })
+  },
 
   createModule: (
     _secret: string,
@@ -519,8 +528,10 @@ export const adminApi = {
     }),
 
   // Levels
-  getLevels: (_secret: string) =>
-    request<AdminLevel[]>('/api/admin/levels', { headers: adminHeaders() }),
+  getLevels: (secret = '') => {
+    void secret
+    return request<AdminLevel[]>('/api/admin/levels', { headers: adminHeaders() })
+  },
 
   createLevel: (_secret: string, data: { title: string; slug?: string; order?: number }) =>
     request<AdminLevel>('/api/admin/levels', {

@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { api, Lesson } from '@/lib/api'
+import { Lesson } from '@/lib/api'
+import { getStoryLessonsByModule, getStoryModuleMeta } from '@/lib/storyCourse'
 import { useAuthStore } from '@/lib/store'
 
 type TopicGroup = { name: string; lessons: Lesson[] }
@@ -23,25 +24,20 @@ function groupByTopic(lessons: Lesson[]): TopicGroup[] {
 export default function ModulePage() {
   const { slug } = useParams<{ slug: string }>()
   const moduleName = decodeURIComponent(slug)
-  const [allLessons, setAllLessons] = useState<Lesson[]>([])
-  const [loading, setLoading] = useState(true)
   const { isCompleted, loadProgress, token } = useAuthStore()
 
   useEffect(() => {
-    api.getLessons().then(setAllLessons).finally(() => setLoading(false))
     if (token) loadProgress()
   }, [token, loadProgress])
 
-  const moduleLessons = useMemo(
-    () => allLessons.filter(l => l.module === moduleName).sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || a.id - b.id),
-    [allLessons, moduleName]
-  )
+  const moduleLessons = useMemo(() => getStoryLessonsByModule(moduleName), [moduleName])
+  const moduleMeta = useMemo(() => getStoryModuleMeta(moduleName), [moduleName])
 
   const topics = useMemo(() => groupByTopic(moduleLessons), [moduleLessons])
   const completedCount = moduleLessons.filter(l => isCompleted('lesson', l.id)).length
   const levelSlug = moduleLessons[0]?.level
 
-  if (!loading && moduleLessons.length === 0) {
+  if (moduleLessons.length === 0) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-16 text-center">
         <p className="text-gray-400">Модуль не найден или уроки ещё не добавлены.</p>
@@ -69,21 +65,26 @@ export default function ModulePage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white mb-2">{moduleName}</h1>
-        {!loading && (
-          <p className="text-gray-400 text-sm">
-            {topics.length} {topics.length === 1 ? 'тема' : topics.length < 5 ? 'темы' : 'тем'} · {moduleLessons.length} уроков · {completedCount} пройдено
-          </p>
+        <p className="text-gray-400 text-sm">
+          {topics.length} {topics.length === 1 ? 'тема' : topics.length < 5 ? 'темы' : 'тем'} · {moduleLessons.length} уроков · {completedCount} пройдено
+        </p>
+        {moduleMeta && (
+          <div className="mt-5 grid gap-3 rounded-3xl border border-white/10 bg-white/[0.04] p-5 md:grid-cols-2">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.24em] text-cyan-300/80">{moduleMeta.sprint}</p>
+              <p className="mt-2 text-sm leading-6 text-gray-300">{moduleMeta.subtitle}</p>
+            </div>
+            <div className="grid gap-2 text-sm text-gray-300">
+              <p><span className="text-gray-500">Jira:</span> <span className="font-mono text-cyan-300">{moduleMeta.ticket}</span></p>
+              <p><span className="text-gray-500">Ритуал:</span> {moduleMeta.ritual}</p>
+              <p><span className="text-gray-500">Результат:</span> {moduleMeta.deliverable}</p>
+            </div>
+          </div>
         )}
       </div>
 
       {/* Topics list (or lessons directly if single topic) */}
-      {loading ? (
-        <div className="space-y-3">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-16 bg-gray-800 rounded-2xl animate-pulse" />
-          ))}
-        </div>
-      ) : topics.length === 0 ? (
+      {topics.length === 0 ? (
         <p className="text-gray-500 text-sm">Уроки ещё не добавлены.</p>
       ) : (
         /* Always show topic cards — never skip topic level */

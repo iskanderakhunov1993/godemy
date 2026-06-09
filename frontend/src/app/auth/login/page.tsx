@@ -2,12 +2,13 @@
 
 import { FormEvent, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { api } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { setAuth } = useAuthStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -21,7 +22,14 @@ export default function LoginPage() {
     try {
       const { token, user } = await api.login(email, password)
       setAuth(token, user)
-      router.push('/guide')
+      const nextUrl = searchParams.get('next')
+      if (nextUrl?.startsWith('/')) {
+        router.push(nextUrl)
+      } else if (user.isAdmin) {
+        router.push('/admin')
+      } else {
+        router.push('/guide')
+      }
     } catch (err) {
       setError((err as Error).message)
     } finally {

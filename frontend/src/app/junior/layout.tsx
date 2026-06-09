@@ -1,21 +1,16 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuthStore } from '@/lib/store'
+import { useAuthHydrated, useAuthStore } from '@/lib/store'
 
 export default function JuniorLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const user = useAuthStore((state) => state.user)
-  const [ready, setReady] = useState(false)
+  const hasHydrated = useAuthHydrated()
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setReady(true), 0)
-    return () => window.clearTimeout(timer)
-  }, [])
-
-  useEffect(() => {
-    if (!ready) return
+    if (!hasHydrated) return
     if (!user) {
       router.replace('/auth/login?next=/junior')
       return
@@ -23,9 +18,9 @@ export default function JuniorLayout({ children }: { children: React.ReactNode }
     if (!user.isPremium && !user.isAdmin) {
       router.replace('/bootcamp/buy')
     }
-  }, [ready, router, user])
+  }, [hasHydrated, router, user])
 
-  if (!ready || !user || (!user.isPremium && !user.isAdmin)) {
+  if (!hasHydrated || !user || (!user.isPremium && !user.isAdmin)) {
     return (
       <div className="mx-auto flex min-h-[55vh] max-w-xl items-center justify-center px-4 text-center">
         <div>

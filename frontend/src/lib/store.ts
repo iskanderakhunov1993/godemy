@@ -1,5 +1,6 @@
 'use client'
 
+import { useSyncExternalStore } from 'react'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { api, User, Progress } from './api'
@@ -64,3 +65,18 @@ export const useAuthStore = create<AuthStore>()(
     }
   )
 )
+
+export function useAuthHydrated() {
+  return useSyncExternalStore(
+    (callback) => {
+      const unsubscribeHydrate = useAuthStore.persist.onHydrate(callback)
+      const unsubscribeFinish = useAuthStore.persist.onFinishHydration(callback)
+      return () => {
+        unsubscribeHydrate()
+        unsubscribeFinish()
+      }
+    },
+    () => useAuthStore.persist.hasHydrated(),
+    () => false
+  )
+}

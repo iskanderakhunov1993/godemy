@@ -4,49 +4,44 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { api } from '@/lib/api'
-import { useAuthStore } from '@/lib/store'
+import { useAuthHydrated, useAuthStore } from '@/lib/store'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const { token, user, setAuth, logout } = useAuthStore()
+  const hasHydrated = useAuthHydrated()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [checking, setChecking] = useState(true)
+  const [sessionState, setSessionState] = useState<'idle' | 'valid' | 'invalid'>('idle')
   const [error, setError] = useState('')
-  const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    if (!token) {
-      setReady(false)
-      setChecking(false)
+    if (!hasHydrated || !token) {
       return
     }
 
-    setChecking(true)
-    setError('')
     api.me()
       .then((me) => {
         if (me.isAdmin) {
           setAuth(token, me)
-          setReady(true)
+          setSessionState('valid')
           return
         }
 
         logout()
-        setReady(false)
+        setSessionState('invalid')
         setError('У этого аккаунта нет доступа к админке. Войдите под админским логином.')
       })
       .catch(() => {
         logout()
-        setReady(false)
+        setSessionState('invalid')
         setError('Сессия невалидна. Войдите снова под админским аккаунтом.')
       })
-      .finally(() => setChecking(false))
-  }, [token, logout])
+  }, [hasHydrated, token, logout, setAuth])
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
-    setChecking(true)
+    setSessionState('idle')
     setError('')
 
     try {
@@ -54,26 +49,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       const { token: nextToken, user: nextUser } = await api.login(trimmedEmail, password)
       if (!nextUser.isAdmin) {
         logout()
-        setReady(false)
+        setSessionState('invalid')
         setError('Этот аккаунт не является админским.')
         return
       }
       setAuth(nextToken, nextUser)
-      setReady(true)
+      setSessionState('valid')
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Ошибка входа'
       setError(message)
-      setReady(false)
-    } finally {
-      setChecking(false)
+      setSessionState('invalid')
     }
   }
 
-  if (checking && !ready) {
+  const isCheckingSession = hasHydrated && Boolean(token) && sessionState === 'idle'
+  const hasAdminSession = Boolean(token && user?.isAdmin && sessionState === 'valid')
+
+  if (!hasHydrated || isCheckingSession) {
     return <div className="min-h-screen bg-gray-950 flex items-center justify-center text-gray-400">Проверка доступа...</div>
   }
 
-  if (!ready) {
+  if (!hasAdminSession) {
     const currentUserLabel = user?.email ? `Текущая сессия: ${user.email}` : ''
 
     return (
@@ -151,7 +147,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           className="ml-auto text-sm text-gray-500 hover:text-red-400 transition-colors"
           onClick={() => {
             logout()
-            setReady(false)
+            setSessionState('idle')
             setEmail('')
             setPassword('')
           }}
