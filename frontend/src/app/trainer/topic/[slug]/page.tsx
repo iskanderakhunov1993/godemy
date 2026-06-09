@@ -1,9 +1,9 @@
 'use client'
 
-import dynamic from 'next/dynamic'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { useParams, useRouter } from 'next/navigation'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { api, type Exercise, type RunResult, type TopicExample, type TrainerTopic } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
 import { markActivityToday, saveLastVisited } from '@/lib/streak'
@@ -11,11 +11,14 @@ import {
   builtInTrainerConcepts,
   getBuiltInTrainerConcept,
   isBuiltInExercise,
+  type BuiltInTrainerConcept,
+  type ConceptSection,
+  type PracticeRailItem,
 } from '@/lib/trainerConcepts'
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
-  loading: () => <div className="h-full animate-pulse bg-gray-950" />,
+  loading: () => <div className="h-full animate-pulse bg-slate-950" />,
 })
 
 type WorkspaceMode = 'browser' | 'local'
@@ -47,9 +50,64 @@ function parseHints(raw?: string): string[] {
   }
 }
 
+function buildFallbackSections(topic: TrainerTopic, syntax: string, pattern: string, examples: TopicExample[]): ConceptSection[] {
+  return [
+    {
+      title: `About ${topic.title}`,
+      paragraphs: [
+        topic.explanation || 'Этот концепт объясняет одну важную идею Go и сразу переводит её в практику.',
+        'Сначала зафиксируй форму решения, а потом уже запоминай частные случаи.',
+      ],
+    },
+    {
+      title: 'Syntax',
+      paragraphs: [
+        'Синтаксис — это не то, что нужно зубрить посимвольно. Важнее заметить форму: где вход, где логика и где результат.',
+      ],
+      code: syntax,
+    },
+    ...(examples[0]
+      ? [{
+          title: examples[0].title,
+          paragraphs: [examples[0].description || 'Разбери пример и попробуй изменить входные данные.'],
+          code: examples[0].code,
+        }]
+      : []),
+    {
+      title: 'Reusable pattern',
+      paragraphs: [
+        'Возьми этот каркас как форму решения. Меняй входные данные и центральную проверку под свою задачу.',
+      ],
+      code: pattern,
+    },
+  ]
+}
+
+function buildFallbackRail(activeExercise: Exercise | null, topic: TrainerTopic): PracticeRailItem[] {
+  return [
+    {
+      title: activeExercise?.title || `${topic.title} drill`,
+      description: activeExercise?.description || 'Начни с одного базового упражнения по теме.',
+      difficulty: 'easy',
+      status: 'recommended',
+    },
+    {
+      title: 'Pattern replay',
+      description: 'Повтори этот же шаблон с другими входными данными.',
+      difficulty: 'easy',
+      status: 'learning',
+    },
+    {
+      title: 'Edge cases',
+      description: 'Проверь, как код ведёт себя на пустых и пограничных значениях.',
+      difficulty: 'medium',
+      status: 'locked',
+    },
+  ]
+}
+
 export default function TrainerTopicPage() {
   const { slug } = useParams<{ slug: string }>()
-
   return <TrainerTopicContent key={slug} slug={slug} />
 }
 
@@ -59,13 +117,9 @@ function TrainerTopicContent({ slug }: { slug: string }) {
   const builtInTopic = getBuiltInTrainerConcept(slug)
   const builtInExercise = builtInTopic?.exercises?.[0] || null
   const [topic, setTopic] = useState<TrainerTopic | null>(builtInTopic || null)
-  const [allTopics, setAllTopics] = useState<TrainerTopic[]>(
-    builtInTopic ? builtInTrainerConcepts : []
-  )
+  const [allTopics, setAllTopics] = useState<TrainerTopic[]>(builtInTopic ? builtInTrainerConcepts : [])
   const [activeExercise, setActiveExercise] = useState<Exercise | null>(builtInExercise)
-  const [code, setCode] = useState(
-    builtInExercise?.starterCode || builtInTopic?.syntax || fallbackCode
-  )
+  const [code, setCode] = useState(builtInExercise?.starterCode || builtInTopic?.syntax || fallbackCode)
   const [result, setResult] = useState<RunResult | null>(null)
   const [loading, setLoading] = useState(!builtInTopic)
   const [running, setRunning] = useState(false)
@@ -168,9 +222,12 @@ function TrainerTopicContent({ slug }: { slug: string }) {
 
   if (loading || !topic) {
     return (
-      <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-        <div className="h-12 w-64 animate-pulse rounded-xl bg-gray-900" />
-        <div className="mt-6 h-[680px] animate-pulse rounded-3xl bg-gray-900" />
+      <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+        <div className="h-16 animate-pulse rounded-3xl bg-gray-900" />
+        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="h-[720px] animate-pulse rounded-3xl bg-gray-900" />
+          <div className="h-[520px] animate-pulse rounded-3xl bg-gray-900" />
+        </div>
       </main>
     )
   }
@@ -182,224 +239,203 @@ function TrainerTopicContent({ slug }: { slug: string }) {
 	// 3. верни результат
 	return ""
 }`
-  const builtInMicroSkills = 'microSkills' in topic && Array.isArray(topic.microSkills) ? topic.microSkills : []
-  const builtInCommonMistakes = 'commonMistakes' in topic && Array.isArray(topic.commonMistakes) ? topic.commonMistakes : []
-  const builtInRelatedSprint = 'relatedSprint' in topic && typeof topic.relatedSprint === 'string' ? topic.relatedSprint : ''
+
+  const conceptCode =
+    'conceptCode' in topic && typeof topic.conceptCode === 'string'
+      ? topic.conceptCode
+      : topic.title.slice(0, 2)
+  const summary =
+    'summary' in topic && typeof topic.summary === 'string'
+      ? topic.summary
+      : topic.explanation || 'Короткая теория по теме, чтобы перейти к практике без перегруза.'
+  const builtInMicroSkills =
+    'microSkills' in topic && Array.isArray(topic.microSkills) ? topic.microSkills : []
+  const builtInCommonMistakes =
+    'commonMistakes' in topic && Array.isArray(topic.commonMistakes) ? topic.commonMistakes : []
+  const builtInRelatedSprint =
+    'relatedSprint' in topic && typeof topic.relatedSprint === 'string' ? topic.relatedSprint : ''
+  const conceptSections: ConceptSection[] =
+    'sections' in topic && Array.isArray(topic.sections) && topic.sections.length > 0
+      ? topic.sections
+      : buildFallbackSections(topic, syntax, pattern, examples)
+  const practiceRail: PracticeRailItem[] =
+    'practiceRail' in topic && Array.isArray(topic.practiceRail) && topic.practiceRail.length > 0
+      ? topic.practiceRail
+      : buildFallbackRail(activeExercise, topic)
+
+  const scrollToLab = () => {
+    document.getElementById('quick-lab')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500">
-        <Link href="/trainer" className="transition-colors hover:text-white">Тренажёр</Link>
-        <span>/</span>
-        <span className="text-gray-300">{topic.title}</span>
-      </div>
-
-      <header className="mt-6 border-b border-gray-800 pb-8">
-        <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
-          <div className="max-w-3xl">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full border border-violet-500/25 bg-violet-500/10 px-3 py-1 text-xs font-bold text-violet-300">
-                Концепт {Math.max(currentIndex + 1, 1)}
-              </span>
-              <span className="rounded-full border border-gray-700 bg-gray-900 px-3 py-1 text-xs text-gray-500">
-                10–15 минут
-              </span>
-              {completed && (
-                <span className="rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-300">
-                  Выполнено
-                </span>
-              )}
-            </div>
-            <h1 className="mt-5 text-4xl font-black text-white sm:text-5xl">{topic.title}</h1>
-            <p className="mt-4 text-lg leading-relaxed text-gray-400">
-              {topic.explanation || activeExercise?.description || 'Разбери концепт и сразу примени его в коротком упражнении.'}
-            </p>
-            {builtInRelatedSprint && (
-              <p className="mt-4 inline-flex rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-300">
-                Связано со спринтом: {builtInRelatedSprint}
-              </p>
-            )}
-          </div>
-          <Link href="/trainer" className="text-sm font-semibold text-violet-300 hover:text-violet-200">
-            Все концепты →
-          </Link>
+      <div className="rounded-[34px] border border-[#d6ddfb] bg-[#eef2ff] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.08)] sm:p-8">
+        <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500">
+          <Link href="/trainer" className="transition-colors hover:text-slate-950">Тренажёр</Link>
+          <span>→</span>
+          <span className="text-slate-700">{topic.title}</span>
         </div>
-      </header>
 
-      <section className="mt-8 grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-          <p className="text-xs font-bold uppercase tracking-widest text-cyan-300">Что поймёшь</p>
-          <p className="mt-3 text-sm leading-6 text-gray-300">
-            {'summary' in topic && typeof topic.summary === 'string'
-              ? topic.summary
-              : 'Короткая теория по теме, чтобы перейти к практике без перегруза.'}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-          <p className="text-xs font-bold uppercase tracking-widest text-violet-300">Микро-навыки</p>
-          <ul className="mt-3 space-y-2 text-sm leading-6 text-gray-300">
-            {(builtInMicroSkills.length > 0 ? builtInMicroSkills : [
-              'прочитать форму кода',
-              'понять, где вход и выход',
-              'закрепить паттерн маленькой задачей',
-            ]).map((skill) => (
-              <li key={skill} className="flex gap-2">
-                <span className="text-violet-300">•</span>
-                <span>{skill}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-          <p className="text-xs font-bold uppercase tracking-widest text-amber-300">Как проходить</p>
-          <ol className="mt-3 space-y-2 text-sm leading-6 text-gray-300">
-            <li>1. Сначала прочитай идею и синтаксис.</li>
-            <li>2. Открой пример в песочнице и покрути входные данные.</li>
-            <li>3. После этого реши mini-задачу без копипаста.</li>
-          </ol>
-        </div>
-      </section>
-
-      <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(420px,0.82fr)] lg:items-start">
-        <article className="space-y-6">
-          <LessonSection number="01" title="Идея">
-            <p className="text-base leading-7 text-gray-300">
-              {topic.explanation || 'В Go простые конструкции специально выглядят предсказуемо. Сначала пойми форму кода, затем меняй данные и поведение.'}
-            </p>
-            {hints.length > 0 && (
-              <ul className="mt-5 space-y-3">
-                {hints.slice(0, 3).map((hint) => (
-                  <li key={hint} className="flex gap-3 text-sm leading-6 text-gray-400">
-                    <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-violet-500/10 text-[10px] text-violet-300">✓</span>
-                    {hint}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </LessonSection>
-
-          <LessonSection number="02" title="Синтаксис">
-            <CodeBlock code={syntax} />
-            <p className="mt-4 text-sm leading-6 text-gray-500">
-              Не запоминай код целиком. Обрати внимание на ключевые слова, типы и место, где возвращается результат.
-            </p>
-          </LessonSection>
-
-          {examples.length > 0 && (
-            <LessonSection number="03" title="Пример">
-              <div className="space-y-4">
-                {examples.slice(0, 2).map((example) => (
-                  <div key={example.title} className="rounded-2xl border border-gray-800 bg-gray-950/60 p-4">
-                    <div className="mb-3 flex items-center justify-between gap-3">
-                      <h3 className="font-bold text-white">{example.title}</h3>
-                      <button
-                        onClick={() => {
-                          setCode(example.code)
-                          setResult(null)
-                          setWorkspaceMode('browser')
-                        }}
-                        className="text-xs font-semibold text-violet-300 hover:text-violet-200"
-                      >
-                        Открыть в песочнице
-                      </button>
-                    </div>
-                    <CodeBlock code={example.code} />
-                    {example.description && <p className="mt-3 text-sm text-gray-500">{example.description}</p>}
-                  </div>
-                ))}
+        <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+          <article className="min-w-0">
+            <header className="flex flex-wrap items-center gap-4">
+              <div className="flex h-20 w-20 items-center justify-center rounded-[22px] border-4 border-[#2a266d] bg-white text-3xl font-black tracking-tight text-[#201a61]">
+                {conceptCode}
               </div>
-            </LessonSection>
-          )}
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="text-4xl font-black tracking-tight text-[#201a61] sm:text-5xl">{topic.title}</h1>
+                  <span className="text-lg text-slate-500">in Go</span>
+                </div>
+                <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-slate-600">
+                  <span className="inline-flex items-center gap-2">
+                    <span className="text-[#2a266d]">↔</span>
+                    {practiceRail.length} exercises
+                  </span>
+                  {completed && (
+                    <span className="rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                      Concept complete
+                    </span>
+                  )}
+                  {builtInRelatedSprint && (
+                    <span className="rounded-full border border-cyan-300 bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700">
+                      {builtInRelatedSprint}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </header>
 
-          <LessonSection number={examples.length > 0 ? '04' : '03'} title="Паттерн">
-            <p className="mb-4 text-sm leading-6 text-gray-400">
-              Паттерн — это форма решения, которую можно переиспользовать. Замени входные данные и основную логику под свою задачу.
-            </p>
-            <CodeBlock code={pattern} />
-          </LessonSection>
+            <div className="mt-6 rounded-[28px] border border-[#d9def4] bg-white p-6 sm:p-8">
+              <SectionTitle title={`About ${topic.title}`} />
+              <p className="mt-4 text-[17px] leading-8 text-slate-700">{summary}</p>
 
-          <LessonSection number={examples.length > 0 ? '05' : '04'} title="Частые ошибки">
-            <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5">
-              <ul className="space-y-3 text-sm leading-6 text-gray-300">
-                {(builtInCommonMistakes.length > 0 ? builtInCommonMistakes : [
-                  'смешивают бизнес-логику и вывод в консоль',
-                  'пытаются решить задачу слишком сложно',
-                  'не проверяют, что именно должно быть на выходе',
-                ]).map((mistake) => (
-                  <li key={mistake} className="flex gap-3">
-                    <span className="mt-1 text-amber-300">⚠</span>
-                    <span>{mistake}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </LessonSection>
-
-          <LessonSection number={examples.length > 0 ? '06' : '05'} title="Задание">
-            {topic.exercises?.length ? (
-              <>
-                {topic.exercises.length > 1 && (
-                  <div className="mb-5 flex flex-wrap gap-2">
-                    {topic.exercises.map((exercise, index) => (
-                      <button
-                        key={exercise.id}
-                        onClick={() => selectExercise(exercise)}
-                        className={`rounded-xl border px-3 py-2 text-sm transition-colors ${
-                          activeExercise?.id === exercise.id
-                            ? 'border-violet-500/50 bg-violet-500/10 text-violet-200'
-                            : 'border-gray-800 bg-gray-950 text-gray-500 hover:border-gray-700'
-                        }`}
-                      >
-                        {index + 1}. {exercise.title}
-                      </button>
+              {conceptSections.map((section) => (
+                <div key={section.title} className="mt-8">
+                  <SectionTitle title={section.title} />
+                  <div className="mt-4 space-y-4 text-[16px] leading-8 text-slate-700">
+                    {section.paragraphs.map((paragraph) => (
+                      <p key={paragraph}>{paragraph}</p>
                     ))}
                   </div>
-                )}
-                <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5">
-                  <p className="text-xs font-bold uppercase tracking-widest text-cyan-300">Практика</p>
-                  <h3 className="mt-3 text-xl font-bold text-white">{activeExercise?.title}</h3>
-                  <p className="mt-3 leading-7 text-gray-300">{activeExercise?.description}</p>
-                  {builtInTopic?.expectedOutput && (
-                    <div className="mt-5 rounded-xl border border-gray-800 bg-gray-950 px-4 py-3">
-                      <p className="text-xs uppercase tracking-widest text-gray-600">Ожидаемый вывод</p>
-                      <code className="mt-2 block text-sm text-cyan-200">{builtInTopic.expectedOutput}</code>
+                  {section.code && <LightCodeBlock code={section.code} />}
+                </div>
+              ))}
+
+              <div className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5">
+                <p className="text-sm font-bold uppercase tracking-[0.22em] text-amber-700">Watch out</p>
+                <ul className="mt-3 space-y-2 text-sm leading-7 text-slate-700">
+                  {(builtInCommonMistakes.length > 0 ? builtInCommonMistakes : [
+                    'не смешивай вывод в консоль и вычисление результата',
+                    'сначала собери простую рабочую версию, потом улучшай',
+                    'сверяйся с ожидаемым выводом перед рефакторингом',
+                  ]).map((mistake) => (
+                    <li key={mistake} className="flex gap-3">
+                      <span className="mt-1 text-amber-600">•</span>
+                      <span>{mistake}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <aside className="space-y-5 lg:sticky lg:top-20 lg:self-start">
+            <div className="rounded-[28px] border border-[#d9def4] bg-white p-5">
+              <div className="flex items-center gap-2 text-sm font-bold text-[#2a266d]">
+                <span>⌘</span>
+                <span>Learn {topic.title}</span>
+              </div>
+
+              <button
+                onClick={scrollToLab}
+                className="mt-5 block w-full rounded-[22px] border border-[#7667ff] bg-white p-4 text-left shadow-[0_8px_24px_rgba(118,103,255,0.12)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_32px_rgba(118,103,255,0.18)]"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#dff6ff] text-2xl">🧪</div>
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-bold text-[#1e1b5f]">{activeExercise?.title || `${topic.title} practice`}</p>
+                      <span className="rounded-full border border-[#d8cffd] bg-[#f5f1ff] px-2.5 py-1 text-[11px] font-semibold text-[#5a4bd6]">
+                        Recommended
+                      </span>
+                      <span className="rounded-full border border-[#d8cffd] bg-[#f7f8ff] px-2.5 py-1 text-[11px] font-semibold text-slate-600">
+                        Learning Exercise
+                      </span>
                     </div>
-                  )}
-                  <div className="mt-5 flex flex-wrap gap-2 text-xs">
-                    <span className="rounded-full bg-gray-900 px-3 py-1.5 text-gray-400">{activeExercise?.difficulty}</span>
-                    <span className="rounded-full bg-gray-900 px-3 py-1.5 text-gray-400">{activeExercise?.category}</span>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                      {activeExercise?.description || 'Открой quick lab и закрепи концепт на одном компактном упражнении.'}
+                    </p>
                   </div>
                 </div>
-              </>
-            ) : (
-              <p className="text-gray-400">Практическое задание для этого концепта готовится.</p>
-            )}
-          </LessonSection>
+              </button>
+            </div>
 
-          {nextTopic && (
-            <Link
-              href={`/trainer/topic/${nextTopic.slug}`}
-              className="flex items-center justify-between rounded-2xl border border-gray-800 bg-gray-900 p-5 transition-colors hover:border-violet-500/40"
-            >
-              <div>
-                <p className="text-xs uppercase tracking-widest text-gray-600">Следующий концепт</p>
-                <p className="mt-2 font-bold text-white">{nextTopic.title}</p>
+            <div className="rounded-[28px] border border-[#d9def4] bg-white p-5">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-sm font-bold text-[#2a266d]">
+                  <span>↔</span>
+                  <span>Unlock {Math.max(practiceRail.length - 1, 0)} more exercises to practice {topic.title}</span>
+                </div>
               </div>
-              <span className="text-2xl text-violet-300">→</span>
-            </Link>
-          )}
-        </article>
 
-        <aside className="lg:sticky lg:top-20">
-          <div className="overflow-hidden rounded-3xl border border-gray-700 bg-gray-900 shadow-2xl">
-            <div className="flex border-b border-gray-800 bg-gray-950 p-2">
+              <div className="mt-5 space-y-4">
+                {practiceRail.slice(1).map((item) => (
+                  <PracticeCard key={item.title} item={item} />
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-[28px] border border-[#d9def4] bg-white p-5">
+              <p className="text-sm font-bold text-[#2a266d]">You will practice</p>
+              <ul className="mt-4 space-y-2 text-sm leading-7 text-slate-700">
+                {(builtInMicroSkills.length > 0 ? builtInMicroSkills : [
+                  'понять форму решения',
+                  'закрепить один reusable pattern',
+                  'не бояться маленькой практики сразу после теории',
+                ]).map((skill) => (
+                  <li key={skill} className="flex gap-3">
+                    <span className="mt-1 text-[#5a4bd6]">•</span>
+                    <span>{skill}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <section id="quick-lab" className="mt-10 rounded-[32px] border border-gray-800 bg-gradient-to-br from-slate-950 to-slate-900 shadow-2xl">
+        <div className="border-b border-gray-800 px-6 py-5 sm:px-8">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.26em] text-cyan-300">Quick lab</p>
+              <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">{activeExercise?.title || 'Практика по концепту'}</h2>
+              <p className="mt-3 max-w-3xl text-sm leading-7 text-gray-400">
+                Сначала попробуй сам, потом запусти код и только после этого отправь решение на проверку.
+              </p>
+            </div>
+            {nextTopic && (
+              <Link
+                href={`/trainer/topic/${nextTopic.slug}`}
+                className="rounded-2xl border border-violet-500/30 bg-violet-500/10 px-4 py-2.5 text-sm font-semibold text-violet-200 transition hover:border-violet-400/50 hover:bg-violet-500/15"
+              >
+                Следующий концепт →
+              </Link>
+            )}
+          </div>
+        </div>
+
+        <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="min-w-0">
+            <div className="mb-4 flex border border-gray-800 bg-slate-950 p-1.5 rounded-2xl">
               <button
                 onClick={() => setWorkspaceMode('browser')}
                 className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
                   workspaceMode === 'browser' ? 'bg-violet-500 text-white' : 'text-gray-500 hover:text-white'
                 }`}
               >
-                Песочница
+                Browser sandbox
               </button>
               <button
                 onClick={() => setWorkspaceMode('local')}
@@ -407,16 +443,16 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                   workspaceMode === 'local' ? 'bg-violet-500 text-white' : 'text-gray-500 hover:text-white'
                 }`}
               >
-                Локально
+                Local workflow
               </button>
             </div>
 
             {workspaceMode === 'browser' ? (
-              <>
+              <div className="overflow-hidden rounded-[28px] border border-gray-800 bg-slate-950">
                 <div className="flex items-center justify-between border-b border-gray-800 px-4 py-3">
                   <div>
                     <p className="text-xs font-bold text-white">main.go</p>
-                    <p className="text-[11px] text-gray-600">Код запускается на сервере Godemy</p>
+                    <p className="text-[11px] text-gray-600">Run, inspect output and submit when ready</p>
                   </div>
                   <button
                     onClick={() => {
@@ -425,10 +461,11 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                     }}
                     className="text-xs text-gray-500 hover:text-white"
                   >
-                    Сбросить
+                    Reset
                   </button>
                 </div>
-                <div className="h-[460px]">
+
+                <div className="h-[480px]">
                   <MonacoEditor
                     height="100%"
                     language="go"
@@ -445,7 +482,8 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                     }}
                   />
                 </div>
-                <div className="flex flex-wrap items-center gap-2 border-t border-gray-800 bg-gray-950 px-4 py-3">
+
+                <div className="flex flex-wrap items-center gap-2 border-t border-gray-800 bg-slate-950 px-4 py-3">
                   <button
                     onClick={() => void runCode()}
                     disabled={running}
@@ -463,21 +501,22 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                     </button>
                   )}
                 </div>
+
                 <div className={`min-h-28 border-t border-gray-800 p-4 font-mono text-sm ${
                   result?.error
                     ? 'bg-red-950/20 text-red-200'
                     : result?.passed
                       ? 'bg-emerald-950/20 text-emerald-200'
-                      : 'bg-gray-950 text-gray-500'
+                      : 'bg-slate-950 text-gray-500'
                 }`}>
                   <p className="mb-2 font-sans text-xs font-bold uppercase tracking-widest text-gray-600">Результат</p>
                   {result ? result.error || result.output || (result.passed ? 'Все тесты пройдены ✓' : 'Нет вывода') : 'Нажми «Запустить», чтобы увидеть результат.'}
                 </div>
-              </>
+              </div>
             ) : (
-              <div className="p-6">
-                <p className="text-xs font-bold uppercase tracking-widest text-violet-300">Работа на компьютере</p>
-                <h2 className="mt-3 text-2xl font-black text-white">Повтори упражнение локально</h2>
+              <div className="rounded-[28px] border border-gray-800 bg-slate-950 p-6">
+                <p className="text-xs font-bold uppercase tracking-widest text-violet-300">Работа локально</p>
+                <h3 className="mt-3 text-2xl font-black text-white">Повтори упражнение у себя на компьютере</h3>
                 <ol className="mt-6 space-y-5">
                   <LocalStep number="1" title="Создай папку проекта">
                     <code>mkdir godemy-practice && cd godemy-practice</code>
@@ -494,47 +533,117 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                 </ol>
                 <button
                   onClick={() => void copyLocalCommand()}
-                  className="mt-7 w-full rounded-xl border border-gray-700 bg-gray-950 px-4 py-3 text-sm font-bold text-gray-300 transition-colors hover:border-violet-500/50 hover:text-white"
+                  className="mt-7 w-full rounded-xl border border-gray-700 bg-slate-900 px-4 py-3 text-sm font-bold text-gray-300 transition-colors hover:border-violet-500/50 hover:text-white"
                 >
                   {copied ? 'Команда скопирована ✓' : 'Скопировать стартовую команду'}
                 </button>
                 <p className="mt-4 text-xs leading-5 text-gray-600">
-                  После локальной проверки вернись в песочницу и отправь решение, чтобы сохранить прогресс.
+                  После локальной проверки вернись в браузерный sandbox и отправь решение, если хочешь зафиксировать прогресс.
                 </p>
               </div>
             )}
           </div>
-        </aside>
-      </div>
+
+          <div className="space-y-4">
+            <InfoPanel title="Что сделать прямо сейчас">
+              <ol className="space-y-2 text-sm leading-6 text-gray-300">
+                <li>1. Прочитай теорию и один пример слева.</li>
+                <li>2. Открой quick lab и измени код под задачу.</li>
+                <li>3. Запусти и сверься с ожидаемым выводом.</li>
+              </ol>
+            </InfoPanel>
+
+            {builtInTopic?.expectedOutput && (
+              <InfoPanel title="Expected output">
+                <code className="block rounded-xl border border-gray-800 bg-slate-950 px-3 py-3 font-mono text-sm text-cyan-200">
+                  {builtInTopic.expectedOutput}
+                </code>
+              </InfoPanel>
+            )}
+
+            {hints.length > 0 && (
+              <InfoPanel title="Hints">
+                <ul className="space-y-2 text-sm leading-6 text-gray-300">
+                  {hints.slice(0, 3).map((hint) => (
+                    <li key={hint} className="flex gap-3">
+                      <span className="mt-1 text-cyan-300">•</span>
+                      <span>{hint}</span>
+                    </li>
+                  ))}
+                </ul>
+              </InfoPanel>
+            )}
+          </div>
+        </div>
+      </section>
     </main>
   )
 }
 
-function LessonSection({
-  number,
-  title,
-  children,
-}: {
-  number: string
-  title: string
-  children: React.ReactNode
-}) {
+function SectionTitle({ title }: { title: string }) {
+  return <h2 className="text-2xl font-black tracking-tight text-[#201a61]">{title}</h2>
+}
+
+function LightCodeBlock({ code }: { code: string }) {
   return (
-    <section className="rounded-3xl border border-gray-800 bg-gray-900 p-6 sm:p-7">
-      <div className="mb-5 flex items-center gap-3">
-        <span className="font-mono text-xs font-black text-violet-400">{number}</span>
-        <h2 className="text-xl font-black text-white">{title}</h2>
-      </div>
-      {children}
-    </section>
+    <pre className="mt-4 overflow-x-auto rounded-2xl border border-[#d8def7] bg-[#fafbff] p-4 text-sm leading-7 text-[#3a356e] shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]">
+      <code>{code}</code>
+    </pre>
   )
 }
 
-function CodeBlock({ code }: { code: string }) {
+function PracticeCard({ item }: { item: PracticeRailItem }) {
+  const statusTone = {
+    recommended: 'border-[#7667ff] bg-white shadow-[0_8px_24px_rgba(118,103,255,0.10)]',
+    learning: 'border-[#d8def7] bg-white',
+    locked: 'border-[#e7eaf8] bg-[#fbfcff] opacity-90',
+  }[item.status]
+
+  const badgeTone = {
+    recommended: 'bg-[#f5f1ff] text-[#5a4bd6] border-[#d8cffd]',
+    learning: 'bg-[#eff6ff] text-[#3452b3] border-[#d6e4ff]',
+    locked: 'bg-[#f8f8ff] text-slate-500 border-[#e5e7f5]',
+  }[item.status]
+
+  const difficultyTone = item.difficulty === 'easy'
+    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+    : 'bg-amber-50 text-amber-700 border-amber-200'
+
   return (
-    <pre className="overflow-x-auto rounded-2xl border border-gray-800 bg-gray-950 p-4 text-sm leading-7 text-cyan-100">
-      <code>{code}</code>
-    </pre>
+    <div className={`rounded-[22px] border p-4 transition ${statusTone}`}>
+      <div className="flex items-start gap-4">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#dff6ff] text-2xl">
+          {item.status === 'locked' ? '🔒' : item.status === 'learning' ? '🧠' : '🧩'}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="font-bold text-[#1e1b5f]">{item.title}</p>
+            <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${badgeTone}`}>
+              {item.status === 'locked' ? 'Locked' : item.status === 'learning' ? 'Learning exercise' : 'Recommended'}
+            </span>
+            <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${difficultyTone}`}>
+              {item.difficulty}
+            </span>
+          </div>
+          <p className="mt-2 text-sm leading-6 text-slate-600">{item.description}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function InfoPanel({
+  title,
+  children,
+}: {
+  title: string
+  children: ReactNode
+}) {
+  return (
+    <section className="rounded-[24px] border border-gray-800 bg-slate-950 p-5">
+      <p className="text-xs font-bold uppercase tracking-[0.24em] text-gray-500">{title}</p>
+      <div className="mt-4">{children}</div>
+    </section>
   )
 }
 
@@ -545,7 +654,7 @@ function LocalStep({
 }: {
   number: string
   title: string
-  children: React.ReactNode
+  children: ReactNode
 }) {
   return (
     <li className="flex gap-3">
@@ -554,7 +663,7 @@ function LocalStep({
       </span>
       <div className="min-w-0">
         <p className="text-sm font-semibold text-white">{title}</p>
-        <div className="mt-2 overflow-x-auto rounded-xl bg-gray-950 px-3 py-2 font-mono text-xs text-cyan-200">
+        <div className="mt-2 overflow-x-auto rounded-xl bg-slate-900 px-3 py-2 font-mono text-xs text-cyan-200">
           {children}
         </div>
       </div>

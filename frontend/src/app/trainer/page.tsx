@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import { api, type Exercise, type TrainerTopic } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
@@ -42,7 +42,10 @@ export default function TrainerPage() {
   const allConcepts: Array<TrainerTopic | BuiltInTrainerConcept> = topics.length > 0
     ? topics
     : builtInTrainerConcepts
-  const concepts = allConcepts.map((topic) => ({
+  const concepts = allConcepts.map((topic, index) => ({
+        code: 'conceptCode' in topic && typeof topic.conceptCode === 'string'
+          ? topic.conceptCode
+          : String(index + 1).padStart(2, '0'),
         title: topic.title,
         description: 'summary' in topic && typeof topic.summary === 'string'
           ? topic.summary
@@ -50,103 +53,165 @@ export default function TrainerPage() {
         slug: topic.slug,
         category: topic.module === 'core' ? 'Go' : topic.module,
         exercises: topic.exercises?.length || 0,
+        microSkills: 'microSkills' in topic && Array.isArray(topic.microSkills)
+          ? topic.microSkills.slice(0, 3)
+          : [],
       }))
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <section className="grid gap-8 border-b border-gray-800 pb-10 lg:grid-cols-[1fr_auto] lg:items-end">
-        <div className="max-w-3xl">
-          <div className="mb-4 inline-flex rounded-full border border-violet-500/25 bg-violet-500/10 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-300">
-            Учись через практику
+    <main className="min-h-screen bg-[#f5f6ff]">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="rounded-[28px] border border-[#d9dcfb] bg-white px-6 py-7 shadow-[0_18px_60px_rgba(79,70,229,0.08)] sm:px-8">
+            <div className="flex flex-wrap items-start gap-5">
+              <div className="flex h-20 w-20 items-center justify-center rounded-[26px] border-[3px] border-[#2b237c] bg-[#f7f8ff] font-mono text-3xl font-black text-[#2b237c]">
+                Go
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-3">
+                  <h1 className="text-4xl font-black tracking-tight text-[#20184a] sm:text-5xl">Concepts</h1>
+                  <span className="rounded-full border border-[#cfd4ff] bg-[#eef1ff] px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-[#5850d6]">
+                    Go track
+                  </span>
+                </div>
+                <p className="mt-4 max-w-3xl text-base leading-8 text-[#5f6283] sm:text-lg">
+                  Здесь мы изучаем Go так, чтобы человек не застревал в теории. Каждая тема — это
+                  короткое объяснение, паттерн, живые примеры и потом упражнение на закрепление,
+                  как в хорошем concept-треке.
+                </p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  <Pill>Сначала понять</Pill>
+                  <Pill>Потом попробовать</Pill>
+                  <Pill>И сразу закрепить</Pill>
+                </div>
+              </div>
+            </div>
           </div>
-          <h1 className="text-4xl font-black text-white sm:text-5xl">Тренажёр Go</h1>
-          <p className="mt-4 text-lg leading-relaxed text-gray-400">
-            Это отдельная рабочая зона от курса: здесь нет длинных лекций, только понятный цикл
-            <span className="text-white"> понять → закрепить → повторить</span>. Открыл тему, быстро схватил идею,
-            увидел рабочий паттерн и сразу сделал mini-drill в песочнице или локально.
-          </p>
-          <div className="mt-5 flex flex-wrap gap-2 text-xs text-gray-400">
-            <span className="rounded-full border border-gray-700 bg-gray-900 px-3 py-1">Курс = путь и проекты</span>
-            <span className="rounded-full border border-gray-700 bg-gray-900 px-3 py-1">Тренажёр = темы и drills</span>
-            <span className="rounded-full border border-gray-700 bg-gray-900 px-3 py-1">Bootcamp = подписка и уровни</span>
-          </div>
-        </div>
 
-        <div className="rounded-2xl border border-gray-800 bg-gray-900 px-5 py-4">
-          <div className="flex items-center justify-between gap-8 text-sm">
-            <span className="text-gray-500">Задач решено</span>
-            <span className="font-bold text-white">{completedExercises} / {exercises.length}</span>
-          </div>
-          <div className="mt-3 h-2 w-56 max-w-full overflow-hidden rounded-full bg-gray-800">
-            <div
-              className="h-full rounded-full bg-violet-400 transition-all"
-              style={{ width: `${exercises.length ? (completedExercises / exercises.length) * 100 : 0}%` }}
-            />
-          </div>
-        </div>
-      </section>
+          <aside className="rounded-[28px] border border-[#d9dcfb] bg-white px-6 py-7 shadow-[0_18px_60px_rgba(79,70,229,0.08)]">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold text-[#5f6283]">Прогресс по тренажёру</p>
+                <p className="mt-1 text-3xl font-black text-[#20184a]">{completedExercises} / {exercises.length || concepts.length}</p>
+              </div>
+              <div className="rounded-2xl bg-[#f5f6ff] px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#6f63ff]">
+                Practice
+              </div>
+            </div>
+            <div className="mt-5 h-3 overflow-hidden rounded-full bg-[#eceffd]">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-[#6f63ff] to-[#8ab4ff] transition-all"
+                style={{ width: `${(exercises.length || concepts.length) ? (completedExercises / (exercises.length || concepts.length)) * 100 : 0}%` }}
+              />
+            </div>
+            <div className="mt-6 space-y-3 text-sm text-[#5f6283]">
+              <p>Тренажёр — это отдельная зона от курса: без перегруза, с простыми кусками теории.</p>
+              <p>Идеальный сценарий: открыть тему, разобраться за 10–15 минут и сразу закрепить в quick lab.</p>
+            </div>
+          </aside>
+        </section>
 
-      <nav className="mt-8 grid gap-3 sm:grid-cols-3">
-        {viewOptions.map((option) => (
-          <button
-            key={option.id}
-            onClick={() => setView(option.id)}
-            className={`rounded-2xl border p-4 text-left transition-colors ${
-              view === option.id
-                ? 'border-violet-500/50 bg-violet-500/10'
-                : 'border-gray-800 bg-gray-900 hover:border-gray-700'
-            }`}
-          >
-            <p className={`font-bold ${view === option.id ? 'text-violet-300' : 'text-white'}`}>{option.label}</p>
-            <p className="mt-1 text-xs text-gray-500">{option.description}</p>
-          </button>
-        ))}
-      </nav>
+        <nav className="mt-8 grid gap-3 md:grid-cols-3">
+          {viewOptions.map((option) => (
+            <button
+              key={option.id}
+              onClick={() => setView(option.id)}
+              className={`rounded-[24px] border px-5 py-4 text-left transition-all ${
+                view === option.id
+                  ? 'border-[#7467ff] bg-white shadow-[0_10px_30px_rgba(111,99,255,0.12)]'
+                  : 'border-[#d9dcfb] bg-[#f7f8ff] hover:border-[#c7cbf7] hover:bg-white'
+              }`}
+            >
+              <p className={`text-lg font-black ${view === option.id ? 'text-[#2b237c]' : 'text-[#3a3567]'}`}>{option.label}</p>
+              <p className="mt-1 text-sm leading-6 text-[#666b8e]">{option.description}</p>
+            </button>
+          ))}
+        </nav>
 
       {view === 'concepts' && (
         <section className="mt-10">
           <div className="mb-6 flex items-end justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-black text-white">Трек концептов</h2>
-              <p className="mt-2 text-sm text-gray-500">
-                Иди сверху вниз: сначала каркас языка, потом ветвления, данные, сущности и работа с API.
+              <h2 className="text-3xl font-black text-[#20184a]">Concept track</h2>
+              <p className="mt-2 text-sm leading-6 text-[#666b8e]">
+                Идём как в Exercism: у каждой темы есть простое объяснение, кодовые паттерны и
+                упражнения, которые открываются по мере движения.
               </p>
             </div>
-            <span className="text-sm text-gray-500">{concepts.length} тем</span>
+            <span className="text-sm font-semibold text-[#666b8e]">{concepts.length} тем</span>
           </div>
 
           {loading ? (
             <div className="space-y-3">
-              {[1, 2, 3, 4].map((item) => <div key={item} className="h-28 animate-pulse rounded-2xl bg-gray-900" />)}
+              {[1, 2, 3, 4].map((item) => (
+                <div key={item} className="h-36 animate-pulse rounded-[28px] bg-white" />
+              ))}
             </div>
           ) : (
-            <div className="overflow-hidden rounded-3xl border border-gray-800 bg-gray-900">
-              {concepts.map((concept, index) => {
+            <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+              <div className="space-y-4">
+                {concepts.map((concept, index) => {
                 const href = `/trainer/topic/${concept.slug}`
 
                 return (
                   <Link
                     key={`${concept.title}-${index}`}
                     href={href}
-                    className="group grid gap-4 border-b border-gray-800 p-5 transition-colors last:border-b-0 hover:bg-gray-800/70 sm:grid-cols-[48px_1fr_auto] sm:items-center"
+                    className="group block rounded-[28px] border border-[#d9dcfb] bg-white p-5 shadow-[0_12px_36px_rgba(79,70,229,0.08)] transition-all hover:-translate-y-0.5 hover:border-[#8a80ff] hover:shadow-[0_18px_44px_rgba(79,70,229,0.12)]"
                   >
-                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-gray-700 bg-gray-950 font-mono text-sm font-black text-violet-300">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="font-bold text-white transition-colors group-hover:text-violet-300">{concept.title}</h3>
-                        <span className="rounded-full bg-gray-800 px-2.5 py-1 text-[11px] text-gray-500">{concept.category}</span>
+                    <div className="grid gap-5 sm:grid-cols-[76px_minmax(0,1fr)_auto] sm:items-start">
+                      <div className="flex h-[76px] w-[76px] items-center justify-center rounded-[24px] border-[3px] border-[#2b237c] bg-[#f7f8ff] font-mono text-2xl font-black text-[#2b237c]">
+                        {concept.code}
                       </div>
-                      <p className="mt-2 line-clamp-2 text-sm text-gray-500">{concept.description}</p>
-                    </div>
-                    <div className="flex items-center gap-4 text-xs text-gray-500">
-                      <span>{concept.exercises || 1} практика</span>
-                      <span className="text-lg text-gray-600 transition-colors group-hover:text-violet-300">→</span>
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="text-2xl font-black tracking-tight text-[#20184a] transition-colors group-hover:text-[#4e46c8]">
+                            {concept.title}
+                          </h3>
+                          <span className="rounded-full border border-[#d8dcff] bg-[#f5f6ff] px-2.5 py-1 text-[11px] font-semibold text-[#666b8e]">
+                            {concept.category}
+                          </span>
+                          <span className="rounded-full border border-[#d8dcff] bg-white px-2.5 py-1 text-[11px] font-semibold text-[#666b8e]">
+                            {concept.exercises || 1} exercise
+                          </span>
+                        </div>
+                        <p className="mt-3 max-w-2xl text-sm leading-7 text-[#5f6283]">{concept.description}</p>
+                        {concept.microSkills.length > 0 && (
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            {concept.microSkills.map((skill) => (
+                              <span
+                                key={skill}
+                                className="rounded-full border border-[#d8dcff] bg-[#f7f8ff] px-3 py-1 text-xs font-medium text-[#545a84]"
+                              >
+                                {skill}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-start justify-end">
+                        <span className="rounded-full bg-[#eef1ff] px-4 py-2 text-sm font-bold text-[#5a52d5]">
+                          Открыть →
+                        </span>
+                      </div>
                     </div>
                   </Link>
                 )
-              })}
+                })}
+              </div>
+
+              <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
+                <SidebarCard
+                  title="Как проходить темы"
+                  eyebrow="Playbook"
+                  body="1. Читаешь идею простым языком. 2. Смотришь паттерн. 3. Делаешь упражнение в quick lab. 4. Идёшь дальше только после маленькой победы."
+                />
+                <SidebarCard
+                  title="Что внутри каждой темы"
+                  eyebrow="Structure"
+                  body="About → синтаксис → паттерн → частые ошибки → мини-практика. Мы убираем лишнее и оставляем только то, что реально помогает писать код."
+                />
+              </aside>
             </div>
           )}
         </section>
@@ -155,8 +220,10 @@ export default function TrainerPage() {
       {view === 'practice' && (
         <section className="mt-10">
           <div className="mb-6">
-            <h2 className="text-2xl font-black text-white">Самостоятельные задачи</h2>
-            <p className="mt-2 text-sm text-gray-500">Используй после концептов, когда хочешь проверить себя без подробной теории.</p>
+            <h2 className="text-3xl font-black text-[#20184a]">Самостоятельные задачи</h2>
+            <p className="mt-2 text-sm leading-6 text-[#666b8e]">
+              Здесь уже меньше объяснений и больше самостоятельности. Отлично подходит после concept track.
+            </p>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             {exercises.map((exercise) => {
@@ -165,19 +232,19 @@ export default function TrainerPage() {
                 <Link
                   key={exercise.id}
                   href={`/trainer/${exercise.id}`}
-                  className="rounded-2xl border border-gray-800 bg-gray-900 p-5 transition-colors hover:border-violet-500/40"
+                  className="rounded-[28px] border border-[#d9dcfb] bg-white p-5 shadow-[0_12px_36px_rgba(79,70,229,0.08)] transition-all hover:border-[#8a80ff] hover:shadow-[0_18px_44px_rgba(79,70,229,0.12)]"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                      completed ? 'bg-emerald-500/10 text-emerald-300' : 'bg-gray-800 text-gray-500'
+                      completed ? 'bg-emerald-100 text-emerald-700' : 'bg-[#f5f6ff] text-[#666b8e]'
                     }`}>
                       {completed ? 'Выполнено' : exercise.difficulty}
                     </span>
-                    <span className="font-mono text-xs text-gray-600">#{exercise.order}</span>
+                    <span className="font-mono text-xs text-[#8b90b3]">#{exercise.order}</span>
                   </div>
-                  <h3 className="mt-5 font-bold text-white">{exercise.title}</h3>
-                  <p className="mt-2 line-clamp-2 text-sm text-gray-500">{exercise.description}</p>
-                  <p className="mt-5 text-xs text-violet-300">{exercise.category} →</p>
+                  <h3 className="mt-5 text-xl font-black text-[#20184a]">{exercise.title}</h3>
+                  <p className="mt-2 line-clamp-2 text-sm leading-7 text-[#5f6283]">{exercise.description}</p>
+                  <p className="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-[#5a52d5]">{exercise.category} →</p>
                 </Link>
               )
             })}
@@ -190,6 +257,33 @@ export default function TrainerPage() {
           <FlashcardsTab />
         </section>
       )}
+      </div>
     </main>
+  )
+}
+
+function Pill({ children }: { children: ReactNode }) {
+  return (
+    <span className="rounded-full border border-[#d8dcff] bg-[#f7f8ff] px-3 py-1.5 text-xs font-semibold text-[#5f6283]">
+      {children}
+    </span>
+  )
+}
+
+function SidebarCard({
+  eyebrow,
+  title,
+  body,
+}: {
+  eyebrow: string
+  title: string
+  body: string
+}) {
+  return (
+    <div className="rounded-[28px] border border-[#d9dcfb] bg-white p-5 shadow-[0_12px_36px_rgba(79,70,229,0.08)]">
+      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#6f63ff]">{eyebrow}</p>
+      <h3 className="mt-3 text-xl font-black text-[#20184a]">{title}</h3>
+      <p className="mt-3 text-sm leading-7 text-[#5f6283]">{body}</p>
+    </div>
   )
 }
