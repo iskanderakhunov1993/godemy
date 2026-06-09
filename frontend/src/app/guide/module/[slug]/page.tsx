@@ -81,6 +81,16 @@ export default function ModulePage() {
             </div>
           </div>
         )}
+        <div className="mt-5 rounded-2xl border border-gray-800 bg-gray-900 p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.24em] text-violet-300">Как учиться в этом спринте</p>
+          <p className="mt-2 text-sm leading-6 text-gray-300">
+            Сначала пройди уроки этого спринта по порядку, потом добей узкие навыки в тренажёре.
+            Так ты получишь и продуктовый контекст, и короткие технические повторы без перегруза.
+          </p>
+          <Link href="/trainer" className="mt-3 inline-flex text-sm font-semibold text-violet-300 hover:text-violet-200">
+            Открыть тренажёр →
+          </Link>
+        </div>
       </div>
 
       {/* Topics list (or lessons directly if single topic) */}

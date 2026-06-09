@@ -182,6 +182,9 @@ function TrainerTopicContent({ slug }: { slug: string }) {
 	// 3. верни результат
 	return ""
 }`
+  const builtInMicroSkills = 'microSkills' in topic && Array.isArray(topic.microSkills) ? topic.microSkills : []
+  const builtInCommonMistakes = 'commonMistakes' in topic && Array.isArray(topic.commonMistakes) ? topic.commonMistakes : []
+  const builtInRelatedSprint = 'relatedSprint' in topic && typeof topic.relatedSprint === 'string' ? topic.relatedSprint : ''
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
@@ -211,12 +214,51 @@ function TrainerTopicContent({ slug }: { slug: string }) {
             <p className="mt-4 text-lg leading-relaxed text-gray-400">
               {topic.explanation || activeExercise?.description || 'Разбери концепт и сразу примени его в коротком упражнении.'}
             </p>
+            {builtInRelatedSprint && (
+              <p className="mt-4 inline-flex rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-300">
+                Связано со спринтом: {builtInRelatedSprint}
+              </p>
+            )}
           </div>
           <Link href="/trainer" className="text-sm font-semibold text-violet-300 hover:text-violet-200">
             Все концепты →
           </Link>
         </div>
       </header>
+
+      <section className="mt-8 grid gap-4 md:grid-cols-3">
+        <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+          <p className="text-xs font-bold uppercase tracking-widest text-cyan-300">Что поймёшь</p>
+          <p className="mt-3 text-sm leading-6 text-gray-300">
+            {'summary' in topic && typeof topic.summary === 'string'
+              ? topic.summary
+              : 'Короткая теория по теме, чтобы перейти к практике без перегруза.'}
+          </p>
+        </div>
+        <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+          <p className="text-xs font-bold uppercase tracking-widest text-violet-300">Микро-навыки</p>
+          <ul className="mt-3 space-y-2 text-sm leading-6 text-gray-300">
+            {(builtInMicroSkills.length > 0 ? builtInMicroSkills : [
+              'прочитать форму кода',
+              'понять, где вход и выход',
+              'закрепить паттерн маленькой задачей',
+            ]).map((skill) => (
+              <li key={skill} className="flex gap-2">
+                <span className="text-violet-300">•</span>
+                <span>{skill}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+          <p className="text-xs font-bold uppercase tracking-widest text-amber-300">Как проходить</p>
+          <ol className="mt-3 space-y-2 text-sm leading-6 text-gray-300">
+            <li>1. Сначала прочитай идею и синтаксис.</li>
+            <li>2. Открой пример в песочнице и покрути входные данные.</li>
+            <li>3. После этого реши mini-задачу без копипаста.</li>
+          </ol>
+        </div>
+      </section>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(420px,0.82fr)] lg:items-start">
         <article className="space-y-6">
@@ -276,7 +318,24 @@ function TrainerTopicContent({ slug }: { slug: string }) {
             <CodeBlock code={pattern} />
           </LessonSection>
 
-          <LessonSection number={examples.length > 0 ? '05' : '04'} title="Задание">
+          <LessonSection number={examples.length > 0 ? '05' : '04'} title="Частые ошибки">
+            <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5">
+              <ul className="space-y-3 text-sm leading-6 text-gray-300">
+                {(builtInCommonMistakes.length > 0 ? builtInCommonMistakes : [
+                  'смешивают бизнес-логику и вывод в консоль',
+                  'пытаются решить задачу слишком сложно',
+                  'не проверяют, что именно должно быть на выходе',
+                ]).map((mistake) => (
+                  <li key={mistake} className="flex gap-3">
+                    <span className="mt-1 text-amber-300">⚠</span>
+                    <span>{mistake}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </LessonSection>
+
+          <LessonSection number={examples.length > 0 ? '06' : '05'} title="Задание">
             {topic.exercises?.length ? (
               <>
                 {topic.exercises.length > 1 && (

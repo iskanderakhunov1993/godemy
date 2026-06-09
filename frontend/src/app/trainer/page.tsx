@@ -10,9 +10,9 @@ import { builtInTrainerConcepts, type BuiltInTrainerConcept } from '@/lib/traine
 type View = 'concepts' | 'practice' | 'cards'
 
 const viewOptions: Array<{ id: View; label: string; description: string }> = [
-  { id: 'concepts', label: 'Концепты', description: 'Теория и практика по шагам' },
-  { id: 'practice', label: 'Задачи', description: 'Закрепление без подсказок' },
-  { id: 'cards', label: 'Карточки', description: 'Быстрое повторение' },
+  { id: 'concepts', label: 'Понять', description: 'Короткая теория, синтаксис и паттерны' },
+  { id: 'practice', label: 'Закрепить', description: 'Самостоятельные задачи без лишних подсказок' },
+  { id: 'cards', label: 'Повторить', description: 'Быстрое повторение терминов и форм' },
 ]
 
 export default function TrainerPage() {
@@ -61,8 +61,9 @@ export default function TrainerPage() {
           </div>
           <h1 className="text-4xl font-black text-white sm:text-5xl">Тренажёр Go</h1>
           <p className="mt-4 text-lg leading-relaxed text-gray-400">
-            Это отдельная рабочая зона от курса: здесь нет сюжетных спринтов, только короткая теория,
-            паттерны, советы и практика по темам. Можно работать в песочнице на странице или повторять локально.
+            Это отдельная рабочая зона от курса: здесь нет длинных лекций, только понятный цикл
+            <span className="text-white"> понять → закрепить → повторить</span>. Открыл тему, быстро схватил идею,
+            увидел рабочий паттерн и сразу сделал mini-drill в песочнице или локально.
           </p>
           <div className="mt-5 flex flex-wrap gap-2 text-xs text-gray-400">
             <span className="rounded-full border border-gray-700 bg-gray-900 px-3 py-1">Курс = путь и проекты</span>
@@ -107,7 +108,9 @@ export default function TrainerPage() {
           <div className="mb-6 flex items-end justify-between gap-4">
             <div>
               <h2 className="text-2xl font-black text-white">Трек концептов</h2>
-              <p className="mt-2 text-sm text-gray-500">Проходи сверху вниз: каждый урок опирается на предыдущий.</p>
+              <p className="mt-2 text-sm text-gray-500">
+                Иди сверху вниз: сначала каркас языка, потом ветвления, данные, сущности и работа с API.
+              </p>
             </div>
             <span className="text-sm text-gray-500">{concepts.length} тем</span>
           </div>

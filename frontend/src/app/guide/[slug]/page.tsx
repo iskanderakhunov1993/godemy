@@ -8,6 +8,7 @@ import { useAuthStore } from '@/lib/store'
 import { markActivityToday, saveLastVisited } from '@/lib/streak'
 import { LessonContentRenderer, hasGateableTasks, TasksStatus } from '@/components/LessonContent'
 import { getStoryCourseLesson, storyCourseLessons, storyCourseLevels } from '@/lib/storyCourse'
+import { getRecommendedTrainerConcepts } from '@/lib/trainerConcepts'
 
 export default function LessonPage() {
   return (
@@ -107,6 +108,12 @@ function LessonContent() {
   const completed = isCompleted('lesson', lesson.id)
   const allTasksDone = tasksStatus === null || tasksStatus.done >= tasksStatus.total
   const canProceed = completed || allTasksDone
+  const relatedTrainerConcepts = getRecommendedTrainerConcepts({
+    module: lesson.module,
+    category: lesson.category,
+    title: lesson.title,
+    description: lesson.description,
+  })
 
   const courseLessons = allLessons
   const currentLevelIndex = levels.findIndex((l) => l.slug === lesson.level)
@@ -186,6 +193,43 @@ function LessonContent() {
                 }}
               />
           </div>
+
+          {relatedTrainerConcepts.length > 0 && (
+            <section className="mt-10 rounded-3xl border border-cyan-500/20 bg-cyan-500/5 p-6">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.24em] text-cyan-300">Подкрепить навык</p>
+                  <h2 className="mt-2 text-2xl font-semibold text-white">Что потренировать после урока</h2>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-300">
+                    Курс даёт сюжет и проектный контекст, а тренажёр помогает быстро добить конкретный навык руками.
+                  </p>
+                </div>
+                <Link href="/trainer" className="text-sm font-semibold text-cyan-300 hover:text-cyan-200">
+                  Открыть весь тренажёр →
+                </Link>
+              </div>
+
+              <div className="mt-5 grid gap-4 md:grid-cols-3">
+                {relatedTrainerConcepts.map((concept) => (
+                  <Link
+                    key={concept.slug}
+                    href={`/trainer/topic/${concept.slug}`}
+                    className="rounded-2xl border border-white/10 bg-gray-950/50 p-5 transition-colors hover:border-cyan-400/40 hover:bg-gray-900"
+                  >
+                    <p className="text-sm font-semibold text-white">{concept.title}</p>
+                    <p className="mt-2 text-sm leading-6 text-gray-400">{concept.summary}</p>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {concept.microSkills.slice(0, 2).map((skill) => (
+                        <span key={skill} className="rounded-full border border-gray-800 bg-gray-900 px-2.5 py-1 text-[11px] text-gray-400">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Actions */}
           <div className="mt-10 pt-6 border-t border-gray-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
