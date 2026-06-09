@@ -525,6 +525,12 @@ function ProfileContent() {
                 </div>
               ))}
             </div>
+
+            <div className="mt-4 rounded-2xl border border-gray-800 bg-gray-900/60 px-4 py-3 text-sm text-gray-400">
+              {earnedCount > 0
+                ? 'Открывай раздел сертификатов, чтобы выпустить, посмотреть и скачать свои документы.'
+                : 'Сертификаты появятся после полного завершения бесплатного курса, тренажёра или буткемпа.'}
+            </div>
           </section>
 
           {/* Feedback quick link */}

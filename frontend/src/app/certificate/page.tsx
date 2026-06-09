@@ -21,11 +21,19 @@ function formatDate(value?: string) {
   }).format(source)
 }
 
+function lockedStateTitle(certificate: CertificateStatus) {
+  if (certificate.earned && certificate.fullNameRequired) return 'Нужно заполнить ФИО'
+  if (certificate.earned && !certificate.downloadAllowed) return 'Сертификат готов'
+  return 'Сертификат пока недоступен'
+}
+
 function CertificateContent() {
   const searchParams = useSearchParams()
   const { token, user } = useAuthStore()
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [sending, setSending] = useState(false)
+  const [flashMessage, setFlashMessage] = useState<string | null>(null)
 
   const type = (searchParams.get('type') || 'course') as CertificateStatus['id']
   const autoprint = searchParams.get('print') === '1'
@@ -47,6 +55,20 @@ function CertificateContent() {
   )
 
   const theme = CERT_THEME[type] || CERT_THEME.course
+
+  const sendToEmail = async () => {
+    if (!certificate?.emailAllowed) return
+    setSending(true)
+    setFlashMessage(null)
+    try {
+      const response = await api.emailCertificate(certificate.id)
+      setFlashMessage(response.message)
+    } catch (error) {
+      setFlashMessage(error instanceof Error ? error.message : 'Не удалось отправить письмо')
+    } finally {
+      setSending(false)
+    }
+  }
 
   useEffect(() => {
     if (autoprint && certificate?.downloadAllowed) {
@@ -90,7 +112,7 @@ function CertificateContent() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="rounded-3xl border border-gray-800 bg-gray-900 p-8 max-w-xl">
-          <h1 className="text-3xl font-black text-white">Сертификат пока недоступен</h1>
+          <h1 className="text-3xl font-black text-white">{lockedStateTitle(certificate)}</h1>
           <p className="mt-4 text-gray-400 leading-7">{certificate.lockedReason || 'Сначала заверши программу.'}</p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href="/certificates" className="rounded-xl border border-gray-700 px-5 py-3 font-semibold text-gray-200 hover:border-gray-500 transition-colors">
@@ -124,6 +146,15 @@ function CertificateContent() {
           ← Назад к сертификатам
         </Link>
         <div className="flex flex-wrap gap-3">
+          {certificate.emailAllowed && (
+            <button
+              onClick={sendToEmail}
+              disabled={sending}
+              className="rounded-xl border border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/20 disabled:opacity-50 text-violet-200 font-semibold px-5 py-2.5 text-sm transition-colors"
+            >
+              {sending ? 'Отправляем...' : 'Выслать на почту'}
+            </button>
+          )}
           {certificate.downloadAllowed ? (
             <button
               onClick={() => window.print()}
@@ -141,6 +172,14 @@ function CertificateContent() {
           )}
         </div>
       </div>
+
+      {flashMessage && (
+        <div className="no-print max-w-6xl mx-auto px-4">
+          <div className="rounded-2xl border border-violet-500/20 bg-violet-500/10 px-4 py-3 text-sm text-violet-100">
+            {flashMessage}
+          </div>
+        </div>
+      )}
 
       <div className="min-h-[80vh] flex items-center justify-center px-4 py-6 bg-[#090b14]">
         <div
@@ -206,6 +245,12 @@ function CertificateContent() {
               <p className="mt-6 max-w-2xl text-lg leading-8 text-white/65">
                 и получил(а) практические знания и навыки для разработки современных и надёжных продуктов на Go.
               </p>
+
+              {!certificate.downloadAllowed && (
+                <div className="mt-8 inline-flex max-w-2xl rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm leading-6 text-amber-100">
+                  Сертификат уже выпущен и доступен для просмотра. Скачать PDF и отправить его на почту можно после активации подписки Godemy Pro.
+                </div>
+              )}
 
               <div className="mt-16 flex items-end justify-between gap-6">
                 <div>

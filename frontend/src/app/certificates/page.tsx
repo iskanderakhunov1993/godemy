@@ -15,6 +15,55 @@ function formatEarnedDate(value?: string) {
   }).format(new Date(value))
 }
 
+function certificateEmoji(id: CertificateStatus['id']) {
+  switch (id) {
+    case 'course':
+      return '🎓'
+    case 'trainer':
+      return '⚡'
+    case 'bootcamp':
+      return '🏆'
+    default:
+      return '📘'
+  }
+}
+
+function getCertificateState(cert: CertificateStatus) {
+  if (!cert.earned) {
+    return {
+      label: 'В процессе',
+      tone: 'bg-gray-800 text-gray-400 border border-gray-700',
+      panelTone: 'border-gray-800 bg-gray-900/70',
+      summary: 'Заверши программу, чтобы выпустить сертификат.',
+    }
+  }
+
+  if (!cert.previewAllowed) {
+    return {
+      label: 'Нужно ФИО',
+      tone: 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/20',
+      panelTone: 'border-cyan-500/30 bg-[radial-gradient(circle_at_top_right,rgba(6,182,212,0.14),rgba(17,24,39,0.96)_42%)]',
+      summary: 'Сертификат уже заработан, но нужно заполнить ФИО для выпуска.',
+    }
+  }
+
+  if (!cert.downloadAllowed) {
+    return {
+      label: 'Нужен Pro',
+      tone: 'bg-amber-500/15 text-amber-300 border border-amber-500/20',
+      panelTone: 'border-violet-500/30 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.18),rgba(17,24,39,0.96)_42%)]',
+      summary: 'Сертификат готов. Просмотр доступен, скачивание и email — по подписке.',
+    }
+  }
+
+  return {
+    label: 'Готов',
+    tone: 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20',
+    panelTone: 'border-violet-500/30 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.18),rgba(17,24,39,0.96)_42%)] shadow-[0_16px_50px_rgba(76,29,149,0.18)]',
+    summary: 'Сертификат полностью доступен: просмотр, PDF и отправка на почту.',
+  }
+}
+
 function CertificatesContent() {
   const router = useRouter()
   const { user, token, setAuth } = useAuthStore()
@@ -42,6 +91,19 @@ function CertificatesContent() {
 
   const certificates = userProfile?.certificates ?? []
   const earnedCount = useMemo(() => certificates.filter((cert) => cert.earned).length, [certificates])
+  const readyToDownloadCount = useMemo(() => certificates.filter((cert) => cert.downloadAllowed).length, [certificates])
+  const needsFullNameCount = useMemo(() => certificates.filter((cert) => cert.earned && !cert.previewAllowed).length, [certificates])
+  const sortedCertificates = useMemo(() => {
+    return [...certificates].sort((a, b) => {
+      const score = (cert: CertificateStatus) => {
+        if (cert.downloadAllowed) return 4
+        if (cert.previewAllowed) return 3
+        if (cert.earned) return 2
+        return 1
+      }
+      return score(b) - score(a)
+    })
+  }, [certificates])
 
   const saveFullName = async () => {
     if (!token || !user) return
@@ -98,10 +160,29 @@ function CertificatesContent() {
           </div>
         </div>
 
+        <div className="mt-5 grid gap-3 md:grid-cols-3">
+          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-emerald-300">Полностью доступны</p>
+            <p className="mt-2 text-3xl font-black text-white">{readyToDownloadCount}</p>
+            <p className="mt-2 text-sm text-emerald-100/80">Можно скачать PDF и выслать на почту.</p>
+          </div>
+          <div className="rounded-2xl border border-violet-500/20 bg-violet-500/10 p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-violet-300">Уже заработаны</p>
+            <p className="mt-2 text-3xl font-black text-white">{earnedCount}</p>
+            <p className="mt-2 text-sm text-violet-100/80">Сертификаты, которые уже можно выпустить или открыть.</p>
+          </div>
+          <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-cyan-300">Требуют ФИО</p>
+            <p className="mt-2 text-3xl font-black text-white">{needsFullNameCount}</p>
+            <p className="mt-2 text-sm text-cyan-100/80">Заполни имя и фамилию, чтобы выпустить сертификат.</p>
+          </div>
+        </div>
+
         <div className="mt-5 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-4">
           <p className="text-sm text-cyan-200 font-semibold mb-2">ФИО для сертификата</p>
           <div className="flex flex-col sm:flex-row gap-2">
             <input
+              id="certificate-full-name"
               value={fullNameDraft}
               onChange={(e) => setFullNameDraft(e.target.value)}
               placeholder="Например: Иванов Иван Иванович"
@@ -128,28 +209,27 @@ function CertificatesContent() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-        {certificates.map((cert) => (
-          <article
-            key={cert.id}
-            className={`rounded-[28px] border p-6 transition-all ${
-              cert.earned
-                ? 'border-violet-500/30 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.18),rgba(17,24,39,0.96)_42%)] shadow-[0_16px_50px_rgba(76,29,149,0.18)]'
-                : 'border-gray-800 bg-gray-900/70'
-            }`}
-          >
+        {sortedCertificates.map((cert) => {
+          const state = getCertificateState(cert)
+
+          return (
+            <article
+              key={cert.id}
+              className={`rounded-[28px] border p-6 transition-all ${state.panelTone}`}
+            >
             <div className="flex items-start justify-between gap-3">
               <div>
+                <div className="mb-3 text-3xl">{certificateEmoji(cert.id)}</div>
                 <p className="text-xs uppercase tracking-[0.2em] text-violet-300">{cert.subtitle}</p>
                 <h2 className="mt-2 text-2xl font-black text-white">{cert.title}</h2>
               </div>
-              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                cert.earned ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20' : 'bg-gray-800 text-gray-400 border border-gray-700'
-              }`}>
-                {cert.earned ? 'Доступен' : 'В процессе'}
+              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${state.tone}`}>
+                {state.label}
               </span>
             </div>
 
             <p className="mt-3 text-sm leading-7 text-gray-400">{cert.description}</p>
+            <p className="mt-2 text-sm text-gray-300">{state.summary}</p>
 
             <div className="mt-5 rounded-2xl border border-gray-800 bg-black/20 p-4">
               <div className="flex items-center justify-between text-xs text-gray-500">
@@ -193,6 +273,13 @@ function CertificatesContent() {
                 >
                   Открыть сертификат
                 </Link>
+              ) : cert.earned && cert.fullNameRequired ? (
+                <button
+                  onClick={() => document.getElementById('certificate-full-name')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-bold px-4 py-3 transition-colors"
+                >
+                  Заполнить ФИО
+                </button>
               ) : (
                 <Link
                   href={cert.ctaHref}
@@ -212,12 +299,19 @@ function CertificatesContent() {
                   >
                     Скачать PDF
                   </a>
-                ) : (
+                ) : cert.previewAllowed ? (
                   <Link
                     href="/bootcamp/buy"
                     className="flex items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-semibold px-4 py-2.5 transition-colors"
                   >
-                    Godemy Pro
+                    Открыть PDF с Pro
+                  </Link>
+                ) : (
+                  <Link
+                    href={cert.ctaHref}
+                    className="flex items-center justify-center rounded-xl border border-gray-700 bg-gray-900 text-gray-300 hover:border-gray-500 font-semibold px-4 py-2.5 transition-colors"
+                  >
+                    {cert.earned ? 'Выпустить' : 'Продолжить'}
                   </Link>
                 )}
 
@@ -229,18 +323,25 @@ function CertificatesContent() {
                   >
                     {emailingId === cert.id ? 'Отправляем...' : 'Выслать на почту'}
                   </button>
+                ) : cert.previewAllowed ? (
+                  <Link
+                    href="/bootcamp/buy"
+                    className="flex items-center justify-center rounded-xl border border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/20 text-violet-200 font-semibold px-4 py-2.5 transition-colors"
+                  >
+                    Email с Pro
+                  </Link>
                 ) : (
                   <button
                     disabled
                     className="rounded-xl border border-gray-800 bg-gray-900 text-gray-500 font-semibold px-4 py-2.5 cursor-not-allowed"
                   >
-                    Выслать на почту
+                    Пока недоступно
                   </button>
                 )}
               </div>
             </div>
           </article>
-        ))}
+        )})}
       </div>
     </div>
   )
