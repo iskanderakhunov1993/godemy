@@ -1,7 +1,17 @@
 'use client'
 
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import Link from 'next/link'
+import {
+  BookOpen,
+  Check,
+  Dumbbell,
+  Layers3,
+  LockKeyhole,
+  Map as MapIcon,
+  Play,
+  Sparkles,
+} from 'lucide-react'
 import { api, type Exercise, type TrainerTopic } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
 import FlashcardsTab from './FlashcardsTab'
@@ -22,9 +32,9 @@ type ConceptNode = {
   current: boolean
 }
 
-type MapRow = {
-  items: ConceptNode[]
-}
+type MapRow = { items: ConceptNode[] }
+type MapPoint = ConceptNode & { x: number; y: number; width: number }
+type MapEdge = { from: MapPoint; to: MapPoint }
 
 const viewOptions: Array<{ id: View; label: string; description: string }> = [
   { id: 'concepts', label: 'Маршрут', description: 'Проходи темы как связанный concept track' },
@@ -33,14 +43,24 @@ const viewOptions: Array<{ id: View; label: string; description: string }> = [
 ]
 
 const rowPattern = [1, 4, 2, 4, 3, 4]
-const rowHeight = 148
+const mapWidth = 960
+const mapRowGap = 132
 
 export default function TrainerPage() {
   const [view, setView] = useState<View>('concepts')
   const [topics, setTopics] = useState<TrainerTopic[]>([])
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [loading, setLoading] = useState(true)
-  const [localConceptProgress, setLocalConceptProgress] = useState<Record<string, boolean>>({})
+  const [localConceptProgress] = useState<Record<string, boolean>>(() => {
+    if (typeof window === 'undefined') return {}
+
+    return Object.fromEntries(
+      builtInTrainerConcepts.map((concept) => [
+        concept.slug,
+        window.localStorage.getItem(`trainer-concept-${concept.slug}`) === 'completed',
+      ])
+    )
+  })
   const { token, loadProgress, isCompleted } = useAuthStore()
 
   useEffect(() => {
@@ -52,23 +72,14 @@ export default function TrainerPage() {
         setTopics([...topicItems].sort((a, b) => a.order - b.order))
         setExercises([...exerciseItems].sort((a, b) => a.order - b.order))
       })
+      .catch(() => {
+        setTopics([])
+        setExercises([])
+      })
       .finally(() => setLoading(false))
 
     if (token) loadProgress()
   }, [token, loadProgress])
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-
-    const nextProgress = Object.fromEntries(
-      builtInTrainerConcepts.map((concept) => [
-        concept.slug,
-        window.localStorage.getItem(`trainer-concept-${concept.slug}`) === 'completed',
-      ])
-    )
-
-    setLocalConceptProgress(nextProgress)
-  }, [])
 
   const allConcepts: Array<TrainerTopic | BuiltInTrainerConcept> = topics.length > 0
     ? topics
@@ -121,192 +132,159 @@ export default function TrainerPage() {
 
   const conceptRows = useMemo(() => buildRows(conceptNodes), [conceptNodes])
   const mapPoints = useMemo(() => buildMapPoints(conceptRows), [conceptRows])
-  const conceptMapHeight = Math.max(520, conceptRows.length * rowHeight + 64)
+  const mapEdges = useMemo(() => buildMapEdges(conceptRows, mapPoints), [conceptRows, mapPoints])
+  const conceptMapHeight = Math.max(500, 96 + conceptRows.length * mapRowGap)
 
   return (
-    <main className="page-shell">
-      <div className="page-wrap py-8 sm:py-10">
-        <section className="section-frame rounded-[34px] px-6 py-8 sm:px-8 sm:py-10">
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
-            <div>
-              <div className="flex flex-wrap items-start gap-5">
-                <div className="flex h-20 w-20 items-center justify-center rounded-[28px] border border-violet-400/25 bg-white/[0.04] font-mono text-3xl font-black text-white shadow-[0_18px_40px_rgba(91,33,182,0.18)]">
-                  Go
-                </div>
-                <div className="min-w-0 flex-1">
-                  <span className="eyebrow">Trainer Journey</span>
-                  <h1 className="mt-4 text-4xl font-black tracking-[-0.05em] text-white sm:text-5xl">
-                    Твой маршрут по темам Go
-                  </h1>
-                  <p className="mt-4 max-w-3xl text-base leading-8 text-slate-300 sm:text-lg">
-                    Мы перестраиваем тренажёр как живую карту пути: каждая тема открывает следующую,
-                    теория связана с практикой, а человек визуально понимает, где он сейчас и что идёт дальше.
-                  </p>
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    <SoftPill>Concept-first</SoftPill>
-                    <SoftPill>Маленькие победы</SoftPill>
-                    <SoftPill>Связанный прогресс</SoftPill>
-                  </div>
-                </div>
+    <main className="min-h-screen bg-[#f7f8fc] text-[#1d2143]">
+      <div className="mx-auto max-w-[1180px] px-4 py-8 sm:px-6 sm:py-12">
+        <section className="flex flex-col gap-8 border-b border-[#e2e5f0] pb-9 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-center gap-5">
+            <div className="relative flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-[#dfe3f1] bg-white shadow-[0_12px_30px_rgba(50,45,120,0.10)]">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#5b4fd6] font-mono text-xl font-black text-white">
+                Go
               </div>
+              <Sparkles className="absolute -right-1 -top-1 h-6 w-6 rounded-full bg-[#eaf8dc] p-1 text-[#4c9c21]" />
             </div>
+            <div>
+              <p className="text-sm font-semibold text-[#625b92]">Go learning track</p>
+              <h1 className="mt-1 text-3xl font-extrabold sm:text-4xl">Твой путь через Go</h1>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-[#666b86] sm:text-base">
+                Изучай концепции по порядку, закрепляй их практикой и открывай следующие темы.
+              </p>
+            </div>
+          </div>
 
-            <aside className="surface-card rounded-[30px] p-5">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-sm font-semibold text-slate-300">Прогресс по concept track</p>
-                  <p className="mt-2 text-3xl font-black text-white">
-                    {completedConcepts} / {conceptNodes.length}
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-violet-400/20 bg-violet-400/10 px-3 py-2 text-xs font-bold uppercase tracking-[0.22em] text-violet-200">
-                  {completionPercent}%
-                </div>
+          <div className="w-full rounded-lg border border-[#e1e3ee] bg-white p-4 shadow-[0_8px_24px_rgba(50,45,120,0.06)] lg:w-[310px]">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase text-[#777c98]">Прогресс маршрута</p>
+                <p className="mt-1 text-xl font-extrabold">{completedConcepts} из {conceptNodes.length} тем</p>
               </div>
-              <div className="mt-5 h-3 overflow-hidden rounded-full bg-white/8">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-300 transition-all"
-                  style={{ width: `${completionPercent}%` }}
-                />
-              </div>
-              <div className="mt-6 space-y-3 text-sm leading-6 text-slate-400">
-                <p>Открыто тем: <span className="font-semibold text-slate-200">{unlockedConcepts}</span></p>
-                <p>
-                  Сейчас лучше всего идти в тему{' '}
-                  <span className="font-semibold text-white">{currentConcept?.title ?? 'Basics'}</span>,
-                  а потом закреплять её в quick lab.
-                </p>
-              </div>
-            </aside>
+              <span className="text-lg font-extrabold text-[#5b4fd6]">{completionPercent}%</span>
+            </div>
+            <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#eceefa]">
+              <div
+                className="h-full rounded-full bg-[#5b4fd6] transition-all"
+                style={{ width: `${completionPercent}%` }}
+              />
+            </div>
+            <p className="mt-3 text-xs text-[#777c98]">
+              Открыто: {unlockedConcepts}. Текущая тема: {currentConcept?.title ?? 'Basics'}.
+            </p>
           </div>
         </section>
 
-        <nav className="mt-8 grid gap-3 md:grid-cols-3">
+        <nav className="mt-7 flex gap-1 overflow-x-auto border-b border-[#e2e5f0]">
           {viewOptions.map((option) => (
             <button
               key={option.id}
               onClick={() => setView(option.id)}
-              className={`rounded-[24px] border px-5 py-4 text-left transition-all ${
+              className={`flex min-w-max items-center gap-3 border-b-2 px-4 py-4 text-left ${
                 view === option.id
-                  ? 'border-violet-400/30 bg-white/[0.08] shadow-[0_18px_40px_rgba(91,33,182,0.14)]'
-                  : 'border-white/8 bg-white/[0.03] hover:border-white/14 hover:bg-white/[0.05]'
+                  ? 'border-[#5b4fd6] text-[#5b4fd6]'
+                  : 'border-transparent text-[#6d7190] hover:text-[#343858]'
               }`}
             >
-              <p className={`text-lg font-bold ${view === option.id ? 'text-white' : 'text-slate-200'}`}>{option.label}</p>
-              <p className="mt-1 text-sm leading-6 text-slate-400">{option.description}</p>
+              {option.id === 'concepts' && <MapIcon className="h-5 w-5" />}
+              {option.id === 'practice' && <Dumbbell className="h-5 w-5" />}
+              {option.id === 'cards' && <Layers3 className="h-5 w-5" />}
+              <span className="font-bold">{option.label}</span>
             </button>
           ))}
         </nav>
 
         {view === 'concepts' && (
-          <section className="mt-10 grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
-            <div className="surface-card overflow-hidden rounded-[34px] p-5 sm:p-6">
-              <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-                <div>
-                  <span className="eyebrow">Learn Map</span>
-                  <h2 className="mt-3 text-3xl font-black tracking-[-0.04em] text-white">Concept graph</h2>
-                  <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-400">
-                    Как в хороших concept-треках: темы ложатся друг на друга, открываются по мере прохождения
-                    и визуально показывают зависимости, а не просто висят списком.
-                  </p>
-                </div>
-                <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-slate-300">
-                  {conceptNodes.length} тем в маршруте
-                </span>
+          <section className="mt-10">
+            <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase text-[#777c98]">Карта обучения</p>
+                <h2 className="mt-2 text-2xl font-extrabold sm:text-3xl">Концепции Go</h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6d7190]">
+                  Связи показывают рекомендуемый порядок. Заверши текущую тему, чтобы открыть следующий уровень.
+                </p>
               </div>
-
-              {loading ? (
-                <div className="h-[560px] animate-pulse rounded-[28px] bg-white/[0.04]" />
-              ) : (
-                <div
-                  className="relative overflow-x-auto rounded-[28px] border border-white/8 bg-[radial-gradient(circle_at_top,_rgba(139,92,246,0.08),_transparent_34%),linear-gradient(180deg,rgba(15,23,42,0.76),rgba(2,6,23,0.9))] p-6"
-                  style={{ minHeight: conceptMapHeight }}
+              {currentConcept && (
+                <Link
+                  href={`/trainer/topic/${currentConcept.slug}`}
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[#5b4fd6] px-5 text-sm font-bold text-white shadow-[0_8px_18px_rgba(91,79,214,0.24)] hover:bg-[#4f43c8]"
                 >
-                  <svg
-                    className="pointer-events-none absolute inset-0 h-full w-full"
-                    viewBox={`0 0 100 ${conceptRows.length * 18 + 16}`}
-                    preserveAspectRatio="none"
-                    aria-hidden="true"
-                  >
-                    {mapPoints.map((point, index) => {
-                      const next = mapPoints[index + 1]
-                      if (!next) return null
-
-                      const bend = (next.y - point.y) / 2
-                      const path = [
-                        `M ${point.x} ${point.y}`,
-                        `C ${point.x} ${point.y + bend}`,
-                        `${next.x} ${next.y - bend}`,
-                        `${next.x} ${next.y}`,
-                      ].join(' ')
-
-                      return (
-                        <path
-                          key={`${point.slug}-${next.slug}`}
-                          d={path}
-                          fill="none"
-                          stroke={next.unlocked ? 'rgba(103, 232, 249, 0.30)' : 'rgba(148, 163, 184, 0.16)'}
-                          strokeDasharray="4 4"
-                          strokeWidth="0.35"
-                          strokeLinecap="round"
-                        />
-                      )
-                    })}
-                  </svg>
-
-                  <div className="relative z-10 space-y-7">
-                    {conceptRows.map((row, rowIndex) => (
-                      <div
-                        key={`row-${rowIndex}`}
-                        className={`grid gap-4 ${
-                          row.items.length === 1
-                            ? 'mx-auto max-w-[280px] grid-cols-1'
-                            : row.items.length === 2
-                            ? 'grid-cols-1 md:grid-cols-2'
-                            : row.items.length === 3
-                            ? 'grid-cols-1 md:grid-cols-3'
-                            : 'grid-cols-1 md:grid-cols-2 xl:grid-cols-4'
-                        }`}
-                      >
-                        {row.items.map((concept) => (
-                          <ConceptMapNode key={concept.slug} concept={concept} />
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                  <Play className="h-4 w-4 fill-current" />
+                  Продолжить
+                </Link>
               )}
             </div>
 
-            <aside className="space-y-4 xl:sticky xl:top-24 xl:self-start">
-              <SidebarCard
-                title="Как проходить темы"
-                eyebrow="Playbook"
-                body="1. Открываешь текущую тему. 2. Читаешь короткую теорию и паттерн. 3. Делаешь quick lab. 4. Только потом карта раскрывает следующий шаг."
-              />
-              <SidebarCard
-                title="Что значит locked"
-                eyebrow="Progress Rules"
-                body="Заблокированные темы не отвлекают раньше времени. Пользователь видит ближайший логичный шаг, а не весь лес материалов сразу."
-              />
-              {currentConcept && (
-                <SidebarCard
-                  title={`Сейчас лучше идти в ${currentConcept.title}`}
-                  eyebrow="Current Focus"
-                  body={currentConcept.description}
-                  ctaHref={`/trainer/topic/${currentConcept.slug}`}
-                  ctaLabel="Открыть тему"
-                />
+            <div className="overflow-hidden rounded-lg border border-[#dfe2ee] bg-white shadow-[0_16px_45px_rgba(50,45,120,0.07)]">
+              <div className="flex items-center justify-between border-b border-[#e8eaf2] px-5 py-4">
+                <div>
+                  <p className="text-sm font-bold text-[#343858]">Маршрут изучения</p>
+                  <p className="mt-0.5 text-xs text-[#8589a1]">{conceptNodes.length} тем, {unlockedConcepts} доступны сейчас</p>
+                </div>
+                <BookOpen className="h-5 w-5 text-[#8b8fa8]" />
+              </div>
+
+              {loading ? (
+                <div className="h-[520px] animate-pulse bg-[#f4f5fa]" />
+              ) : (
+                <>
+                  <div className="space-y-3 bg-[#fbfcff] p-4 md:hidden">
+                    {conceptNodes.map((concept, index) => (
+                      <ConceptListNode
+                        key={concept.slug}
+                        concept={concept}
+                        isLast={index === conceptNodes.length - 1}
+                      />
+                    ))}
+                  </div>
+                  <div className="hidden overflow-x-auto bg-[#fbfcff] md:block">
+                  <div
+                    className="relative mx-auto"
+                    style={{ width: mapWidth, height: conceptMapHeight }}
+                  >
+                    <svg className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden="true">
+                      {mapEdges.map(({ from, to }) => {
+                        const fromY = from.y + 46
+                        const toY = to.y
+                        const bend = Math.max(42, (toY - fromY) * 0.58)
+                        return (
+                        <path
+                          key={`${from.slug}-${to.slug}`}
+                          d={`M ${from.x} ${fromY} C ${from.x} ${fromY + bend}, ${to.x} ${toY - bend}, ${to.x} ${toY}`}
+                          fill="none"
+                          stroke={to.unlocked ? '#aaa4ec' : '#ccd4ed'}
+                          strokeDasharray="6 6"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                        />
+                        )
+                      })}
+                    </svg>
+
+                    {mapPoints.map((concept) => (
+                      <ConceptMapNode
+                        key={concept.slug}
+                        concept={concept}
+                        style={{
+                          left: concept.x - concept.width / 2,
+                          top: concept.y,
+                          width: concept.width,
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                </>
               )}
-            </aside>
+            </div>
           </section>
         )}
 
         {view === 'practice' && (
           <section className="mt-10">
             <div className="mb-6">
-              <h2 className="text-3xl font-black text-white">Самостоятельные задачи</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-400">
+              <h2 className="text-3xl font-extrabold text-[#1d2143]">Самостоятельные задачи</h2>
+              <p className="mt-2 text-sm leading-6 text-[#6d7190]">
                 Здесь уже меньше подсказок и больше самостоятельности. Хорошо заходить сюда после нескольких concept-тем.
               </p>
             </div>
@@ -317,21 +295,21 @@ export default function TrainerPage() {
                   <Link
                     key={exercise.id}
                     href={`/trainer/${exercise.id}`}
-                    className="surface-card rounded-[28px] p-5 transition-all hover:-translate-y-0.5 hover:border-violet-400/30"
+                    className="rounded-lg border border-[#dfe2ee] bg-white p-5 shadow-[0_8px_24px_rgba(50,45,120,0.05)] hover:-translate-y-0.5 hover:border-[#b8b2ef]"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
                         completed
-                          ? 'bg-emerald-400/12 text-emerald-200'
-                          : 'bg-white/[0.04] text-slate-300'
+                          ? 'bg-[#e7f7dd] text-[#3f7e20]'
+                          : 'bg-[#eeedf9] text-[#625b92]'
                       }`}>
                         {completed ? 'Выполнено' : exercise.difficulty}
                       </span>
-                      <span className="font-mono text-xs text-slate-500">#{exercise.order}</span>
+                      <span className="font-mono text-xs text-[#8b8fa8]">#{exercise.order}</span>
                     </div>
-                    <h3 className="mt-5 text-xl font-bold text-white">{exercise.title}</h3>
-                    <p className="mt-2 line-clamp-2 text-sm leading-7 text-slate-400">{exercise.description}</p>
-                    <p className="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-violet-300">{exercise.category} →</p>
+                    <h3 className="mt-5 text-xl font-bold text-[#272b50]">{exercise.title}</h3>
+                    <p className="mt-2 line-clamp-2 text-sm leading-7 text-[#6d7190]">{exercise.description}</p>
+                    <p className="mt-5 text-xs font-bold uppercase text-[#5b4fd6]">{exercise.category} →</p>
                   </Link>
                 )
               })}
@@ -364,22 +342,65 @@ function buildRows(concepts: ConceptNode[]): MapRow[] {
   return rows
 }
 
-function buildMapPoints(rows: MapRow[]) {
-  const points: Array<{ slug: string; x: number; y: number; unlocked: boolean }> = []
+function buildMapPoints(rows: MapRow[]): MapPoint[] {
+  const points: MapPoint[] = []
 
   rows.forEach((row, rowIndex) => {
     const total = row.items.length
     row.items.forEach((item, itemIndex) => {
-      const x = total === 1 ? 50 : ((itemIndex + 0.5) / total) * 100
-      const y = 12 + rowIndex * 18
-      points.push({ slug: item.slug, x, y, unlocked: item.unlocked })
+      const width = total === 1 ? 190 : total === 2 ? 210 : 180
+      const sidePadding = total === 4 ? 120 : total === 3 ? 170 : total === 2 ? 250 : mapWidth / 2
+      const usableWidth = mapWidth - sidePadding * 2
+      const x = total === 1
+        ? mapWidth / 2
+        : sidePadding + (usableWidth * itemIndex) / (total - 1)
+      const y = 58 + rowIndex * mapRowGap
+      points.push({ ...item, x, y, width })
     })
   })
 
   return points
 }
 
-function ConceptMapNode({ concept }: { concept: ConceptNode }) {
+function buildMapEdges(rows: MapRow[], points: MapPoint[]): MapEdge[] {
+  const pointBySlug = new Map(points.map((point) => [point.slug, point]))
+  const edges: MapEdge[] = []
+
+  for (let rowIndex = 1; rowIndex < rows.length; rowIndex += 1) {
+    const previous = rows[rowIndex - 1].items
+    const current = rows[rowIndex].items
+
+    current.forEach((item, itemIndex) => {
+      const to = pointBySlug.get(item.slug)
+      if (!to) return
+
+      const parentIndex = Math.min(
+        previous.length - 1,
+        Math.floor((itemIndex * previous.length) / Math.max(1, current.length))
+      )
+      const parent = pointBySlug.get(previous[parentIndex].slug)
+      if (parent) edges.push({ from: parent, to })
+
+      if (previous.length > 1 && current.length <= 2) {
+        const secondParentIndex = Math.min(previous.length - 1, parentIndex + 1)
+        const secondParent = pointBySlug.get(previous[secondParentIndex].slug)
+        if (secondParent && secondParent.slug !== parent?.slug) {
+          edges.push({ from: secondParent, to })
+        }
+      }
+    })
+  }
+
+  return edges
+}
+
+function ConceptMapNode({
+  concept,
+  style,
+}: {
+  concept: ConceptNode
+  style: CSSProperties
+}) {
   const state = concept.completed
     ? 'completed'
     : concept.unlocked
@@ -388,59 +409,42 @@ function ConceptMapNode({ concept }: { concept: ConceptNode }) {
 
   const content = (
     <>
-      <div className="flex items-start justify-between gap-3">
-        <div className={`flex h-12 w-12 items-center justify-center rounded-2xl border font-mono text-sm font-black ${
+      <div className={`flex h-8 w-8 shrink-0 items-center justify-center border font-mono text-[11px] font-bold ${
           state === 'completed'
-            ? 'border-emerald-300/40 bg-emerald-400/15 text-emerald-100'
+            ? 'border-[#70a852] bg-[#e9f7e1] text-[#3f7e20]'
             : state === 'unlocked'
-            ? 'border-violet-300/35 bg-violet-400/14 text-white'
-            : 'border-white/10 bg-white/[0.03] text-slate-400'
+            ? 'border-[#5b4fd6] bg-white text-[#312b79]'
+            : 'border-[#b8bdd1] bg-[#f8f9fd] text-[#737894]'
         }`}>
           {concept.code}
         </div>
 
-        <div className={`flex h-8 w-8 items-center justify-center rounded-full border text-xs ${
-          state === 'completed'
-            ? 'border-emerald-300/35 bg-emerald-400/12 text-emerald-200'
-            : state === 'unlocked'
-            ? 'border-cyan-300/30 bg-cyan-400/10 text-cyan-200'
-            : 'border-white/8 bg-white/[0.04] text-slate-500'
+      <div className="min-w-0 flex-1">
+        <h3 className={`truncate text-sm font-bold ${
+          state === 'locked' ? 'text-[#686d89]' : 'text-[#343858]'
         }`}>
-          {state === 'completed' ? '✓' : state === 'unlocked' ? '→' : '🔒'}
-        </div>
+          {concept.title}
+        </h3>
+        <p className="mt-0.5 text-[11px] text-[#8b8fa8]">
+          {concept.exercisesCount} {concept.exercisesCount === 1 ? 'упражнение' : 'упражнения'}
+        </p>
       </div>
 
-      <h3 className={`mt-4 text-lg font-bold ${
-        state === 'locked' ? 'text-slate-300' : 'text-white'
-      }`}>
-        {concept.title}
-      </h3>
-
-      <div className="mt-2 flex flex-wrap gap-2">
-        <span className="rounded-full border border-white/8 bg-white/[0.04] px-2.5 py-1 text-[11px] font-semibold text-slate-300">
-          {concept.category}
-        </span>
-        <span className="rounded-full border border-white/8 bg-white/[0.04] px-2.5 py-1 text-[11px] font-semibold text-slate-400">
-          {concept.exercisesCount} lab
-        </span>
+      <div className={`absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border ${
+          state === 'completed'
+            ? 'border-[#b9d9a8] bg-[#e9f7e1] text-[#3f7e20]'
+            : state === 'unlocked'
+            ? 'border-[#cac6f3] bg-[#eeecff] text-[#5b4fd6]'
+            : 'border-[#d9dce8] bg-[#e9ebf3] text-[#777c98]'
+        }`}>
+        {state === 'completed' ? (
+          <Check className="h-3.5 w-3.5" strokeWidth={3} />
+        ) : state === 'unlocked' ? (
+          <Play className="h-3 w-3 fill-current" />
+        ) : (
+          <LockKeyhole className="h-3 w-3" />
+        )}
       </div>
-
-      <p className="mt-3 text-sm leading-6 text-slate-400 line-clamp-3">
-        {concept.description}
-      </p>
-
-      {concept.microSkills.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-2">
-          {concept.microSkills.map((skill) => (
-            <span
-              key={skill}
-              className="rounded-full border border-white/8 bg-white/[0.03] px-2.5 py-1 text-[11px] text-slate-400"
-            >
-              {skill}
-            </span>
-          ))}
-        </div>
-      )}
     </>
   )
 
@@ -448,10 +452,12 @@ function ConceptMapNode({ concept }: { concept: ConceptNode }) {
     return (
       <Link
         href={`/trainer/topic/${concept.slug}`}
-        className={`group block rounded-[26px] border p-4 transition-all ${
+        style={style}
+        title={concept.description}
+        className={`group absolute z-10 flex min-h-[64px] items-center gap-3 rounded-md border px-3 py-2.5 shadow-[0_6px_16px_rgba(54,50,110,0.08)] ${
           state === 'completed'
-            ? 'border-emerald-400/20 bg-emerald-400/[0.07] hover:border-emerald-300/30'
-            : 'border-white/10 bg-white/[0.05] hover:-translate-y-0.5 hover:border-violet-300/30 hover:bg-white/[0.07]'
+            ? 'border-[#cde3c0] bg-[#f4fbf0] hover:border-[#91bd78]'
+            : 'border-[#d9d8ec] bg-[#efeff8] hover:-translate-y-0.5 hover:border-[#8e86e4] hover:bg-white'
         }`}
       >
         {content}
@@ -460,43 +466,69 @@ function ConceptMapNode({ concept }: { concept: ConceptNode }) {
   }
 
   return (
-    <div className="rounded-[26px] border border-white/8 bg-white/[0.025] p-4 opacity-80">
+    <div
+      style={style}
+      title={concept.description}
+      className="absolute z-10 flex min-h-[64px] items-center gap-3 rounded-md border border-[#e0e2ec] bg-[#f1f2f7] px-3 py-2.5 opacity-90"
+    >
       {content}
     </div>
   )
 }
 
-function SoftPill({ children }: { children: ReactNode }) {
-  return (
-    <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-slate-300">
-      {children}
-    </span>
-  )
-}
-
-function SidebarCard({
-  eyebrow,
-  title,
-  body,
-  ctaHref,
-  ctaLabel,
+function ConceptListNode({
+  concept,
+  isLast,
 }: {
-  eyebrow: string
-  title: string
-  body: string
-  ctaHref?: string
-  ctaLabel?: string
+  concept: ConceptNode
+  isLast: boolean
 }) {
-  return (
-    <div className="surface-card rounded-[28px] p-5">
-      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-violet-300">{eyebrow}</p>
-      <h3 className="mt-3 text-xl font-bold text-white">{title}</h3>
-      <p className="mt-3 text-sm leading-7 text-slate-400">{body}</p>
-      {ctaHref && ctaLabel && (
-        <Link href={ctaHref} className="btn-secondary mt-5 inline-flex text-sm">
-          {ctaLabel}
-        </Link>
+  const state = concept.completed
+    ? 'completed'
+    : concept.unlocked
+    ? 'unlocked'
+    : 'locked'
+
+  const row = (
+    <div className="relative flex items-center gap-3">
+      {!isLast && (
+        <span className="absolute left-[15px] top-10 h-8 border-l border-dashed border-[#cbd2e8]" />
+      )}
+      <div className={`flex h-8 w-8 shrink-0 items-center justify-center border font-mono text-[11px] font-bold ${
+        state === 'completed'
+          ? 'border-[#70a852] bg-[#e9f7e1] text-[#3f7e20]'
+          : state === 'unlocked'
+          ? 'border-[#5b4fd6] bg-white text-[#312b79]'
+          : 'border-[#c7cad8] bg-[#f1f2f7] text-[#777c98]'
+      }`}>
+        {concept.code}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className={`font-bold ${state === 'locked' ? 'text-[#777c98]' : 'text-[#343858]'}`}>
+          {concept.title}
+        </p>
+        <p className="mt-0.5 truncate text-xs text-[#8b8fa8]">{concept.description}</p>
+      </div>
+      {state === 'completed' ? (
+        <Check className="h-4 w-4 text-[#4c8b2c]" />
+      ) : state === 'unlocked' ? (
+        <Play className="h-4 w-4 fill-current text-[#5b4fd6]" />
+      ) : (
+        <LockKeyhole className="h-4 w-4 text-[#9a9eb1]" />
       )}
     </div>
   )
+
+  if (concept.unlocked) {
+    return (
+      <Link
+        href={`/trainer/topic/${concept.slug}`}
+        className="block rounded-md border border-[#dddfea] bg-white p-3 shadow-[0_4px_14px_rgba(50,45,120,0.05)]"
+      >
+        {row}
+      </Link>
+    )
+  }
+
+  return <div className="rounded-md border border-[#e3e5ed] bg-[#f5f6fa] p-3">{row}</div>
 }
