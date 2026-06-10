@@ -176,10 +176,77 @@ GitHub**: [@iskander](https://github.com/iskander)
 - Развертывание: `scripts/deploy-timeweb.sh` или `docker compose up -d --build`
 - Вопросы? Создай Issue на GitHub
 
-Твой текущий доступ:
+## Доступы роли администратора
 
-- Админка курса (UI): https://godemy.ru/admin
-- Вход в админку: обычная форма логина, но под админским email из `ADMIN_LOGIN`
-- Пароль администратора: значение `ADMIN_SECRET` из `.env.production`
-- Обычный пользователь не видит админку и не может открыть её напрямую
+Административный аккаунт создаётся или обновляется при запуске backend:
 
+- email берётся из `ADMIN_LOGIN`;
+- пароль берётся из `ADMIN_SECRET`;
+- аккаунту устанавливается `isAdmin: true`;
+- если пользователь с таким email уже существует, ему назначается роль администратора и обновляется пароль.
+
+В production `ADMIN_LOGIN` и `ADMIN_SECRET` задаются в `.env.production`.
+Значение `ADMIN_SECRET` должно содержать не менее 32 символов. Сам пароль и другие
+секреты нельзя добавлять в README или коммиты.
+
+### Вход и защита
+
+- Админ-панель: https://godemy.ru/admin
+- Вход выполняется через обычную форму логина с данными `ADMIN_LOGIN` и `ADMIN_SECRET`.
+- После входа frontend проверяет актуальную сессию и поле `isAdmin`.
+- Все запросы к `/api/admin/*` требуют JWT в заголовке `Authorization: Bearer <token>`.
+- Без JWT API возвращает `401 Unauthorized`, без роли администратора — `403 Forbidden`.
+- Обычный пользователь не видит ссылку на админку и не может открыть защищённые страницы или API напрямую.
+
+### Возможности в интерфейсе
+
+| Раздел | URL | Доступ |
+|--------|-----|--------|
+| Главная админки | `/admin` | Переход ко всем редакторам |
+| Редактор курса | `/admin/structure` | Уровни, модули, темы и уроки основного курса |
+| Редактор буткемпа | `/admin/bootcamp` | Уровни, модули, темы и уроки Bootcamp |
+| Уроки | `/admin/lessons`, `/admin/lessons/:id` | Просмотр, создание, редактирование и удаление уроков |
+| Упражнения | `/admin/exercises`, `/admin/exercises/:id` | Просмотр, создание, редактирование и удаление упражнений |
+| Тренажёр | `/admin/trainer` | Переход к редакторам материалов тренажёра |
+| Темы тренажёра | `/admin/trainer-topics`, `/admin/trainer-topics/:id` | CRUD тем и привязка упражнений |
+| Практика тренажёра | `/admin/trainer-practice`, `/admin/trainer-practice/:id` | Настройка упражнения и его представления в тренажёре |
+| Разбор кода | `/admin/trainer/syntax` | Редактор тем синтаксиса |
+| Практер | `/admin/trainer/prakter` | Создание, изменение, проверка и удаление задач практера |
+| Вопросы | `/admin/trainer/questions` | Создание, изменение, фильтрация и удаление вопросов |
+
+Редакторы практера и вопросов сохраняют изменения в `localStorage` текущего браузера.
+Они не изменяют PostgreSQL и не синхронизируют данные между устройствами.
+
+Администратор также может открывать пользовательский раздел Bootcamp `/junior`
+без активной подписки Godemy Pro.
+
+### Защищённые Admin API
+
+| Метод и маршрут | Возможность |
+|-----------------|-------------|
+| `POST /api/admin/activate` | Активировать Godemy Pro пользователю по email на 1–365 дней |
+| `GET /api/admin/lessons` | Получить все уроки |
+| `GET /api/admin/lessons/:id` | Получить урок по ID |
+| `POST /api/admin/lessons` | Создать урок |
+| `PUT /api/admin/lessons/:id` | Изменить урок |
+| `DELETE /api/admin/lessons/:id` | Удалить урок |
+| `GET /api/admin/exercises` | Получить все упражнения |
+| `GET /api/admin/exercises/:id` | Получить упражнение по ID |
+| `POST /api/admin/exercises` | Создать упражнение |
+| `PUT /api/admin/exercises/:id` | Изменить упражнение |
+| `DELETE /api/admin/exercises/:id` | Удалить упражнение |
+| `GET /api/admin/trainer-topics` | Получить темы тренажёра, при необходимости с фильтром `?module=` |
+| `GET /api/admin/trainer-topics/:id` | Получить тему тренажёра по ID |
+| `POST /api/admin/trainer-topics` | Создать тему тренажёра |
+| `PUT /api/admin/trainer-topics/:id` | Изменить тему тренажёра |
+| `DELETE /api/admin/trainer-topics/:id` | Удалить тему тренажёра |
+| `GET /api/admin/modules` | Получить список модулей |
+| `POST /api/admin/modules` | Создать модуль с первым уроком |
+| `PUT /api/admin/modules/:name` | Переименовать модуль |
+| `PUT /api/admin/modules/:name/move` | Переместить модуль на другой уровень |
+| `DELETE /api/admin/modules/:name` | Удалить модуль |
+| `GET /api/admin/levels` | Получить все уровни |
+| `POST /api/admin/levels` | Создать уровень |
+| `PUT /api/admin/levels/:id` | Изменить уровень |
+| `DELETE /api/admin/levels/:id` | Удалить уровень |
+| `POST /api/admin/upload` | Загрузить изображение для контента |
