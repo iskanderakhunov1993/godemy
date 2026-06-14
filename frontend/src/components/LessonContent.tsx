@@ -841,10 +841,11 @@ export function LessonContentRenderer({ content, onTasksChange }: RendererProps)
 
   const [doneKeys, setDoneKeys] = useState<Set<string>>(new Set())
   const [openedContinueKeys, setOpenedContinueKeys] = useState<Set<string>>(new Set())
+  const onTasksChangeRef = useRef(onTasksChange)
 
   useEffect(() => {
-    setOpenedContinueKeys(new Set())
-  }, [personalizedContent])
+    onTasksChangeRef.current = onTasksChange
+  }, [onTasksChange])
 
   const handleDone = useCallback((key: string) => {
     setDoneKeys(prev => {
@@ -873,8 +874,8 @@ export function LessonContentRenderer({ content, onTasksChange }: RendererProps)
   // Notify parent of task status whenever doneKeys changes
   useEffect(() => {
     if (gateableKeys.length === 0) return
-    onTasksChange?.({ total: gateableKeys.length, done: doneKeys.size })
-  }, [doneKeys, gateableKeys, onTasksChange])
+    onTasksChangeRef.current?.({ total: gateableKeys.length, done: doneKeys.size })
+  }, [doneKeys, gateableKeys])
 
   if (!personalizedContent.trim()) {
     return <p className="text-gray-600 text-sm italic">Предпросмотр появится здесь...</p>

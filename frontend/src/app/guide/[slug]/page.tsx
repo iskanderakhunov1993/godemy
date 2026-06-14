@@ -186,6 +186,7 @@ function LessonContent() {
         <div className="lg:col-span-3 order-1 lg:order-2">
           <div className="prose-go">
               <LessonContentRenderer
+                key={lesson.id}
                 content={lesson.content}
                 onTasksChange={status => {
                   setTasksStatus(status)
