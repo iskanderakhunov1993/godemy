@@ -10,17 +10,17 @@ const flagshipLevelSlug = "internship-track"
 
 func seedFlagshipCourse(db *gorm.DB) {
 	level := models.Level{
-		Title:       "Стажировка в Atlas Dev",
+		Title:       "Project ZERO → Engineer",
 		Slug:        flagshipLevelSlug,
 		Order:       1,
-		Description: "Бесплатный флагманский курс: от первого дня в команде до трёх проектов и финального демо.",
+		Description: "Сюжетная стажировка в крупнейшем банке: три backend-проекта, рабочие спринты и финальное демо.",
 	}
 	var existingLevel models.Level
-	db.Where("slug = ?", level.Slug).Attrs(level).FirstOrCreate(&existingLevel)
+	db.Where("slug = ?", level.Slug).Assign(level).FirstOrCreate(&existingLevel)
 
-	for _, lesson := range flagshipLessons() {
+	for _, lesson := range bankInternshipLessons() {
 		var existing models.Lesson
-		db.Where("slug = ?", lesson.Slug).Attrs(lesson).FirstOrCreate(&existing)
+		db.Where("slug = ?", lesson.Slug).Assign(lesson).FirstOrCreate(&existing)
 	}
 }
 
