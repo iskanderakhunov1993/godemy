@@ -12,10 +12,11 @@ import {
   Play,
   Sparkles,
 } from 'lucide-react'
-import { api, type Exercise, type TrainerTopic } from '@/lib/api'
+import { api, type Exercise } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
 import FlashcardsTab from './FlashcardsTab'
-import { builtInTrainerConcepts, type BuiltInTrainerConcept } from '@/lib/trainerConcepts'
+import type { BuiltInTrainerConcept } from '@/lib/trainerConcepts'
+import { getGoConceptCategory, goConceptRoadmap } from '@/lib/goConceptRoadmap'
 
 type View = 'concepts' | 'practice' | 'cards'
 
@@ -48,14 +49,13 @@ const mapRowGap = 132
 
 export default function TrainerPage() {
   const [view, setView] = useState<View>('concepts')
-  const [topics, setTopics] = useState<TrainerTopic[]>([])
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [loading, setLoading] = useState(true)
   const [localConceptProgress] = useState<Record<string, boolean>>(() => {
     if (typeof window === 'undefined') return {}
 
     return Object.fromEntries(
-      builtInTrainerConcepts.map((concept) => [
+      goConceptRoadmap.map((concept) => [
         concept.slug,
         window.localStorage.getItem(`trainer-concept-${concept.slug}`) === 'completed',
       ])
@@ -64,16 +64,11 @@ export default function TrainerPage() {
   const { token, loadProgress, isCompleted } = useAuthStore()
 
   useEffect(() => {
-    Promise.all([
-      api.getTrainerTopics('core'),
-      api.getExercises({ module: 'core' }),
-    ])
-      .then(([topicItems, exerciseItems]) => {
-        setTopics([...topicItems].sort((a, b) => a.order - b.order))
+    api.getExercises({ module: 'core' })
+      .then((exerciseItems) => {
         setExercises([...exerciseItems].sort((a, b) => a.order - b.order))
       })
       .catch(() => {
-        setTopics([])
         setExercises([])
       })
       .finally(() => setLoading(false))
@@ -81,9 +76,7 @@ export default function TrainerPage() {
     if (token) loadProgress()
   }, [token, loadProgress])
 
-  const allConcepts: Array<TrainerTopic | BuiltInTrainerConcept> = topics.length > 0
-    ? topics
-    : builtInTrainerConcepts
+  const allConcepts: BuiltInTrainerConcept[] = goConceptRoadmap
 
   const conceptNodes = useMemo<ConceptNode[]>(() => {
     return allConcepts.map((topic, index) => {
@@ -111,7 +104,7 @@ export default function TrainerPage() {
           ? topic.summary
           : topic.explanation || 'Короткая теория, синтаксис, паттерн и задача для закрепления.',
         slug: topic.slug,
-        category: topic.module === 'core' ? 'Go' : topic.module,
+        category: getGoConceptCategory(topic.slug),
         exercisesCount: topic.exercises?.length || 1,
         microSkills: 'microSkills' in topic && Array.isArray(topic.microSkills)
           ? topic.microSkills.slice(0, 3)
@@ -425,9 +418,7 @@ function ConceptMapNode({
         }`}>
           {concept.title}
         </h3>
-        <p className="mt-0.5 text-[11px] text-[#8b8fa8]">
-          {concept.exercisesCount} {concept.exercisesCount === 1 ? 'упражнение' : 'упражнения'}
-        </p>
+        <p className="mt-0.5 truncate text-[11px] text-[#8b8fa8]">{concept.category}</p>
       </div>
 
       <div className={`absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border ${
@@ -508,6 +499,7 @@ function ConceptListNode({
           {concept.title}
         </p>
         <p className="mt-0.5 truncate text-xs text-[#8b8fa8]">{concept.description}</p>
+        <p className="mt-1 text-[10px] font-bold uppercase tracking-wide text-[#7771b5]">{concept.category}</p>
       </div>
       {state === 'completed' ? (
         <Check className="h-4 w-4 text-[#4c8b2c]" />

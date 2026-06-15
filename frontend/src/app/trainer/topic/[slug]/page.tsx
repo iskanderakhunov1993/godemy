@@ -8,13 +8,11 @@ import { api, type Exercise, type RunResult, type TopicExample, type TrainerTopi
 import { useAuthStore } from '@/lib/store'
 import { markActivityToday, saveLastVisited } from '@/lib/streak'
 import {
-  builtInTrainerConcepts,
-  getBuiltInTrainerConcept,
   isBuiltInExercise,
-  type BuiltInTrainerConcept,
   type ConceptSection,
   type PracticeRailItem,
 } from '@/lib/trainerConcepts'
+import { getGoConceptRoadmapItem, goConceptRoadmap } from '@/lib/goConceptRoadmap'
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
@@ -114,10 +112,10 @@ export default function TrainerTopicPage() {
 function TrainerTopicContent({ slug }: { slug: string }) {
   const router = useRouter()
   const { token, loadProgress, isCompleted } = useAuthStore()
-  const builtInTopic = getBuiltInTrainerConcept(slug)
+  const builtInTopic = getGoConceptRoadmapItem(slug)
   const builtInExercise = builtInTopic?.exercises?.[0] || null
   const [topic, setTopic] = useState<TrainerTopic | null>(builtInTopic || null)
-  const [allTopics, setAllTopics] = useState<TrainerTopic[]>(builtInTopic ? builtInTrainerConcepts : [])
+  const [allTopics, setAllTopics] = useState<TrainerTopic[]>(builtInTopic ? goConceptRoadmap : [])
   const [activeExercise, setActiveExercise] = useState<Exercise | null>(builtInExercise)
   const [code, setCode] = useState(builtInExercise?.starterCode || builtInTopic?.syntax || fallbackCode)
   const [result, setResult] = useState<RunResult | null>(null)
@@ -161,12 +159,6 @@ function TrainerTopicContent({ slug }: { slug: string }) {
       ? localCompleted
       : isCompleted('exercise', activeExercise.id)
     : false
-
-  const selectExercise = (exercise: Exercise) => {
-    setActiveExercise(exercise)
-    setCode(exercise.starterCode || fallbackCode)
-    setResult(null)
-  }
 
   const runCode = async () => {
     setRunning(true)
