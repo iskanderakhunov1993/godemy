@@ -44,6 +44,6 @@ jobs:
           docker compose --env-file .env.production -f docker-compose.prod.yml --profile runner-build build runner-image
           docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build --remove-orphans
           docker image prune -f
-EOF
+          EOF
           
           echo "✓ Production deployment completed"
