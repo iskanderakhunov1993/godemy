@@ -55,6 +55,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const navLinks = [
     { href: '/admin/structure', label: 'Редактор курса' },
     { href: '/admin/bootcamp', label: 'Редактор буткемпа' },
+    { href: '/admin/course-generator', label: 'Генератор курса' },
     { href: '/admin/trainer', label: 'Тренажер' },
   ]
 

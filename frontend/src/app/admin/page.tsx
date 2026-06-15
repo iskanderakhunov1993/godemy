@@ -34,6 +34,12 @@ export default function AdminDashboard() {
         >
           Темы тренажёра
         </Link>
+        <Link
+          href="/admin/course-generator"
+          className="inline-flex items-center bg-emerald-700 hover:bg-emerald-600 text-white rounded-lg px-4 py-2 transition-colors"
+        >
+          Генератор курса
+        </Link>
       </div>
     </div>
   )
