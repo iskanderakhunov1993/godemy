@@ -1,16 +1,16 @@
 'use client'
 
-import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import {
   BookOpen,
   Check,
+  ChevronRight,
+  CircleDot,
   Dumbbell,
   Layers3,
   LockKeyhole,
-  Map as MapIcon,
   Play,
-  Sparkles,
 } from 'lucide-react'
 import { api, type Exercise } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
@@ -26,26 +26,41 @@ type ConceptNode = {
   description: string
   slug: string
   category: string
-  exercisesCount: number
   microSkills: string[]
   completed: boolean
   unlocked: boolean
   current: boolean
 }
 
-type MapRow = { items: ConceptNode[] }
-type MapPoint = ConceptNode & { x: number; y: number; width: number }
-type MapEdge = { from: MapPoint; to: MapPoint }
+type ConceptGroup = {
+  category: string
+  concepts: ConceptNode[]
+  completedCount: number
+  unlockedCount: number
+}
 
 const viewOptions: Array<{ id: View; label: string; description: string }> = [
-  { id: 'concepts', label: 'Маршрут', description: 'Проходи темы как связанный concept track' },
-  { id: 'practice', label: 'Практика', description: 'Отдельные задачи для самостоятельного закрепления' },
-  { id: 'cards', label: 'Повторение', description: 'Быстрые карточки для терминов и форм' },
+  { id: 'concepts', label: 'Концепции', description: 'Рабочий маршрут по трём проектам' },
+  { id: 'practice', label: 'Практика', description: 'Самостоятельные backend-задачи' },
+  { id: 'cards', label: 'Повторение', description: 'Быстрые карточки для закрепления' },
 ]
 
-const rowPattern = [1, 4, 2, 4, 3, 4]
-const mapWidth = 960
-const mapRowGap = 132
+const categoryMeta: Record<string, { ticket: string; mission: string }> = {
+  Foundations: { ticket: 'ZERO-FOUND', mission: 'Подготовить основу Project 1' },
+  Logic: { ticket: 'ZERO-LOGIC', mission: 'Реализовать бизнес-решения' },
+  Functions: { ticket: 'ZERO-FUNC', mission: 'Разделить код на рабочие блоки' },
+  'Working With Data': { ticket: 'ZERO-DATA', mission: 'Описать данные продукта' },
+  'Packages & Project Organization': { ticket: 'ZERO-ORG', mission: 'Собрать командный Go-проект' },
+  'Error Handling': { ticket: 'ZERO-ERR', mission: 'Сделать ошибки управляемыми' },
+  'Files & Data Storage': { ticket: 'ZERO-FILE', mission: 'Сохранить данные локально' },
+  'HTTP & APIs': { ticket: 'ZERO-HTTP', mission: 'Понять контракт API' },
+  Environment: { ticket: 'ZERO-ENV', mission: 'Вынести настройки из кода' },
+  'Backend Development': { ticket: 'ZERO-BACK', mission: 'Собрать HTTP-сервис' },
+  Database: { ticket: 'ZERO-DB', mission: 'Подключить PostgreSQL' },
+  'Testing & Debugging': { ticket: 'ZERO-QA', mission: 'Найти и доказать ошибки' },
+  Docker: { ticket: 'ZERO-DOCKER', mission: 'Упаковать сервис' },
+  'Career / Real Work': { ticket: 'ZERO-TEAM', mission: 'Передать работу команде' },
+}
 
 export default function TrainerPage() {
   const [view, setView] = useState<View>('concepts')
@@ -65,12 +80,8 @@ export default function TrainerPage() {
 
   useEffect(() => {
     api.getExercises({ module: 'core' })
-      .then((exerciseItems) => {
-        setExercises([...exerciseItems].sort((a, b) => a.order - b.order))
-      })
-      .catch(() => {
-        setExercises([])
-      })
+      .then((exerciseItems) => setExercises([...exerciseItems].sort((a, b) => a.order - b.order)))
+      .catch(() => setExercises([]))
       .finally(() => setLoading(false))
 
     if (token) loadProgress()
@@ -84,31 +95,23 @@ export default function TrainerPage() {
       const topicExercises = topic.exercises ?? []
       const remoteCompleted =
         topicExercises.length > 0 && topicExercises.every((exercise) => isCompleted('exercise', exercise.id))
-
       const completed = remoteCompleted || builtInCompleted
-      const unlocked = index === 0 || allConcepts.slice(0, index).every((prevTopic) => {
-        const prevExercises = prevTopic.exercises ?? []
-        const prevBuiltIn = localConceptProgress[prevTopic.slug] ?? false
-        const prevRemote =
-          prevExercises.length > 0 && prevExercises.every((exercise) => isCompleted('exercise', exercise.id))
+      const unlocked = index === 0 || allConcepts.slice(0, index).every((previous) => {
+        const previousExercises = previous.exercises ?? []
+        const previousRemote =
+          previousExercises.length > 0
+          && previousExercises.every((exercise) => isCompleted('exercise', exercise.id))
 
-        return prevRemote || prevBuiltIn
+        return previousRemote || (localConceptProgress[previous.slug] ?? false)
       })
 
       return {
-        code: 'conceptCode' in topic && typeof topic.conceptCode === 'string'
-          ? topic.conceptCode
-          : String(index + 1).padStart(2, '0'),
+        code: topic.conceptCode || String(index + 1).padStart(2, '0'),
         title: topic.title,
-        description: 'summary' in topic && typeof topic.summary === 'string'
-          ? topic.summary
-          : topic.explanation || 'Короткая теория, синтаксис, паттерн и задача для закрепления.',
+        description: topic.summary || topic.explanation,
         slug: topic.slug,
         category: getGoConceptCategory(topic.slug),
-        exercisesCount: topic.exercises?.length || 1,
-        microSkills: 'microSkills' in topic && Array.isArray(topic.microSkills)
-          ? topic.microSkills.slice(0, 3)
-          : [],
+        microSkills: topic.microSkills.slice(0, 3),
         completed,
         unlocked,
         current: unlocked && !completed,
@@ -116,193 +119,212 @@ export default function TrainerPage() {
     })
   }, [allConcepts, isCompleted, localConceptProgress])
 
+  const conceptGroups = useMemo<ConceptGroup[]>(() => {
+    const groups = new Map<string, ConceptNode[]>()
+    for (const concept of conceptNodes) {
+      const items = groups.get(concept.category) ?? []
+      items.push(concept)
+      groups.set(concept.category, items)
+    }
+
+    return Array.from(groups, ([category, concepts]) => ({
+      category,
+      concepts,
+      completedCount: concepts.filter((concept) => concept.completed).length,
+      unlockedCount: concepts.filter((concept) => concept.unlocked).length,
+    }))
+  }, [conceptNodes])
+
   const completedConcepts = conceptNodes.filter((concept) => concept.completed).length
   const currentConcept = conceptNodes.find((concept) => concept.current) ?? conceptNodes[0]
-  const unlockedConcepts = conceptNodes.filter((concept) => concept.unlocked).length
+  const currentGroupIndex = Math.max(
+    0,
+    conceptGroups.findIndex((group) => group.category === currentConcept?.category)
+  )
   const completionPercent = conceptNodes.length
     ? Math.round((completedConcepts / conceptNodes.length) * 100)
     : 0
 
-  const conceptRows = useMemo(() => buildRows(conceptNodes), [conceptNodes])
-  const mapPoints = useMemo(() => buildMapPoints(conceptRows), [conceptRows])
-  const mapEdges = useMemo(() => buildMapEdges(conceptRows, mapPoints), [conceptRows, mapPoints])
-  const conceptMapHeight = Math.max(500, 96 + conceptRows.length * mapRowGap)
-
   return (
-    <main className="min-h-screen bg-[#f7f8fc] text-[#1d2143]">
-      <div className="mx-auto max-w-[1180px] px-4 py-8 sm:px-6 sm:py-12">
-        <section className="flex flex-col gap-8 border-b border-[#e2e5f0] pb-9 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-center gap-5">
-            <div className="relative flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-[#dfe3f1] bg-white shadow-[0_12px_30px_rgba(50,45,120,0.10)]">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#5b4fd6] font-mono text-xl font-black text-white">
-                Go
+    <main className="min-h-screen bg-[#050914] text-white">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
+        <header className="overflow-hidden rounded-[32px] border border-white/10 bg-[radial-gradient(circle_at_10%_0%,rgba(34,211,238,0.13),transparent_30%),radial-gradient(circle_at_100%_0%,rgba(139,92,246,0.14),transparent_30%),#0a1020]">
+          <div className="grid lg:grid-cols-[0.72fr_1.28fr]">
+            <div className="border-b border-white/8 p-6 sm:p-8 lg:border-b-0 lg:border-r">
+              <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
+                Project ZERO · Knowledge Base
               </div>
-              <Sparkles className="absolute -right-1 -top-1 h-6 w-6 rounded-full bg-[#eaf8dc] p-1 text-[#4c9c21]" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-[#625b92]">Go learning track</p>
-              <h1 className="mt-1 text-3xl font-extrabold sm:text-4xl">Твой путь через Go</h1>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-[#666b86] sm:text-base">
-                Изучай концепции по порядку, закрепляй их практикой и открывай следующие темы.
+              <div className="mt-5 flex items-center gap-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 font-mono text-lg font-black text-cyan-200">
+                  Go
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Инженерная база стажёра</p>
+                  <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Концепции Go</h1>
+                </div>
+              </div>
+              <p className="mt-5 max-w-md text-sm leading-6 text-gray-400">
+                Только знания, которые нужны, чтобы выпустить три проекта. Без академического обхода языка по кругу.
               </p>
-            </div>
-          </div>
 
-          <div className="w-full rounded-lg border border-[#e1e3ee] bg-white p-4 shadow-[0_8px_24px_rgba(50,45,120,0.06)] lg:w-[310px]">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-bold uppercase text-[#777c98]">Прогресс маршрута</p>
-                <p className="mt-1 text-xl font-extrabold">{completedConcepts} из {conceptNodes.length} тем</p>
+              <div className="mt-8">
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <p className="text-xs text-gray-500">Готовность базы</p>
+                    <p className="mt-1 text-2xl font-semibold">{completionPercent}%</p>
+                  </div>
+                  <p className="text-right text-xs leading-5 text-gray-500">
+                    {completedConcepts} из {conceptNodes.length} закрыто
+                    <br />
+                    раздел {currentGroupIndex + 1} из {conceptGroups.length}
+                  </p>
+                </div>
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/8">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-400 to-violet-400 transition-all duration-700"
+                    style={{ width: `${completionPercent}%` }}
+                  />
+                </div>
               </div>
-              <span className="text-lg font-extrabold text-[#5b4fd6]">{completionPercent}%</span>
             </div>
-            <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#eceefa]">
-              <div
-                className="h-full rounded-full bg-[#5b4fd6] transition-all"
-                style={{ width: `${completionPercent}%` }}
-              />
-            </div>
-            <p className="mt-3 text-xs text-[#777c98]">
-              Открыто: {unlockedConcepts}. Текущая тема: {currentConcept?.title ?? 'Basics'}.
-            </p>
-          </div>
-        </section>
 
-        <nav className="mt-7 flex gap-1 overflow-x-auto border-b border-[#e2e5f0]">
+            <div className="p-6 sm:p-8">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <span className="rounded-lg bg-violet-400/12 px-2.5 py-1 font-mono text-xs text-violet-300">
+                    {categoryMeta[currentConcept?.category]?.ticket ?? 'ZERO-GO'}
+                  </span>
+                  <span className="text-xs text-gray-500">{currentConcept?.category}</span>
+                </div>
+                <span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-[11px] font-medium text-amber-200">
+                  Текущая задача
+                </span>
+              </div>
+
+              <div className="mt-6 grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
+                <div>
+                  <p className="text-xs font-medium text-cyan-300">
+                    {categoryMeta[currentConcept?.category]?.mission ?? 'Продолжить инженерный маршрут'}
+                  </p>
+                  <h2 className="mt-2 max-w-2xl text-2xl font-semibold leading-tight sm:text-3xl">
+                    {currentConcept?.title}
+                  </h2>
+                  <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-400">
+                    {currentConcept?.description}
+                  </p>
+                </div>
+                {currentConcept && (
+                  <Link
+                    href={`/trainer/topic/${currentConcept.slug}`}
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-cyan-300 px-5 text-sm font-bold text-slate-950 shadow-[0_12px_35px_rgba(34,211,238,0.18)] hover:-translate-y-0.5 hover:bg-cyan-200"
+                  >
+                    Открыть задачу
+                    <ChevronRight className="h-4 w-4" />
+                  </Link>
+                )}
+              </div>
+
+              <div className="mt-7 grid gap-3 border-t border-white/8 pt-5 sm:grid-cols-3">
+                {currentConcept?.microSkills.map((skill, index) => (
+                  <div key={skill} className="flex items-start gap-2 text-xs leading-5 text-gray-400">
+                    <span className="mt-1 font-mono text-[10px] text-cyan-300">0{index + 1}</span>
+                    <span>{skill}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <nav className="mt-7 flex gap-2 overflow-x-auto rounded-2xl border border-white/8 bg-white/[0.025] p-1.5">
           {viewOptions.map((option) => (
             <button
               key={option.id}
+              type="button"
               onClick={() => setView(option.id)}
-              className={`flex min-w-max items-center gap-3 border-b-2 px-4 py-4 text-left ${
+              className={`flex min-w-max flex-1 items-center gap-3 rounded-xl px-4 py-3 text-left ${
                 view === option.id
-                  ? 'border-[#5b4fd6] text-[#5b4fd6]'
-                  : 'border-transparent text-[#6d7190] hover:text-[#343858]'
+                  ? 'bg-white/10 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]'
+                  : 'text-gray-500 hover:bg-white/[0.04] hover:text-gray-300'
               }`}
             >
-              {option.id === 'concepts' && <MapIcon className="h-5 w-5" />}
+              {option.id === 'concepts' && <BookOpen className="h-5 w-5" />}
               {option.id === 'practice' && <Dumbbell className="h-5 w-5" />}
               {option.id === 'cards' && <Layers3 className="h-5 w-5" />}
-              <span className="font-bold">{option.label}</span>
+              <span>
+                <span className="block text-sm font-semibold">{option.label}</span>
+                <span className="mt-0.5 hidden text-[11px] text-gray-500 md:block">{option.description}</span>
+              </span>
             </button>
           ))}
         </nav>
 
         {view === 'concepts' && (
-          <section className="mt-10">
-            <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <section className="mt-9">
+            <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="text-xs font-bold uppercase text-[#777c98]">Карта обучения</p>
-                <h2 className="mt-2 text-2xl font-extrabold sm:text-3xl">Концепции Go</h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6d7190]">
-                  Связи показывают рекомендуемый порядок. Заверши текущую тему, чтобы открыть следующий уровень.
-                </p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">Рабочий backlog</p>
+                <h2 className="mt-2 text-2xl font-semibold">14 разделов инженерной базы</h2>
               </div>
-              {currentConcept && (
-                <Link
-                  href={`/trainer/topic/${currentConcept.slug}`}
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[#5b4fd6] px-5 text-sm font-bold text-white shadow-[0_8px_18px_rgba(91,79,214,0.24)] hover:bg-[#4f43c8]"
-                >
-                  <Play className="h-4 w-4 fill-current" />
-                  Продолжить
-                </Link>
-              )}
+              <p className="max-w-lg text-sm leading-6 text-gray-500">
+                Каждый раздел закрывает конкретную потребность проекта. Иди по порядку и открывай следующую задачу после проверки текущей.
+              </p>
             </div>
 
-            <div className="overflow-hidden rounded-lg border border-[#dfe2ee] bg-white shadow-[0_16px_45px_rgba(50,45,120,0.07)]">
-              <div className="flex items-center justify-between border-b border-[#e8eaf2] px-5 py-4">
-                <div>
-                  <p className="text-sm font-bold text-[#343858]">Маршрут изучения</p>
-                  <p className="mt-0.5 text-xs text-[#8589a1]">{conceptNodes.length} тем, {unlockedConcepts} доступны сейчас</p>
-                </div>
-                <BookOpen className="h-5 w-5 text-[#8b8fa8]" />
+            {loading ? (
+              <div className="mt-6 h-[520px] animate-pulse rounded-3xl border border-white/8 bg-white/[0.025]" />
+            ) : (
+              <div className="mt-6 space-y-4">
+                {conceptGroups.map((group, groupIndex) => (
+                  <ConceptSection
+                    key={group.category}
+                    group={group}
+                    index={groupIndex}
+                    active={groupIndex === currentGroupIndex}
+                  />
+                ))}
               </div>
-
-              {loading ? (
-                <div className="h-[520px] animate-pulse bg-[#f4f5fa]" />
-              ) : (
-                <>
-                  <div className="space-y-3 bg-[#fbfcff] p-4 md:hidden">
-                    {conceptNodes.map((concept, index) => (
-                      <ConceptListNode
-                        key={concept.slug}
-                        concept={concept}
-                        isLast={index === conceptNodes.length - 1}
-                      />
-                    ))}
-                  </div>
-                  <div className="hidden overflow-x-auto bg-[#fbfcff] md:block">
-                  <div
-                    className="relative mx-auto"
-                    style={{ width: mapWidth, height: conceptMapHeight }}
-                  >
-                    <svg className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden="true">
-                      {mapEdges.map(({ from, to }) => {
-                        const fromY = from.y + 46
-                        const toY = to.y
-                        const bend = Math.max(42, (toY - fromY) * 0.58)
-                        return (
-                        <path
-                          key={`${from.slug}-${to.slug}`}
-                          d={`M ${from.x} ${fromY} C ${from.x} ${fromY + bend}, ${to.x} ${toY - bend}, ${to.x} ${toY}`}
-                          fill="none"
-                          stroke={to.unlocked ? '#aaa4ec' : '#ccd4ed'}
-                          strokeDasharray="6 6"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                        />
-                        )
-                      })}
-                    </svg>
-
-                    {mapPoints.map((concept) => (
-                      <ConceptMapNode
-                        key={concept.slug}
-                        concept={concept}
-                        style={{
-                          left: concept.x - concept.width / 2,
-                          top: concept.y,
-                          width: concept.width,
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-                </>
-              )}
-            </div>
+            )}
           </section>
         )}
 
         {view === 'practice' && (
-          <section className="mt-10">
-            <div className="mb-6">
-              <h2 className="text-3xl font-extrabold text-[#1d2143]">Самостоятельные задачи</h2>
-              <p className="mt-2 text-sm leading-6 text-[#6d7190]">
-                Здесь уже меньше подсказок и больше самостоятельности. Хорошо заходить сюда после нескольких concept-тем.
+          <section className="mt-9">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">Practice Queue</p>
+                <h2 className="mt-2 text-2xl font-semibold">Самостоятельные задачи</h2>
+              </div>
+              <p className="max-w-lg text-sm leading-6 text-gray-500">
+                Здесь меньше подсказок: бери задачу после concept card и проверяй, можешь ли применить форму решения самостоятельно.
               </p>
             </div>
-            <div className="grid gap-4 md:grid-cols-2">
+
+            <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {exercises.map((exercise) => {
                 const completed = isCompleted('exercise', exercise.id)
                 return (
                   <Link
                     key={exercise.id}
                     href={`/trainer/${exercise.id}`}
-                    className="rounded-lg border border-[#dfe2ee] bg-white p-5 shadow-[0_8px_24px_rgba(50,45,120,0.05)] hover:-translate-y-0.5 hover:border-[#b8b2ef]"
+                    className="group rounded-3xl border border-white/8 bg-white/[0.025] p-5 hover:-translate-y-0.5 hover:border-cyan-300/30 hover:bg-cyan-300/[0.04]"
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                    <div className="flex items-center justify-between gap-3">
+                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${
                         completed
-                          ? 'bg-[#e7f7dd] text-[#3f7e20]'
-                          : 'bg-[#eeedf9] text-[#625b92]'
+                          ? 'bg-emerald-400/10 text-emerald-300'
+                          : 'bg-violet-400/10 text-violet-300'
                       }`}>
-                        {completed ? 'Выполнено' : exercise.difficulty}
+                        {completed ? 'Готово' : exercise.difficulty}
                       </span>
-                      <span className="font-mono text-xs text-[#8b8fa8]">#{exercise.order}</span>
+                      <span className="font-mono text-xs text-gray-600">TASK-{String(exercise.order).padStart(2, '0')}</span>
                     </div>
-                    <h3 className="mt-5 text-xl font-bold text-[#272b50]">{exercise.title}</h3>
-                    <p className="mt-2 line-clamp-2 text-sm leading-7 text-[#6d7190]">{exercise.description}</p>
-                    <p className="mt-5 text-xs font-bold uppercase text-[#5b4fd6]">{exercise.category} →</p>
+                    <h3 className="mt-5 text-lg font-semibold">{exercise.title}</h3>
+                    <p className="mt-2 line-clamp-2 text-sm leading-6 text-gray-500">{exercise.description}</p>
+                    <p className="mt-5 flex items-center gap-1 text-xs font-semibold text-cyan-300">
+                      Взять задачу <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                    </p>
                   </Link>
                 )
               })}
@@ -311,7 +333,7 @@ export default function TrainerPage() {
         )}
 
         {view === 'cards' && (
-          <section className="mt-10">
+          <section className="mt-9">
             <FlashcardsTab />
           </section>
         )}
@@ -320,121 +342,107 @@ export default function TrainerPage() {
   )
 }
 
-function buildRows(concepts: ConceptNode[]): MapRow[] {
-  const rows: MapRow[] = []
-  let cursor = 0
-  let patternIndex = 0
-
-  while (cursor < concepts.length) {
-    const size = rowPattern[patternIndex % rowPattern.length]
-    rows.push({ items: concepts.slice(cursor, cursor + size) })
-    cursor += size
-    patternIndex += 1
-  }
-
-  return rows
-}
-
-function buildMapPoints(rows: MapRow[]): MapPoint[] {
-  const points: MapPoint[] = []
-
-  rows.forEach((row, rowIndex) => {
-    const total = row.items.length
-    row.items.forEach((item, itemIndex) => {
-      const width = total === 1 ? 190 : total === 2 ? 210 : 180
-      const sidePadding = total === 4 ? 120 : total === 3 ? 170 : total === 2 ? 250 : mapWidth / 2
-      const usableWidth = mapWidth - sidePadding * 2
-      const x = total === 1
-        ? mapWidth / 2
-        : sidePadding + (usableWidth * itemIndex) / (total - 1)
-      const y = 58 + rowIndex * mapRowGap
-      points.push({ ...item, x, y, width })
-    })
-  })
-
-  return points
-}
-
-function buildMapEdges(rows: MapRow[], points: MapPoint[]): MapEdge[] {
-  const pointBySlug = new Map(points.map((point) => [point.slug, point]))
-  const edges: MapEdge[] = []
-
-  for (let rowIndex = 1; rowIndex < rows.length; rowIndex += 1) {
-    const previous = rows[rowIndex - 1].items
-    const current = rows[rowIndex].items
-
-    current.forEach((item, itemIndex) => {
-      const to = pointBySlug.get(item.slug)
-      if (!to) return
-
-      const parentIndex = Math.min(
-        previous.length - 1,
-        Math.floor((itemIndex * previous.length) / Math.max(1, current.length))
-      )
-      const parent = pointBySlug.get(previous[parentIndex].slug)
-      if (parent) edges.push({ from: parent, to })
-
-      if (previous.length > 1 && current.length <= 2) {
-        const secondParentIndex = Math.min(previous.length - 1, parentIndex + 1)
-        const secondParent = pointBySlug.get(previous[secondParentIndex].slug)
-        if (secondParent && secondParent.slug !== parent?.slug) {
-          edges.push({ from: secondParent, to })
-        }
-      }
-    })
-  }
-
-  return edges
-}
-
-function ConceptMapNode({
-  concept,
-  style,
+function ConceptSection({
+  group,
+  index,
+  active,
 }: {
-  concept: ConceptNode
-  style: CSSProperties
+  group: ConceptGroup
+  index: number
+  active: boolean
 }) {
-  const state = concept.completed
-    ? 'completed'
-    : concept.unlocked
-    ? 'unlocked'
-    : 'locked'
+  const complete = group.completedCount === group.concepts.length
+  const locked = group.unlockedCount === 0
+  const meta = categoryMeta[group.category]
 
-  const content = (
-    <>
-      <div className={`flex h-8 w-8 shrink-0 items-center justify-center border font-mono text-[11px] font-bold ${
-          state === 'completed'
-            ? 'border-[#70a852] bg-[#e9f7e1] text-[#3f7e20]'
-            : state === 'unlocked'
-            ? 'border-[#5b4fd6] bg-white text-[#312b79]'
-            : 'border-[#b8bdd1] bg-[#f8f9fd] text-[#737894]'
+  return (
+    <article className={`overflow-hidden rounded-3xl border ${
+      active
+        ? 'border-cyan-300/30 bg-cyan-300/[0.035] shadow-[0_18px_60px_rgba(34,211,238,0.06)]'
+        : complete
+          ? 'border-emerald-400/20 bg-emerald-400/[0.025]'
+          : 'border-white/8 bg-white/[0.02]'
+    }`}>
+      <div className="grid gap-4 border-b border-white/8 p-5 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:p-6">
+        <div className={`flex h-11 w-11 items-center justify-center rounded-2xl border font-mono text-xs font-bold ${
+          active
+            ? 'border-cyan-300/30 bg-cyan-300 text-slate-950'
+            : complete
+              ? 'border-emerald-400/25 bg-emerald-400/10 text-emerald-300'
+              : 'border-white/10 bg-white/5 text-gray-500'
         }`}>
-          {concept.code}
+          {complete ? <Check className="h-5 w-5" /> : String(index + 1).padStart(2, '0')}
         </div>
-
-      <div className="min-w-0 flex-1">
-        <h3 className={`truncate text-sm font-bold ${
-          state === 'locked' ? 'text-[#686d89]' : 'text-[#343858]'
-        }`}>
-          {concept.title}
-        </h3>
-        <p className="mt-0.5 truncate text-[11px] text-[#8b8fa8]">{concept.category}</p>
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-violet-300">{meta?.ticket}</span>
+            {active && <span className="rounded-full bg-cyan-300/10 px-2 py-0.5 text-[10px] font-semibold text-cyan-200">Сейчас</span>}
+          </div>
+          <h3 className="mt-1 text-lg font-semibold">{group.category}</h3>
+          <p className="mt-1 text-sm text-gray-500">{meta?.mission}</p>
+        </div>
+        <div className="sm:text-right">
+          <p className="text-sm font-medium text-gray-300">{group.completedCount}/{group.concepts.length} задач</p>
+          <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/8 sm:w-28">
+            <div
+              className={`h-full rounded-full ${complete ? 'bg-emerald-400' : 'bg-cyan-300'}`}
+              style={{ width: `${(group.completedCount / group.concepts.length) * 100}%` }}
+            />
+          </div>
+        </div>
       </div>
 
-      <div className={`absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border ${
-          state === 'completed'
-            ? 'border-[#b9d9a8] bg-[#e9f7e1] text-[#3f7e20]'
-            : state === 'unlocked'
-            ? 'border-[#cac6f3] bg-[#eeecff] text-[#5b4fd6]'
-            : 'border-[#d9dce8] bg-[#e9ebf3] text-[#777c98]'
+      <div className="grid gap-3 p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-3 xl:grid-cols-4">
+        {group.concepts.map((concept) => (
+          <ConceptTaskCard key={concept.slug} concept={concept} sectionLocked={locked} />
+        ))}
+      </div>
+    </article>
+  )
+}
+
+function ConceptTaskCard({
+  concept,
+  sectionLocked,
+}: {
+  concept: ConceptNode
+  sectionLocked: boolean
+}) {
+  const content = (
+    <>
+      <div className="flex items-center justify-between gap-3">
+        <span className={`font-mono text-[11px] font-bold ${
+          concept.completed ? 'text-emerald-300' : concept.unlocked ? 'text-cyan-300' : 'text-gray-600'
         }`}>
-        {state === 'completed' ? (
-          <Check className="h-3.5 w-3.5" strokeWidth={3} />
-        ) : state === 'unlocked' ? (
-          <Play className="h-3 w-3 fill-current" />
-        ) : (
-          <LockKeyhole className="h-3 w-3" />
-        )}
+          GO-{concept.code}
+        </span>
+        <span className={`flex h-7 w-7 items-center justify-center rounded-full border ${
+          concept.completed
+            ? 'border-emerald-400/25 bg-emerald-400/10 text-emerald-300'
+            : concept.current
+              ? 'border-cyan-300/30 bg-cyan-300/10 text-cyan-200'
+              : 'border-white/8 bg-white/[0.03] text-gray-600'
+        }`}>
+          {concept.completed ? (
+            <Check className="h-3.5 w-3.5" />
+          ) : concept.current ? (
+            <CircleDot className="h-3.5 w-3.5" />
+          ) : (
+            <LockKeyhole className="h-3.5 w-3.5" />
+          )}
+        </span>
+      </div>
+      <h4 className={`mt-4 min-h-12 text-sm font-semibold leading-6 ${
+        concept.unlocked ? 'text-white' : 'text-gray-500'
+      }`}>
+        {concept.title}
+      </h4>
+      <p className="mt-2 line-clamp-2 text-xs leading-5 text-gray-600">{concept.description}</p>
+      <div className="mt-5 flex items-center justify-between border-t border-white/6 pt-3">
+        <span className="text-[10px] uppercase tracking-[0.14em] text-gray-600">
+          {concept.completed ? 'Закрыто' : concept.current ? 'В работе' : 'В очереди'}
+        </span>
+        {concept.unlocked && <Play className="h-3.5 w-3.5 fill-current text-cyan-300" />}
       </div>
     </>
   )
@@ -443,13 +451,7 @@ function ConceptMapNode({
     return (
       <Link
         href={`/trainer/topic/${concept.slug}`}
-        style={style}
-        title={concept.description}
-        className={`group absolute z-10 flex min-h-[64px] items-center gap-3 rounded-md border px-3 py-2.5 shadow-[0_6px_16px_rgba(54,50,110,0.08)] ${
-          state === 'completed'
-            ? 'border-[#cde3c0] bg-[#f4fbf0] hover:border-[#91bd78]'
-            : 'border-[#d9d8ec] bg-[#efeff8] hover:-translate-y-0.5 hover:border-[#8e86e4] hover:bg-white'
-        }`}
+        className="group rounded-2xl border border-white/10 bg-[#0b1222] p-4 hover:-translate-y-0.5 hover:border-cyan-300/35 hover:bg-[#0d1729]"
       >
         {content}
       </Link>
@@ -458,69 +460,10 @@ function ConceptMapNode({
 
   return (
     <div
-      style={style}
-      title={concept.description}
-      className="absolute z-10 flex min-h-[64px] items-center gap-3 rounded-md border border-[#e0e2ec] bg-[#f1f2f7] px-3 py-2.5 opacity-90"
+      title={sectionLocked ? 'Сначала закрой предыдущий раздел' : 'Сначала закрой предыдущую задачу'}
+      className="rounded-2xl border border-white/[0.055] bg-black/10 p-4 opacity-75"
     >
       {content}
     </div>
   )
-}
-
-function ConceptListNode({
-  concept,
-  isLast,
-}: {
-  concept: ConceptNode
-  isLast: boolean
-}) {
-  const state = concept.completed
-    ? 'completed'
-    : concept.unlocked
-    ? 'unlocked'
-    : 'locked'
-
-  const row = (
-    <div className="relative flex items-center gap-3">
-      {!isLast && (
-        <span className="absolute left-[15px] top-10 h-8 border-l border-dashed border-[#cbd2e8]" />
-      )}
-      <div className={`flex h-8 w-8 shrink-0 items-center justify-center border font-mono text-[11px] font-bold ${
-        state === 'completed'
-          ? 'border-[#70a852] bg-[#e9f7e1] text-[#3f7e20]'
-          : state === 'unlocked'
-          ? 'border-[#5b4fd6] bg-white text-[#312b79]'
-          : 'border-[#c7cad8] bg-[#f1f2f7] text-[#777c98]'
-      }`}>
-        {concept.code}
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className={`font-bold ${state === 'locked' ? 'text-[#777c98]' : 'text-[#343858]'}`}>
-          {concept.title}
-        </p>
-        <p className="mt-0.5 truncate text-xs text-[#8b8fa8]">{concept.description}</p>
-        <p className="mt-1 text-[10px] font-bold uppercase tracking-wide text-[#7771b5]">{concept.category}</p>
-      </div>
-      {state === 'completed' ? (
-        <Check className="h-4 w-4 text-[#4c8b2c]" />
-      ) : state === 'unlocked' ? (
-        <Play className="h-4 w-4 fill-current text-[#5b4fd6]" />
-      ) : (
-        <LockKeyhole className="h-4 w-4 text-[#9a9eb1]" />
-      )}
-    </div>
-  )
-
-  if (concept.unlocked) {
-    return (
-      <Link
-        href={`/trainer/topic/${concept.slug}`}
-        className="block rounded-md border border-[#dddfea] bg-white p-3 shadow-[0_4px_14px_rgba(50,45,120,0.05)]"
-      >
-        {row}
-      </Link>
-    )
-  }
-
-  return <div className="rounded-md border border-[#e3e5ed] bg-[#f5f6fa] p-3">{row}</div>
 }
