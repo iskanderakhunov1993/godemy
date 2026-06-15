@@ -178,7 +178,7 @@ GitHub**: [@iskander](https://github.com/iskander)
 
 ## Тестовые аккаунты по ролям
 
-Обе роли входят через обычную форму: http://godemy.ru/auth/login
+Обе роли входят через обычную форму: [http://godemy.ru/auth/login](http://godemy.ru/auth/login)
 
 | Роль | Email | Пароль | После входа |
 |------|-------|--------|-------------|
@@ -188,6 +188,9 @@ GitHub**: [@iskander](https://github.com/iskander)
 Production-пароль администратора нельзя коммитить в публичный репозиторий. Он
 хранится только на сервере в `/opt/golanger/.env.production` и передаётся backend
 через переменную `ADMIN_SECRET`.
+
+Генератор курса после входа администратора:
+[http://godemy.ru/admin/course-generator](http://godemy.ru/admin/course-generator).
 
 ## Доступы роли администратора
 
