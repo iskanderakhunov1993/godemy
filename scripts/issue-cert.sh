@@ -14,6 +14,7 @@ CONF_FILE="$ROOT_DIR/docker/nginx/conf.d/golanger.conf"
 HTTPS_TEMPLATE="$ROOT_DIR/docker/nginx/conf.d/golanger-https.conf.example"
 ENV_FILE="$ROOT_DIR/.env.production"
 COMPOSE_FILE="$ROOT_DIR/docker-compose.prod.yml"
+HTTP_BACKUP="$ROOT_DIR/docker/nginx/conf.d/golanger.conf.http-backup"
 
 if ! command -v docker >/dev/null 2>&1; then
   echo "docker is required"
@@ -30,8 +31,12 @@ if [ ! -f "$ENV_FILE" ]; then
   exit 1
 fi
 
+# Preserve the current HTTP config so we can restore it if certificate issuance fails.
+cp "$CONF_FILE" "$HTTP_BACKUP"
+trap 'cp "$HTTP_BACKUP" "$CONF_FILE" >/dev/null 2>&1 || true' ERR
+
 # 1) Start stack in HTTP mode for ACME challenge.
-docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d db redis backend frontend nginx
+docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d db backend frontend nginx
 
 # 2) Request certificate using webroot challenge.
 docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" run --rm --entrypoint certbot certbot \
@@ -45,5 +50,8 @@ sed "s/app\.example\.com/$DOMAIN/g" "$HTTPS_TEMPLATE" > "$CONF_FILE"
 # 4) Reload nginx and start renewal daemon.
 docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d certbot
 docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" restart nginx
+
+rm -f "$HTTP_BACKUP"
+trap - ERR
 
 echo "Certificate issued and HTTPS enabled for $DOMAIN"
