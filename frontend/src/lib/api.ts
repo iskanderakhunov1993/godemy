@@ -550,14 +550,14 @@ export const adminApi = {
     return request<AdminLevel[]>('/api/admin/levels', { headers: adminHeaders() })
   },
 
-  createLevel: (_secret: string, data: { title: string; slug?: string; order?: number }) =>
+  createLevel: (_secret: string, data: { title: string; slug?: string; order?: number; description?: string }) =>
     request<AdminLevel>('/api/admin/levels', {
       method: 'POST',
       headers: adminHeaders(),
       body: JSON.stringify(data),
     }),
 
-  updateLevel: (_secret: string, id: number, data: { title?: string; slug?: string; order: number }) =>
+  updateLevel: (_secret: string, id: number, data: { title?: string; slug?: string; order: number; description?: string }) =>
     request<AdminLevel>(`/api/admin/levels/${id}`, {
       method: 'PUT',
       headers: adminHeaders(),

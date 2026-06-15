@@ -4,8 +4,9 @@ import { useEffect, useMemo } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Lesson } from '@/lib/api'
-import { getStoryLessonsByModule, getStoryModuleMeta } from '@/lib/storyCourse'
+import { getStoryModuleMeta } from '@/lib/storyCourse'
 import { useAuthStore } from '@/lib/store'
+import { useFlagshipCourse } from '@/lib/useFlagshipCourse'
 
 type TopicGroup = { name: string; lessons: Lesson[] }
 
@@ -25,12 +26,16 @@ export default function ModulePage() {
   const { slug } = useParams<{ slug: string }>()
   const moduleName = decodeURIComponent(slug)
   const { isCompleted, loadProgress, token } = useAuthStore()
+  const { lessons: courseLessons } = useFlagshipCourse()
 
   useEffect(() => {
     if (token) loadProgress()
   }, [token, loadProgress])
 
-  const moduleLessons = useMemo(() => getStoryLessonsByModule(moduleName), [moduleName])
+  const moduleLessons = useMemo(
+    () => courseLessons.filter((lesson) => lesson.module === moduleName),
+    [courseLessons, moduleName]
+  )
   const moduleMeta = useMemo(() => getStoryModuleMeta(moduleName), [moduleName])
 
   const topics = useMemo(() => groupByTopic(moduleLessons), [moduleLessons])
@@ -102,22 +107,40 @@ export default function ModulePage() {
           {topics.map((topic, idx) => {
             const topicCompleted = topic.lessons.filter(l => isCompleted('lesson', l.id)).length
             const allDone = topic.lessons.length > 0 && topicCompleted === topic.lessons.length
+            const topicProgress = Math.round((topicCompleted / Math.max(topic.lessons.length, 1)) * 100)
             return (
               <li key={topic.name}>
                 <Link
                   href={`/guide/topic/${encodeURIComponent(topic.name)}?module=${encodeURIComponent(moduleName)}`}
-                  className="flex items-center gap-4 bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-gray-700 rounded-2xl px-6 py-4 transition-all group"
+                  className="group block rounded-3xl border border-gray-800 bg-gray-900 px-6 py-5 transition-all hover:border-cyan-300/25 hover:bg-gray-800"
                 >
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-sm font-bold ${allDone ? 'bg-emerald-500/20 text-emerald-400' : 'bg-gray-800 text-gray-400 group-hover:bg-gray-700'}`}>
-                    {allDone ? '✓' : idx + 1}
+                  <div className="flex items-start gap-4">
+                    <div className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl text-sm font-bold ${allDone ? 'bg-emerald-500/20 text-emerald-400' : 'bg-gray-800 text-gray-400 group-hover:bg-gray-700'}`}>
+                      {allDone ? '✓' : idx + 1}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="font-semibold text-white">{topic.name}</p>
+                        <span className="text-xs text-gray-500">{topicCompleted}/{topic.lessons.length}</span>
+                      </div>
+                      <p className="mt-2 text-sm leading-6 text-gray-400">
+                        {topic.lessons[0]?.description || 'Короткая теория, практика и проверка понимания.'}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white font-medium text-sm">{topic.name}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{topicCompleted} / {topic.lessons.length} уроков</p>
+
+                  <div className="mt-5 grid gap-2 border-t border-white/5 pt-4 sm:grid-cols-2">
+                    {topic.lessons.slice(0, 2).map((lesson, lessonIndex) => (
+                      <div key={lesson.slug} className="flex items-center gap-2 text-xs text-gray-500">
+                        <span className="font-mono text-cyan-300/70">{idx + 1}.{lessonIndex + 1}</span>
+                        <span className="truncate">{lesson.title}</span>
+                      </div>
+                    ))}
                   </div>
-                  <svg className="w-4 h-4 text-gray-600 group-hover:text-gray-300 flex-shrink-0 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+
+                  <div className="mt-4 h-1 overflow-hidden rounded-full bg-white/8">
+                    <div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-violet-400" style={{ width: `${topicProgress}%` }} />
+                  </div>
                 </Link>
               </li>
             )

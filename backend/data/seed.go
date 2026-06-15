@@ -899,6 +899,8 @@ func increment() {
 		var existing models.Exercise
 		db.Where("module = ? AND \"order\" = ?", exercises[i].Module, exercises[i].Order).Attrs(exercises[i]).FirstOrCreate(&existing)
 	}
+
+	seedFlagshipCourse(db)
 }
 
 func juniorLessons() []models.Lesson {

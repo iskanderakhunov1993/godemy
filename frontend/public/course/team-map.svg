@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+  <title id="title">Карта продуктовой команды</title>
+  <desc id="desc">Пользовательская задача проходит через продукт, разработку, проверку и релиз.</desc>
+  <rect width="960" height="360" rx="32" fill="#09111f"/>
+  <g fill="none" stroke="#334155" stroke-width="3">
+    <path d="M174 180h116M410 180h116M646 180h116"/>
+  </g>
+  <g font-family="Arial, sans-serif" text-anchor="middle">
+    <g transform="translate(50 100)">
+      <rect width="124" height="160" rx="24" fill="#172033" stroke="#22d3ee"/>
+      <circle cx="62" cy="48" r="22" fill="#22d3ee"/>
+      <text x="62" y="100" fill="#fff" font-size="22" font-weight="700">PM</text>
+      <text x="62" y="126" fill="#94a3b8" font-size="14">Проблема</text>
+    </g>
+    <g transform="translate(290 100)">
+      <rect width="120" height="160" rx="24" fill="#172033" stroke="#8b5cf6"/>
+      <circle cx="60" cy="48" r="22" fill="#8b5cf6"/>
+      <text x="60" y="100" fill="#fff" font-size="22" font-weight="700">DEV</text>
+      <text x="60" y="126" fill="#94a3b8" font-size="14">Решение</text>
+    </g>
+    <g transform="translate(526 100)">
+      <rect width="120" height="160" rx="24" fill="#172033" stroke="#34d399"/>
+      <circle cx="60" cy="48" r="22" fill="#34d399"/>
+      <text x="60" y="100" fill="#fff" font-size="22" font-weight="700">QA</text>
+      <text x="60" y="126" fill="#94a3b8" font-size="14">Проверка</text>
+    </g>
+    <g transform="translate(762 100)">
+      <rect width="148" height="160" rx="24" fill="#172033" stroke="#f59e0b"/>
+      <circle cx="74" cy="48" r="22" fill="#f59e0b"/>
+      <text x="74" y="100" fill="#fff" font-size="22" font-weight="700">RELEASE</text>
+      <text x="74" y="126" fill="#94a3b8" font-size="14">Результат</text>
+    </g>
+  </g>
+</svg>

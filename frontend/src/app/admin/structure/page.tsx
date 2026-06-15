@@ -110,12 +110,14 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
   const [editingLessonTitle, setEditingLessonTitle] = useState("")
   const [openedLessonId, setOpenedLessonId] = useState<number | null>(null)
   const [openedLessonTitle, setOpenedLessonTitle] = useState("")
+  const [openedLessonDescription, setOpenedLessonDescription] = useState("")
   const [openedLessonContent, setOpenedLessonContent] = useState("")
   const [editingModuleName, setEditingModuleName] = useState<string | null>(null)
   const [editingModuleValue, setEditingModuleValue] = useState("")
   // Level management state
   const [editingLevelId, setEditingLevelId] = useState<number | null>(null)
   const [editingLevelTitle, setEditingLevelTitle] = useState("")
+  const [editingLevelDescription, setEditingLevelDescription] = useState("")
   const [newLevelTitle, setNewLevelTitle] = useState("")
   const [newLevelSlug, setNewLevelSlug] = useState("")
   const [showNewLevelForm, setShowNewLevelForm] = useState(false)
@@ -277,10 +279,16 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
     }
     setSaving(true)
     try {
-      await adminApi.updateLevel(secret, level.id, { title, slug: level.slug, order: level.order })
+      await adminApi.updateLevel(secret, level.id, {
+        title,
+        slug: level.slug,
+        order: level.order,
+        description: editingLevelDescription.trim(),
+      })
       await refreshData()
       setEditingLevelId(null)
       setEditingLevelTitle("")
+      setEditingLevelDescription("")
       flashSuccess("Уровень сохранён")
     } catch {
       flashSuccess("Ошибка при сохранении уровня")
@@ -326,8 +334,8 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
     setSaving(true)
     try {
       await Promise.all([
-        adminApi.updateLevel(secret, a.id, { title: a.title, slug: a.slug, order: b.order }),
-        adminApi.updateLevel(secret, b.id, { title: b.title, slug: b.slug, order: a.order }),
+        adminApi.updateLevel(secret, a.id, { title: a.title, slug: a.slug, order: b.order, description: a.description }),
+        adminApi.updateLevel(secret, b.id, { title: b.title, slug: b.slug, order: a.order, description: b.description }),
       ])
       await refreshData()
     } catch {
@@ -344,8 +352,8 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
     setSaving(true)
     try {
       await Promise.all([
-        adminApi.updateLevel(secret, a.id, { title: a.title, slug: a.slug, order: b.order }),
-        adminApi.updateLevel(secret, b.id, { title: b.title, slug: b.slug, order: a.order }),
+        adminApi.updateLevel(secret, a.id, { title: a.title, slug: a.slug, order: b.order, description: a.description }),
+        adminApi.updateLevel(secret, b.id, { title: b.title, slug: b.slug, order: a.order, description: b.description }),
       ])
       await refreshData()
     } catch {
@@ -467,6 +475,25 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
     }
   }
 
+  async function handleDeleteTopic(level: string, moduleName: string, topicName: string) {
+    const topicLessons = lessons.filter(
+      (lesson) => lesson.level === level && lesson.module === moduleName && lesson.category === topicName
+    )
+    if (topicLessons.length === 0) return
+    if (!window.confirm(`Удалить тему "${topicName}" и ${topicLessons.length} уроков внутри?`)) return
+
+    setSaving(true)
+    try {
+      await Promise.all(topicLessons.map((lesson) => adminApi.deleteLesson(secret, lesson.id)))
+      await refreshData()
+      flashSuccess("Тема удалена")
+    } catch {
+      flashSuccess("Ошибка при удалении темы")
+    } finally {
+      setSaving(false)
+    }
+  }
+
   async function handleCreateLessonInTopic(
     level: string,
     moduleName: string,
@@ -504,13 +531,17 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
   function handleOpenLesson(lesson: AdminLesson) {
     setOpenedLessonId(lesson.id)
     setOpenedLessonTitle(lesson.title)
+    setOpenedLessonDescription(lesson.description || "")
     setOpenedLessonContent(lesson.content || "")
   }
 
   async function handleSaveLessonContent(lesson: AdminLesson) {
     setSaving(true)
     try {
-      await adminApi.updateLesson(secret, lesson.id, { content: openedLessonContent })
+      await adminApi.updateLesson(secret, lesson.id, {
+        description: openedLessonDescription.trim(),
+        content: openedLessonContent,
+      })
       await refreshData()
       flashSuccess("Текст урока сохранен")
     } catch {
@@ -1106,7 +1137,10 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
                     onKeyDown={(e) => { if (e.key === "Enter") handleUpdateLevel(level) }}
                   />
                 ) : (
-                  <span className="flex-1 text-white font-medium">{level.title}</span>
+                  <div className="flex-1">
+                    <p className="text-white font-medium">{level.title}</p>
+                    {level.description && <p className="mt-1 text-xs text-gray-500">{level.description}</p>}
+                  </div>
                 )}
                 <span className="text-gray-500 text-xs">[{level.slug}]</span>
                 {editingLevelId === level.id ? (
@@ -1117,14 +1151,22 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
                       className="text-xs bg-cyan-700 hover:bg-cyan-600 text-white rounded px-2 py-1"
                     >Сохранить</button>
                     <button
-                      onClick={() => { setEditingLevelId(null); setEditingLevelTitle("") }}
+                      onClick={() => {
+                        setEditingLevelId(null)
+                        setEditingLevelTitle("")
+                        setEditingLevelDescription("")
+                      }}
                       className="text-xs bg-gray-700 hover:bg-gray-600 text-white rounded px-2 py-1"
                     >Отмена</button>
                   </>
                 ) : (
                   <>
                     <button
-                      onClick={() => { setEditingLevelId(level.id); setEditingLevelTitle(level.title) }}
+                      onClick={() => {
+                        setEditingLevelId(level.id)
+                        setEditingLevelTitle(level.title)
+                        setEditingLevelDescription(level.description || "")
+                      }}
                       disabled={saving}
                       className="text-xs bg-gray-700 hover:bg-gray-600 text-white rounded px-2 py-1"
                     >Редактировать</button>
@@ -1134,6 +1176,15 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
                       className="text-xs text-red-400 hover:text-red-300"
                     >✕</button>
                   </>
+                )}
+                {editingLevelId === level.id && (
+                  <textarea
+                    value={editingLevelDescription}
+                    onChange={(e) => setEditingLevelDescription(e.target.value)}
+                    placeholder="Короткое описание курса или уровня"
+                    rows={2}
+                    className="ml-16 mt-2 w-[calc(100%-4rem)] resize-none rounded border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-200"
+                  />
                 )}
               </div>
             )})}
@@ -1532,6 +1583,13 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
                                       >
                                         ↓
                                       </button>
+                                      <button
+                                        onClick={() => handleDeleteTopic(module.level, module.name, topic.name)}
+                                        disabled={saving}
+                                        className="text-xs rounded bg-red-950/70 px-2 py-0.5 text-red-300 hover:bg-red-900"
+                                      >
+                                        Удалить
+                                      </button>
                                     </>
                                   )}
                                 </div>
@@ -1669,15 +1727,32 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
                                         </div>
                                       </div>
                                       {openedLessonId === lesson.id && (
-                                        <LessonEditor
-                                          value={openedLessonContent}
-                                          onChange={setOpenedLessonContent}
-                                          onSave={() => handleSaveLessonContent(lesson)}
-                                          saving={saving}
-                                          lessonTitle={openedLessonTitle}
-                                          onClose={() => { setOpenedLessonId(null); setOpenedLessonTitle(""); setOpenedLessonContent("") }}
-                                          secret={secret}
-                                        />
+                                        <div className="rounded-2xl border border-indigo-500/25 bg-gray-950/60 p-3">
+                                          <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-gray-500">
+                                            Короткое описание на карточке урока
+                                          </label>
+                                          <textarea
+                                            value={openedLessonDescription}
+                                            onChange={(e) => setOpenedLessonDescription(e.target.value)}
+                                            rows={2}
+                                            placeholder="Что пользователь поймёт или сделает за этот урок"
+                                            className="mb-3 w-full resize-none rounded-xl border border-gray-700 bg-gray-900 px-3 py-2 text-sm text-gray-200"
+                                          />
+                                          <LessonEditor
+                                            value={openedLessonContent}
+                                            onChange={setOpenedLessonContent}
+                                            onSave={() => handleSaveLessonContent(lesson)}
+                                            saving={saving}
+                                            lessonTitle={openedLessonTitle}
+                                            onClose={() => {
+                                              setOpenedLessonId(null)
+                                              setOpenedLessonTitle("")
+                                              setOpenedLessonDescription("")
+                                              setOpenedLessonContent("")
+                                            }}
+                                            secret={secret}
+                                          />
+                                        </div>
                                       )}
                                     </React.Fragment>
                                   ))}

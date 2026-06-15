@@ -3,32 +3,40 @@
 import { useEffect, useMemo } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { storyCourseLessons, storyCourseLevels } from '@/lib/storyCourse'
 import { useAuthStore } from '@/lib/store'
-
-function groupByModule() {
-  const map = new Map<string, number>()
-  for (const lesson of storyCourseLessons) {
-    map.set(lesson.module, (map.get(lesson.module) ?? 0) + 1)
-  }
-  return Array.from(map.entries()).map(([name, lessonCount]) => ({ name, lessonCount }))
-}
+import { useFlagshipCourse } from '@/lib/useFlagshipCourse'
 
 export default function LevelPage() {
   const { slug } = useParams<{ slug: string }>()
   const levelSlug = decodeURIComponent(slug)
   const { isCompleted, loadProgress, token } = useAuthStore()
+  const { lessons: courseLessons, levels } = useFlagshipCourse()
 
   useEffect(() => {
     if (token) loadProgress()
   }, [token, loadProgress])
 
-  const levelInfo = useMemo(() => storyCourseLevels.find((item) => item.slug === levelSlug), [levelSlug])
+  const levelInfo = useMemo(() => levels.find((item) => item.slug === levelSlug), [levelSlug, levels])
   const levelLessons = useMemo(
-    () => storyCourseLessons.filter((lesson) => lesson.level === levelSlug),
-    [levelSlug]
+    () => courseLessons.filter((lesson) => lesson.level === levelSlug),
+    [courseLessons, levelSlug]
   )
-  const modules = useMemo(() => groupByModule(), [])
+  const modules = useMemo(() => {
+    const map = new Map<string, { name: string; lessonCount: number; firstOrder: number; topics: Set<string> }>()
+    for (const lesson of levelLessons) {
+      const current = map.get(lesson.module) ?? {
+        name: lesson.module,
+        lessonCount: 0,
+        firstOrder: lesson.order,
+        topics: new Set<string>(),
+      }
+      current.lessonCount += 1
+      current.firstOrder = Math.min(current.firstOrder, lesson.order)
+      current.topics.add(lesson.category)
+      map.set(lesson.module, current)
+    }
+    return Array.from(map.values()).sort((a, b) => a.firstOrder - b.firstOrder)
+  }, [levelLessons])
   const completedCount = levelLessons.filter((lesson) => isCompleted('lesson', lesson.id)).length
 
   if (!levelInfo || levelLessons.length === 0) {
@@ -74,7 +82,9 @@ export default function LevelPage() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-base font-semibold text-white">{moduleItem.name}</p>
-                  <p className="mt-1 text-xs text-gray-500">{done} / {moduleItem.lessonCount} уроков</p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    {moduleItem.topics.size} тем · {done} / {moduleItem.lessonCount} уроков
+                  </p>
                 </div>
                 <span className="text-gray-600 transition-colors group-hover:text-cyan-200">→</span>
               </Link>

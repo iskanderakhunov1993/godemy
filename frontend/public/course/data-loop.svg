@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+  <title id="title">Жизненный цикл данных CRUD</title>
+  <desc id="desc">Создание, чтение, обновление и удаление записи образуют цикл.</desc>
+  <rect width="960" height="360" rx="32" fill="#09111f"/>
+  <g font-family="Arial, sans-serif" text-anchor="middle">
+    <circle cx="480" cy="180" r="78" fill="#111c30" stroke="#64748b" stroke-width="3"/>
+    <text x="480" y="174" fill="#fff" font-size="24" font-weight="700">Expense</text>
+    <text x="480" y="204" fill="#94a3b8" font-size="15">одна запись</text>
+    <g fill="#172033" stroke-width="3">
+      <rect x="80" y="72" width="170" height="86" rx="22" stroke="#22d3ee"/>
+      <rect x="710" y="72" width="170" height="86" rx="22" stroke="#34d399"/>
+      <rect x="710" y="202" width="170" height="86" rx="22" stroke="#f59e0b"/>
+      <rect x="80" y="202" width="170" height="86" rx="22" stroke="#f472b6"/>
+    </g>
+    <g fill="#fff" font-size="21" font-weight="700">
+      <text x="165" y="125">Create</text>
+      <text x="795" y="125">Read</text>
+      <text x="795" y="255">Update</text>
+      <text x="165" y="255">Delete</text>
+    </g>
+    <g fill="none" stroke="#475569" stroke-width="4">
+      <path d="M250 115c100-80 360-80 460 0"/>
+      <path d="M795 158v44"/>
+      <path d="M710 245c-100 80-360 80-460 0"/>
+      <path d="M165 202v-44"/>
+    </g>
+  </g>
+</svg>

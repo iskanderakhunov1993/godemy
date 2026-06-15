@@ -335,9 +335,10 @@ func (h *Handler) AdminGetLevels() gin.HandlerFunc {
 }
 
 type createLevelInput struct {
-	Title string `json:"title" binding:"required"`
-	Slug  string `json:"slug"`
-	Order int    `json:"order"`
+	Title       string `json:"title" binding:"required"`
+	Slug        string `json:"slug"`
+	Order       int    `json:"order"`
+	Description string `json:"description"`
 }
 
 func (h *Handler) AdminCreateLevel() gin.HandlerFunc {
@@ -352,9 +353,10 @@ func (h *Handler) AdminCreateLevel() gin.HandlerFunc {
 			slug = strings.ToLower(strings.ReplaceAll(strings.TrimSpace(input.Title), " ", "-"))
 		}
 		level := &models.Level{
-			Title: strings.TrimSpace(input.Title),
-			Slug:  slug,
-			Order: input.Order,
+			Title:       strings.TrimSpace(input.Title),
+			Slug:        slug,
+			Order:       input.Order,
+			Description: strings.TrimSpace(input.Description),
 		}
 		if err := h.content.CreateLevel(level); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -365,9 +367,10 @@ func (h *Handler) AdminCreateLevel() gin.HandlerFunc {
 }
 
 type updateLevelInput struct {
-	Title string `json:"title"`
-	Slug  string `json:"slug"`
-	Order int    `json:"order"`
+	Title       string `json:"title"`
+	Slug        string `json:"slug"`
+	Order       int    `json:"order"`
+	Description string `json:"description"`
 }
 
 func (h *Handler) AdminUpdateLevel() gin.HandlerFunc {
@@ -390,6 +393,7 @@ func (h *Handler) AdminUpdateLevel() gin.HandlerFunc {
 		if input.Title != "" {
 			existing.Title = strings.TrimSpace(input.Title)
 		}
+		existing.Description = strings.TrimSpace(input.Description)
 		if input.Slug != "" {
 			existing.Slug = strings.TrimSpace(input.Slug)
 		}

@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import { useEffect, useMemo } from 'react'
-import { storyCourseLessons, storyModuleMeta } from '@/lib/storyCourse'
+import { getStoryModuleMeta, storyModuleMeta, type StoryModuleMeta } from '@/lib/storyCourse'
 import { useAuthStore } from '@/lib/store'
+import { useFlagshipCourse } from '@/lib/useFlagshipCourse'
 
 type SprintState = 'done' | 'active' | 'queued'
 
@@ -19,16 +20,17 @@ const sprintSymbols = ['◎', '01', '02', '03', '✓']
 
 function SprintNode({
   index,
+  sprint,
   state,
   completedCount,
   lessonCount,
 }: {
   index: number
+  sprint: StoryModuleMeta
   state: SprintState
   completedCount: number
   lessonCount: number
 }) {
-  const sprint = storyModuleMeta[index]
   const statusLabel = state === 'done' ? 'Готово' : state === 'active' ? 'Сейчас' : 'В очереди'
 
   return (
@@ -44,7 +46,7 @@ function SprintNode({
               : 'border-white/8 bg-white/[0.025] hover:border-white/16 hover:bg-white/[0.045]'
         }`}
       >
-        {index < storyModuleMeta.length - 1 && (
+        {index < 4 && (
           <span className="absolute -right-3 top-9 z-10 hidden h-px w-6 bg-white/12 xl:block" aria-hidden="true" />
         )}
 
@@ -58,7 +60,7 @@ function SprintNode({
                   : 'border-white/10 bg-white/5 text-gray-500'
             }`}
           >
-            {state === 'done' ? '✓' : sprintSymbols[index]}
+            {state === 'done' ? '✓' : (sprintSymbols[index] ?? String(index + 1).padStart(2, '0'))}
           </span>
           <span
             className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] ${
@@ -77,7 +79,7 @@ function SprintNode({
           {sprint.sprint}
         </p>
         <h2 className="mt-2 text-base font-semibold leading-snug text-white">
-          {sprintSkills[index]}
+          {sprintSkills[index] ?? sprint.name}
         </h2>
         <p className="mt-1 truncate text-xs text-gray-500">{sprint.project}</p>
 
@@ -100,31 +102,51 @@ function SprintNode({
 
 export default function GuidePage() {
   const { token, loadProgress, isCompleted } = useAuthStore()
+  const { lessons: courseLessons } = useFlagshipCourse()
 
   useEffect(() => {
     if (token) loadProgress()
   }, [token, loadProgress])
 
   const completedLessons = useMemo(
-    () => storyCourseLessons.filter((lesson) => isCompleted('lesson', lesson.id)).length,
-    [isCompleted]
+    () => courseLessons.filter((lesson) => isCompleted('lesson', lesson.id)).length,
+    [courseLessons, isCompleted]
   )
 
   const currentLesson = useMemo(
-    () => storyCourseLessons.find((lesson) => !isCompleted('lesson', lesson.id)) || storyCourseLessons.at(-1)!,
-    [isCompleted]
+    () => courseLessons.find((lesson) => !isCompleted('lesson', lesson.id)) || courseLessons.at(-1)!,
+    [courseLessons, isCompleted]
   )
+
+  const courseModules = useMemo(() => {
+    const names: string[] = []
+    for (const lesson of courseLessons) {
+      if (!names.includes(lesson.module)) names.push(lesson.module)
+    }
+    return names.map((name, index) => getStoryModuleMeta(name) ?? {
+      name,
+      sprint: `Module ${index + 1}`,
+      subtitle: courseLessons.find((lesson) => lesson.module === name)?.description || 'Новый модуль курса.',
+      project: 'Учебный модуль',
+      role: 'Intern Go Developer',
+      duration: `${courseLessons.filter((lesson) => lesson.module === name).length} уроков`,
+      ticket: `COURSE-${index + 1}`,
+      ritual: 'Изучение + практика',
+      deliverable: 'Завершить все уроки модуля',
+      mood: 'Двигаться маленькими шагами',
+    })
+  }, [courseLessons])
 
   const currentModuleIndex = Math.max(
     0,
-    storyModuleMeta.findIndex((module) => module.name === currentLesson.module)
+    courseModules.findIndex((module) => module.name === currentLesson.module)
   )
-  const currentModule = storyModuleMeta[currentModuleIndex]
-  const currentModuleLessons = storyCourseLessons.filter((lesson) => lesson.module === currentModule.name)
+  const currentModule = courseModules[currentModuleIndex] ?? storyModuleMeta[0]
+  const currentModuleLessons = courseLessons.filter((lesson) => lesson.module === currentModule.name)
   const currentModuleCompleted = currentModuleLessons.filter((lesson) => isCompleted('lesson', lesson.id)).length
-  const progressPercent = Math.round((completedLessons / storyCourseLessons.length) * 100)
-  const completedProjects = storyModuleMeta.slice(1, 4).filter((module) => {
-    const lessons = storyCourseLessons.filter((lesson) => lesson.module === module.name)
+  const progressPercent = Math.round((completedLessons / Math.max(courseLessons.length, 1)) * 100)
+  const completedProjects = courseModules.slice(1, 4).filter((module) => {
+    const lessons = courseLessons.filter((lesson) => lesson.module === module.name)
     return lessons.every((lesson) => isCompleted('lesson', lesson.id))
   }).length
 
@@ -137,6 +159,9 @@ export default function GuidePage() {
               <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
                 Atlas Dev · Internship
+              </div>
+              <div className="mt-4 inline-flex rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-[11px] font-semibold text-emerald-200">
+                Бесплатный флагманский курс
               </div>
               <h1 className="mt-5 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
                 Рабочий стол стажёра
@@ -155,7 +180,7 @@ export default function GuidePage() {
                 <p className="text-right text-xs leading-5 text-gray-500">
                   {completedProjects} из 3 проектов
                   <br />
-                  {completedLessons} из {storyCourseLessons.length} задач
+                  {completedLessons} из {courseLessons.length} задач
                 </p>
               </div>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/8">
@@ -222,8 +247,8 @@ export default function GuidePage() {
           </div>
 
           <ol className="-mx-4 mt-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 xl:grid-cols-5">
-            {storyModuleMeta.map((module, index) => {
-              const lessons = storyCourseLessons.filter((lesson) => lesson.module === module.name)
+            {courseModules.map((module, index) => {
+              const lessons = courseLessons.filter((lesson) => lesson.module === module.name)
               const completedCount = lessons.filter((lesson) => isCompleted('lesson', lesson.id)).length
               const state: SprintState = completedCount === lessons.length
                 ? 'done'
@@ -235,6 +260,7 @@ export default function GuidePage() {
                 <SprintNode
                   key={module.name}
                   index={index}
+                  sprint={module}
                   state={state}
                   completedCount={completedCount}
                   lessonCount={lessons.length}
@@ -255,8 +281,8 @@ export default function GuidePage() {
             </div>
 
             <div className="mt-5 grid gap-3 md:grid-cols-3">
-              {storyModuleMeta.slice(1, 4).map((module, projectIndex) => {
-                const lessons = storyCourseLessons.filter((lesson) => lesson.module === module.name)
+              {courseModules.slice(1, 4).map((module, projectIndex) => {
+                const lessons = courseLessons.filter((lesson) => lesson.module === module.name)
                 const done = lessons.every((lesson) => isCompleted('lesson', lesson.id))
                 const active = currentModule.name === module.name
 
@@ -277,7 +303,7 @@ export default function GuidePage() {
                       </span>
                     </div>
                     <p className="mt-5 text-sm font-semibold text-white">{module.project}</p>
-                    <p className="mt-1 text-xs text-gray-500">{sprintSkills[projectIndex + 1]}</p>
+                    <p className="mt-1 text-xs text-gray-500">{sprintSkills[projectIndex + 1] ?? module.subtitle}</p>
                   </Link>
                 )
               })}

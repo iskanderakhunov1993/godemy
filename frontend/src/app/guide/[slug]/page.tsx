@@ -28,7 +28,7 @@ function LessonContent() {
   const [lesson, setLesson] = useState<Lesson | null>(storyLesson)
   const [allLessons, setAllLessons] = useState<Lesson[]>(storyLesson ? storyCourseLessons : [])
   const [levels, setLevels] = useState<AdminLevel[]>(storyLesson ? storyCourseLevels : [])
-  const [loading, setLoading] = useState(!storyLesson)
+  const [loading, setLoading] = useState(true)
   const { token, isCompleted, loadProgress } = useAuthStore()
   const [tasksStatus, setTasksStatus] = useState<TasksStatus | null>(null)
 
@@ -37,12 +37,6 @@ function LessonContent() {
   }, [token, loadProgress])
 
   useEffect(() => {
-    if (storyLesson) {
-      saveLastVisited({ href: `/guide/${slug}`, title: storyLesson.title, type: 'lesson' })
-      markActivityToday()
-      return
-    }
-
     Promise.all([
       api.getLesson(slug),
       api.getLessons(),
@@ -55,7 +49,17 @@ function LessonContent() {
         saveLastVisited({ href: `/guide/${slug}`, title: l.title, type: 'lesson' })
         markActivityToday()
       })
-      .catch(() => router.push('/guide'))
+      .catch(() => {
+        if (storyLesson) {
+          setLesson(storyLesson)
+          setAllLessons(storyCourseLessons)
+          setLevels(storyCourseLevels)
+          saveLastVisited({ href: `/guide/${slug}`, title: storyLesson.title, type: 'lesson' })
+          markActivityToday()
+          return
+        }
+        router.push('/guide')
+      })
       .finally(() => setLoading(false))
   }, [slug, router, storyLesson])
 

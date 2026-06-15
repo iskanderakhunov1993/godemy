@@ -3,8 +3,8 @@
 import { Suspense, useEffect, useMemo } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { getStoryLessonsByTopic } from '@/lib/storyCourse'
 import { useAuthStore } from '@/lib/store'
+import { useFlagshipCourse } from '@/lib/useFlagshipCourse'
 
 function TopicContent() {
   const { topicName } = useParams<{ topicName: string }>()
@@ -12,14 +12,18 @@ function TopicContent() {
   const topicDecoded = decodeURIComponent(topicName)
   const moduleDecoded = decodeURIComponent(searchParams.get('module') ?? '')
   const { isCompleted, loadProgress, token } = useAuthStore()
+  const { lessons: courseLessons } = useFlagshipCourse()
 
   useEffect(() => {
     if (token) loadProgress()
   }, [token, loadProgress])
 
   const topicLessons = useMemo(
-    () => getStoryLessonsByTopic(topicDecoded, moduleDecoded || undefined),
-    [topicDecoded, moduleDecoded]
+    () => courseLessons
+      .filter((lesson) => lesson.category === topicDecoded)
+      .filter((lesson) => !moduleDecoded || lesson.module === moduleDecoded)
+      .sort((left, right) => left.order - right.order || left.id - right.id),
+    [courseLessons, topicDecoded, moduleDecoded]
   )
 
   if (topicLessons.length === 0) {
