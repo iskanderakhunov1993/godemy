@@ -5,10 +5,21 @@ function trimTrailingSlash(value: string): string {
 const envBackendUrl = process.env.NEXT_PUBLIC_BACKEND_URL?.trim() || ''
 const browserOrigin = typeof window !== 'undefined' ? window.location.origin : ''
 
+function getCanonicalOrigin(origin: string): string {
+  try {
+    const parsed = new URL(origin)
+    if (!parsed.hostname.startsWith('www.')) return ''
+    parsed.hostname = parsed.hostname.slice(4)
+    return parsed.origin
+  } catch {
+    return ''
+  }
+}
+
 function getBackendUrlCandidates(): string[] {
   // Production serves the API through nginx on the same origin. Prefer it so a
   // stale or invalid public env value cannot break auth and other core flows.
-  const candidates = [browserOrigin, envBackendUrl]
+  const candidates = [browserOrigin, getCanonicalOrigin(browserOrigin), envBackendUrl]
     .map(trimTrailingSlash)
     .filter(Boolean)
 
