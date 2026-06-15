@@ -176,6 +176,19 @@ GitHub**: [@iskander](https://github.com/iskander)
 - Развертывание: `scripts/deploy-timeweb.sh` или `docker compose up -d --build`
 - Вопросы? Создай Issue на GitHub
 
+## Тестовые аккаунты по ролям
+
+Обе роли входят через обычную форму: http://godemy.ru/auth/login
+
+| Роль | Email | Пароль | После входа |
+|------|-------|--------|-------------|
+| Обычный пользователь | `user@godemy.ru` | `UserGodemy2026!` | `/guide` |
+| Администратор | `admin@godemy.ru` | Значение `ADMIN_SECRET` из production `.env.production` | `/admin` |
+
+Production-пароль администратора нельзя коммитить в публичный репозиторий. Он
+хранится только на сервере в `/opt/golanger/.env.production` и передаётся backend
+через переменную `ADMIN_SECRET`.
+
 ## Доступы роли администратора
 
 Административный аккаунт создаётся или обновляется при запуске backend:
