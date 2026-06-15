@@ -155,7 +155,6 @@ function authHeaders(): HeadersInit {
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`
   const baseCandidates = getBackendUrlCandidates()
-  const apiBaseForMessage = baseCandidates.join(' → ') || '(same-origin)'
 
   let lastError: unknown = null
 
@@ -210,9 +209,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
         if (i < baseCandidates.length - 1) {
           continue
         }
-        throw new Error(
-          `Request timeout after ${REQUEST_TIMEOUT_MS}ms. Check backend availability at ${apiBaseForMessage}.`
-        )
+        throw new Error('Сервер отвечает слишком долго. Попробуй ещё раз через несколько секунд.')
       }
 
       if (error instanceof TypeError) {
@@ -225,9 +222,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
           if (i < baseCandidates.length - 1) {
             continue
           }
-          throw new Error(
-            `Не удалось связаться с сервером. Попробуй ещё раз через несколько секунд.`
-          )
+          throw new Error('Не удалось связаться с сервером. Попробуй ещё раз через несколько секунд.')
         }
       }
 
@@ -244,7 +239,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   if (lastError instanceof Error) {
     throw lastError
   }
-  throw new Error(`Не удалось связаться с сервером. Попробуй ещё раз через несколько секунд.`)
+  throw new Error('Не удалось связаться с сервером. Попробуй ещё раз через несколько секунд.')
 }
 
 export function getBackendBaseUrl(): string {
