@@ -65,7 +65,6 @@ const categoryMeta: Record<string, { ticket: string; mission: string }> = {
 export default function TrainerPage() {
   const [view, setView] = useState<View>('concepts')
   const [exercises, setExercises] = useState<Exercise[]>([])
-  const [loading, setLoading] = useState(true)
   const [localConceptProgress] = useState<Record<string, boolean>>(() => {
     if (typeof window === 'undefined') return {}
 
@@ -82,7 +81,6 @@ export default function TrainerPage() {
     api.getExercises({ module: 'core' })
       .then((exerciseItems) => setExercises([...exerciseItems].sort((a, b) => a.order - b.order)))
       .catch(() => setExercises([]))
-      .finally(() => setLoading(false))
 
     if (token) loadProgress()
   }, [token, loadProgress])
@@ -272,20 +270,16 @@ export default function TrainerPage() {
               </p>
             </div>
 
-            {loading ? (
-              <div className="mt-6 h-[520px] animate-pulse rounded-3xl border border-white/8 bg-white/[0.025]" />
-            ) : (
-              <div className="mt-6 space-y-4">
-                {conceptGroups.map((group, groupIndex) => (
-                  <ConceptSection
-                    key={group.category}
-                    group={group}
-                    index={groupIndex}
-                    active={groupIndex === currentGroupIndex}
-                  />
-                ))}
-              </div>
-            )}
+            <div className="mt-6 space-y-4">
+              {conceptGroups.map((group, groupIndex) => (
+                <ConceptSection
+                  key={group.category}
+                  group={group}
+                  index={groupIndex}
+                  active={groupIndex === currentGroupIndex}
+                />
+              ))}
+            </div>
           </section>
         )}
 
