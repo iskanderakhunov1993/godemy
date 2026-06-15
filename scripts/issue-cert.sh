@@ -44,7 +44,7 @@ docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d db backend fronte
 # 2) Request certificate using webroot challenge.
 docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" run --rm --entrypoint certbot certbot \
   certonly --webroot -w /var/www/certbot \
-  -d "$DOMAIN" -d "www.$DOMAIN" \
+  -d "$DOMAIN" \
   --email "$EMAIL" --agree-tos --no-eff-email
 
 # 3) Switch nginx config to HTTPS mode for the provided domain.
