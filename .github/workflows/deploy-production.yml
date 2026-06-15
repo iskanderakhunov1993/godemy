@@ -3,6 +3,7 @@ name: Deploy to Production
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -40,7 +41,6 @@ jobs:
           git checkout main
           git reset --hard origin/main
           test -f .env.production
-          chmod +x scripts/backup-loop.sh
           docker compose --env-file .env.production -f docker-compose.prod.yml --profile runner-build build runner-image
           docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build --remove-orphans
           docker image prune -f
