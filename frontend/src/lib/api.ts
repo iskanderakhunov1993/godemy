@@ -5,25 +5,10 @@ function trimTrailingSlash(value: string): string {
 const envBackendUrl = process.env.NEXT_PUBLIC_BACKEND_URL?.trim() || ''
 const browserOrigin = typeof window !== 'undefined' ? window.location.origin : ''
 
-function buildApiSubdomain(origin: string): string {
-  try {
-    const parsed = new URL(origin)
-    if (!parsed.hostname || parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1') {
-      return ''
-    }
-    const hostname = parsed.hostname.replace(/^www\./, '')
-    if (hostname.startsWith('api.')) {
-      return origin
-    }
-    parsed.hostname = `api.${hostname}`
-    return parsed.origin
-  } catch {
-    return ''
-  }
-}
-
 function getBackendUrlCandidates(): string[] {
-  const candidates = [envBackendUrl, browserOrigin, buildApiSubdomain(browserOrigin)]
+  // Production serves the API through nginx on the same origin. Prefer it so a
+  // stale or invalid public env value cannot break auth and other core flows.
+  const candidates = [browserOrigin, envBackendUrl]
     .map(trimTrailingSlash)
     .filter(Boolean)
 
@@ -241,7 +226,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
             continue
           }
           throw new Error(
-            `Network error: API is unreachable at ${apiBaseForMessage}. Check NEXT_PUBLIC_BACKEND_URL and backend CORS_ALLOWED_ORIGINS.`
+            `Не удалось связаться с сервером. Попробуй ещё раз через несколько секунд.`
           )
         }
       }
@@ -259,7 +244,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   if (lastError instanceof Error) {
     throw lastError
   }
-  throw new Error(`Network error: API is unreachable at ${apiBaseForMessage}.`)
+  throw new Error(`Не удалось связаться с сервером. Попробуй ещё раз через несколько секунд.`)
 }
 
 export function getBackendBaseUrl(): string {

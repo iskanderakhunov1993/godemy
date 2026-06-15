@@ -104,7 +104,7 @@ replace_env() {
 
 replace_env .env.production CORS_ALLOWED_ORIGINS "http://$BASE_DOMAIN,http://www.$BASE_DOMAIN,https://$BASE_DOMAIN,https://www.$BASE_DOMAIN"
 replace_env .env.production FRONTEND_URL "https://$BASE_DOMAIN"
-replace_env .env.production NEXT_PUBLIC_BACKEND_URL "https://api.$BASE_DOMAIN"
+replace_env .env.production NEXT_PUBLIC_BACKEND_URL "https://$BASE_DOMAIN"
 replace_env .env.production ADMIN_LOGIN "admin@$BASE_DOMAIN"
 
 require_non_placeholder() {
