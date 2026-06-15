@@ -33,7 +33,10 @@ fi
 
 # Preserve the current HTTP config so we can restore it if certificate issuance fails.
 cp "$CONF_FILE" "$HTTP_BACKUP"
-trap 'cp "$HTTP_BACKUP" "$CONF_FILE" >/dev/null 2>&1 || true' ERR
+restore_http_config() {
+  cp "$HTTP_BACKUP" "$CONF_FILE" >/dev/null 2>&1 || true
+}
+trap restore_http_config EXIT
 
 # 1) Start stack in HTTP mode for ACME challenge.
 docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d db backend frontend nginx
@@ -52,6 +55,6 @@ docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d certbot
 docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" restart nginx
 
 rm -f "$HTTP_BACKUP"
-trap - ERR
+trap - EXIT
 
 echo "Certificate issued and HTTPS enabled for $DOMAIN"
