@@ -40,9 +40,9 @@ type ConceptGroup = {
 }
 
 const viewOptions: Array<{ id: View; label: string; description: string }> = [
-  { id: 'concepts', label: 'Темы', description: 'Понятный маршрут по основам' },
-  { id: 'practice', label: 'Практика', description: 'Самостоятельные упражнения' },
-  { id: 'cards', label: 'Повторение', description: 'Быстрые карточки для закрепления' },
+  { id: 'concepts', label: 'Учусь теме', description: 'Короткое объяснение и пример' },
+  { id: 'practice', label: 'Закрепляю кодом', description: 'Упражнения после темы' },
+  { id: 'cards', label: 'Повторяю карточками', description: 'Быстрое повторение понятий' },
 ]
 
 const categoryMeta: Record<string, { ticket: string; mission: string }> = {
@@ -237,7 +237,8 @@ export default function TrainerPage() {
                 </div>
               </div>
               <p className="mt-5 max-w-md text-sm leading-6 text-gray-400">
-                Короткие темы и упражнения, чтобы не просто читать, а постепенно привыкать писать код.
+                Тренажёр разделён на три понятных режима: сначала учишь тему,
+                потом закрепляешь кодом и позже повторяешь карточками.
               </p>
 
               <div className="mt-8">
@@ -336,11 +337,11 @@ export default function TrainerPage() {
           <section className="mt-9">
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">План практики</p>
-                <h2 className="mt-2 text-2xl font-semibold">Ближайший раздел без перегруза</h2>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">Учусь теме</p>
+                <h2 className="mt-2 text-2xl font-semibold">Ближайшие темы без перегруза</h2>
               </div>
               <p className="max-w-lg text-sm leading-6 text-gray-500">
-                Сейчас показываем только доступный путь. Следующие разделы откроются, когда ты закончишь текущие темы.
+                Сначала разберись с темой и примером. Следующие разделы откроются, когда текущий шаг станет понятным.
               </p>
             </div>
 
@@ -368,11 +369,11 @@ export default function TrainerPage() {
           <section className="mt-9">
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">Упражнения</p>
-                <h2 className="mt-2 text-2xl font-semibold">Самостоятельные упражнения</h2>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">Закрепляю кодом</p>
+                <h2 className="mt-2 text-2xl font-semibold">Упражнения после темы</h2>
               </div>
               <p className="max-w-lg text-sm leading-6 text-gray-500">
-                Здесь меньше подсказок: выбирай упражнение после темы и проверяй, получается ли применить идею самому.
+                Здесь меньше подсказок: после объяснения попробуй написать код сам и проверь, получилось ли применить идею.
               </p>
             </div>
 

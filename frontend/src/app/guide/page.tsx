@@ -153,28 +153,47 @@ export default function GuidePage() {
   return (
     <main className="min-h-screen bg-[#050914]">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
-        <header className="grid overflow-hidden rounded-[32px] border border-white/10 bg-[radial-gradient(circle_at_15%_0%,rgba(34,211,238,0.12),transparent_32%),radial-gradient(circle_at_100%_0%,rgba(139,92,246,0.12),transparent_28%),#0a1020] lg:grid-cols-[0.72fr_1.28fr]">
-          <div className="flex flex-col justify-between border-b border-white/8 p-6 sm:p-8 lg:border-b-0 lg:border-r">
+        <header className="overflow-hidden rounded-[32px] border border-white/10 bg-[radial-gradient(circle_at_15%_0%,rgba(34,211,238,0.12),transparent_32%),radial-gradient(circle_at_100%_0%,rgba(139,92,246,0.12),transparent_28%),#0a1020] p-6 sm:p-8">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
+              Бесплатный курс · Go с нуля
+            </div>
+            <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-[11px] font-semibold text-emerald-200">
+              Без регистрации на старте
+            </span>
+          </div>
+
+          <div className="mt-7 grid gap-8 lg:grid-cols-[1fr_0.42fr] lg:items-end">
             <div>
-              <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
-                Бесплатный курс · Go с нуля
-              </div>
-              <div className="mt-4 inline-flex rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-[11px] font-semibold text-emerald-200">
-                Бесплатный курс
-              </div>
-              <h1 className="mt-5 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                Твой путь обучения
+              <p className="text-xs font-medium text-cyan-300">Следующий шаг</p>
+              <h1 className="mt-3 max-w-3xl text-3xl font-semibold leading-tight text-white sm:text-5xl">
+                Начни с текущего урока
               </h1>
-              <p className="mt-3 max-w-md text-sm leading-6 text-gray-400">
-                Проходи уроки по порядку, собирай проекты и видь понятный прогресс.
+              <h2 className="mt-4 max-w-3xl text-2xl font-semibold leading-tight text-violet-200 sm:text-3xl">
+                {currentLesson.title}
+              </h2>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-gray-400 sm:text-base">
+                {currentLesson.description}
               </p>
+
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <Link
+                  href={`/guide/${currentLesson.slug}?module=${encodeURIComponent(currentLesson.module)}&topic=${encodeURIComponent(currentLesson.category)}`}
+                  className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-cyan-300 px-6 text-sm font-bold text-slate-950 shadow-[0_12px_35px_rgba(34,211,238,0.18)] hover:-translate-y-0.5 hover:bg-cyan-200"
+                >
+                  Начать урок →
+                </Link>
+                <p className="text-xs leading-5 text-gray-500">
+                  Сначала урок, потом мини-практика, проект и сертификат.
+                </p>
+              </div>
             </div>
 
-            <div className="mt-8">
+            <div className="rounded-3xl border border-white/8 bg-white/[0.035] p-5">
               <div className="flex items-end justify-between gap-4">
                 <div>
-                  <p className="text-xs text-gray-500">Прогресс обучения</p>
+                  <p className="text-xs text-gray-500">Прогресс</p>
                   <p className="mt-1 text-2xl font-semibold text-white">{progressPercent}%</p>
                 </div>
                 <p className="text-right text-xs leading-5 text-gray-500">
@@ -189,50 +208,10 @@ export default function GuidePage() {
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
-            </div>
-          </div>
-
-          <div className="p-6 sm:p-8">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <span className="rounded-lg bg-violet-400/12 px-2.5 py-1 font-mono text-xs text-violet-300">
-                  Раздел {currentModuleIndex + 1}
-                </span>
-                <span className="text-xs text-gray-500">Шаг {currentModuleIndex + 1}</span>
+              <div className="mt-5 grid gap-2 text-xs text-gray-400">
+                <span>Маршрут: старт → урок → практика → проект → сертификат</span>
+                <span>Текущий раздел: {currentModuleCompleted}/{currentModuleLessons.length} уроков</span>
               </div>
-              <span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-[11px] font-medium text-amber-200">
-                Текущий шаг
-              </span>
-            </div>
-
-            <div className="mt-6 grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
-              <div>
-                <p className="text-xs font-medium text-cyan-300">Следующий урок</p>
-                <h2 className="mt-2 max-w-2xl text-2xl font-semibold leading-tight text-white sm:text-3xl">
-                  {currentLesson.title}
-                </h2>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-400">
-                  {currentLesson.description}
-                </p>
-              </div>
-              <Link
-                href={`/guide/${currentLesson.slug}?module=${encodeURIComponent(currentLesson.module)}&topic=${encodeURIComponent(currentLesson.category)}`}
-                className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-cyan-300 px-5 text-sm font-bold text-slate-950 shadow-[0_12px_35px_rgba(34,211,238,0.18)] hover:-translate-y-0.5 hover:bg-cyan-200"
-              >
-                Начать урок →
-              </Link>
-            </div>
-
-            <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-white/8 pt-5 text-xs">
-              <span className="text-gray-500">
-                Направление <strong className="ml-1 font-medium text-gray-200">Go-разработка</strong>
-              </span>
-              <span className="text-gray-500">
-                Раздел <strong className="ml-1 font-medium text-gray-200">{currentModuleCompleted}/{currentModuleLessons.length}</strong>
-              </span>
-              <span className="text-gray-500">
-                Цель <strong className="ml-1 font-medium text-gray-200">завершить уроки раздела</strong>
-              </span>
             </div>
           </div>
         </header>
@@ -240,8 +219,8 @@ export default function GuidePage() {
         <section className="mt-8">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">План курса</p>
-              <h2 className="mt-2 text-2xl font-semibold text-white">От первого урока до проекта</h2>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">Что будет дальше</p>
+              <h2 className="mt-2 text-2xl font-semibold text-white">Один маршрут без выбора из десятков карточек</h2>
             </div>
             <p className="text-sm text-gray-500">5 разделов · 3 проекта · понятный итог</p>
           </div>
@@ -311,18 +290,11 @@ export default function GuidePage() {
           </div>
 
           <aside className="rounded-[28px] border border-white/8 bg-[linear-gradient(145deg,rgba(34,211,238,0.06),rgba(139,92,246,0.06))] p-6 sm:p-7">
-            <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-violet-400 to-cyan-300 text-sm font-bold text-slate-950">
-                TL
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-white">Наставник курса</p>
-                <p className="text-xs text-emerald-300">подсказывает маршрут</p>
-              </div>
-            </div>
-            <blockquote className="mt-5 text-sm leading-6 text-gray-300">
-              «Не пытайся пройти всё сразу. Сделай текущий урок, закрепи практикой и переходи дальше».
-            </blockquote>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300">Как двигаться</p>
+            <h2 className="mt-3 text-xl font-semibold text-white">Не выбирай всё сразу</h2>
+            <p className="mt-3 text-sm leading-6 text-gray-300">
+              Нажми главный урок сверху. После урока платформа покажет, что закрепить кодом и когда сохранить прогресс.
+            </p>
             <div className="mt-5 flex items-center justify-between border-t border-white/8 pt-4 text-xs">
               <span className="text-gray-500">После раздела</span>
               <span className="font-medium text-cyan-200">+1 понятный навык</span>

@@ -261,9 +261,15 @@ function LessonContent() {
                   )
               )
             ) : (
-              <Link href="/auth/login" className="text-sm text-gray-400 hover:text-cyan-400 transition-colors">
-                Войди чтобы сохранить прогресс →
-              </Link>
+              <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/[0.06] px-4 py-3">
+                <p className="text-sm font-semibold text-cyan-200">Сохрани прогресс</p>
+                <p className="mt-1 text-xs leading-5 text-gray-400">
+                  Урок можно читать без регистрации. Аккаунт пригодится, чтобы продолжить с этого места.
+                </p>
+                <Link href="/auth/register" className="mt-2 inline-flex text-sm font-semibold text-cyan-300 hover:text-cyan-200">
+                  Создать аккаунт →
+                </Link>
+              </div>
             )}
 
             <div className="flex items-center gap-3">

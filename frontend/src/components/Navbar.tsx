@@ -8,6 +8,8 @@ import { SearchModal } from './SearchModal'
 import { BrandLogo } from './BrandLogo'
 import { Menu, X } from 'lucide-react'
 
+const firstLessonHref = '/guide/atlas-first-day'
+
 export function Navbar() {
   const { user, logout } = useAuthStore()
   const pathname = usePathname()
@@ -162,7 +164,7 @@ export function Navbar() {
                 <Link href="/auth/login" className="hidden text-sm text-gray-400 hover:text-white sm:inline">
                   Войти
                 </Link>
-                <Link href="/guide" className="btn-primary text-sm px-4 py-2.5">
+                <Link href={firstLessonHref} className="btn-primary text-sm px-4 py-2.5">
                   Начать урок
                 </Link>
               </>
