@@ -16,8 +16,6 @@ const sprintSkills = [
   'Итог и портфолио',
 ]
 
-const sprintSymbols = ['◎', '01', '02', '03', '✓']
-
 function SprintNode({
   index,
   sprint,
@@ -34,58 +32,53 @@ function SprintNode({
   const statusLabel = state === 'done' ? 'Готово' : state === 'active' ? 'Сейчас' : 'В очереди'
 
   return (
-    <li className="w-[82vw] shrink-0 snap-start sm:w-auto sm:min-w-0">
+    <li>
       <Link
         href={`/guide/module/${encodeURIComponent(sprint.name)}`}
         aria-current={state === 'active' ? 'step' : undefined}
-        className={`group relative flex h-full min-h-44 flex-col rounded-3xl border p-5 transition duration-200 ${
+        className={`group grid gap-4 rounded-2xl border p-4 transition duration-200 sm:grid-cols-[auto_1fr_auto] sm:items-center ${
           state === 'active'
-            ? 'border-cyan-300/50 bg-cyan-300/[0.08] shadow-[0_18px_60px_rgba(34,211,238,0.10)]'
+            ? 'border-cyan-300/40 bg-cyan-300/[0.08]'
             : state === 'done'
               ? 'border-emerald-400/20 bg-emerald-400/[0.05] hover:border-emerald-300/35'
               : 'border-white/8 bg-white/[0.025] hover:border-white/16 hover:bg-white/[0.045]'
         }`}
       >
-        {index < 4 && (
-          <span className="absolute -right-3 top-9 z-10 hidden h-px w-6 bg-white/12 xl:block" aria-hidden="true" />
-        )}
+        <span
+          className={`flex h-10 w-10 items-center justify-center rounded-2xl border font-mono text-xs font-bold ${
+            state === 'active'
+              ? 'border-cyan-300/40 bg-cyan-300 text-slate-950'
+              : state === 'done'
+                ? 'border-emerald-400/30 bg-emerald-400/15 text-emerald-300'
+                : 'border-white/10 bg-white/5 text-gray-500'
+          }`}
+        >
+          {state === 'done' ? '✓' : String(index + 1).padStart(2, '0')}
+        </span>
 
-        <div className="flex items-center justify-between gap-3">
-          <span
-            className={`flex h-10 w-10 items-center justify-center rounded-2xl border font-mono text-xs font-bold ${
-              state === 'active'
-                ? 'border-cyan-300/40 bg-cyan-300 text-slate-950'
-                : state === 'done'
-                  ? 'border-emerald-400/30 bg-emerald-400/15 text-emerald-300'
-                  : 'border-white/10 bg-white/5 text-gray-500'
-            }`}
-          >
-            {state === 'done' ? '✓' : (sprintSymbols[index] ?? String(index + 1).padStart(2, '0'))}
-          </span>
-          <span
-            className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] ${
-              state === 'active'
-                ? 'bg-cyan-300/15 text-cyan-200'
-                : state === 'done'
-                  ? 'bg-emerald-400/10 text-emerald-300'
-                  : 'bg-white/5 text-gray-500'
-            }`}
-          >
-            {statusLabel}
-          </span>
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="text-base font-semibold leading-snug text-white">
+              {sprintSkills[index] ?? sprint.name}
+            </h2>
+            <span
+              className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${
+                state === 'active'
+                  ? 'bg-cyan-300/15 text-cyan-200'
+                  : state === 'done'
+                    ? 'bg-emerald-400/10 text-emerald-300'
+                    : 'bg-white/5 text-gray-500'
+              }`}
+            >
+              {statusLabel}
+            </span>
+          </div>
+          <p className="mt-1 text-sm leading-6 text-gray-400">{sprint.project}</p>
         </div>
 
-        <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-gray-500">
-          Шаг {index + 1}
-        </p>
-        <h2 className="mt-2 text-base font-semibold leading-snug text-white">
-          {sprintSkills[index] ?? sprint.name}
-        </h2>
-        <p className="mt-1 truncate text-xs text-gray-500">{sprint.project}</p>
-
-        <div className="mt-auto pt-5">
+        <div className="min-w-36">
           <div className="flex items-center justify-between text-[11px] text-gray-500">
-            <span>{completedCount}/{lessonCount} уроков</span>
+            <span>{completedCount}/{lessonCount}</span>
             <span className="text-gray-400 transition group-hover:text-white">Открыть →</span>
           </div>
           <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/8">
@@ -153,26 +146,20 @@ export default function GuidePage() {
   return (
     <main className="min-h-screen bg-[#050914]">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
-        <header className="overflow-hidden rounded-[32px] border border-white/10 bg-[radial-gradient(circle_at_15%_0%,rgba(34,211,238,0.12),transparent_32%),radial-gradient(circle_at_100%_0%,rgba(139,92,246,0.12),transparent_28%),#0a1020] p-6 sm:p-8">
+        <header className="rounded-[28px] border border-white/10 bg-white/[0.025] p-6 sm:p-8">
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300">
               <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
               Бесплатный курс · Go с нуля
             </div>
-            <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-[11px] font-semibold text-emerald-200">
-              Без регистрации на старте
-            </span>
           </div>
 
-          <div className="mt-7 grid gap-8 lg:grid-cols-[1fr_0.42fr] lg:items-end">
+          <div className="mt-7 grid gap-7 lg:grid-cols-[1fr_0.34fr] lg:items-end">
             <div>
-              <p className="text-xs font-medium text-cyan-300">Следующий шаг</p>
+              <p className="text-sm font-medium text-cyan-300">Следующий урок</p>
               <h1 className="mt-3 max-w-3xl text-3xl font-semibold leading-tight text-white sm:text-5xl">
-                Начни с текущего урока
-              </h1>
-              <h2 className="mt-4 max-w-3xl text-2xl font-semibold leading-tight text-violet-200 sm:text-3xl">
                 {currentLesson.title}
-              </h2>
+              </h1>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-gray-400 sm:text-base">
                 {currentLesson.description}
               </p>
@@ -185,119 +172,84 @@ export default function GuidePage() {
                   Начать урок →
                 </Link>
                 <p className="text-xs leading-5 text-gray-500">
-                  Сначала урок, потом мини-практика, проект и понятный итог.
+                  Без регистрации на старте. Прогресс можно сохранить позже.
                 </p>
               </div>
             </div>
 
-            <div className="rounded-3xl border border-white/8 bg-white/[0.035] p-5">
-              <div className="flex items-end justify-between gap-4">
-                <div>
-                  <p className="text-xs text-gray-500">Прогресс</p>
-                  <p className="mt-1 text-2xl font-semibold text-white">{progressPercent}%</p>
-                </div>
-                <p className="text-right text-xs leading-5 text-gray-500">
-                  {completedProjects} из 3 проектов
-                  <br />
-                  {completedLessons} из {courseLessons.length} уроков
-                </p>
-              </div>
+            <div className="rounded-3xl border border-white/8 bg-black/15 p-5">
+              <p className="text-xs text-gray-500">Прогресс курса</p>
+              <p className="mt-2 text-3xl font-semibold text-white">{progressPercent}%</p>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/8">
                 <div
                   className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-400 to-violet-400 transition-all duration-700"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
-              <div className="mt-5 grid gap-2 text-xs text-gray-400">
-                <span>Маршрут: старт → урок → практика → проект → понятный итог</span>
-                <span>Текущий раздел: {currentModuleCompleted}/{currentModuleLessons.length} уроков</span>
+              <div className="mt-4 grid gap-1 text-xs leading-5 text-gray-500">
+                <span>{completedLessons} из {courseLessons.length} уроков</span>
+                <span>{completedProjects} из 3 проектов</span>
+                <span>Раздел: {currentModuleCompleted}/{currentModuleLessons.length}</span>
               </div>
             </div>
           </div>
         </header>
 
-        <section className="mt-8">
-          <div className="flex flex-wrap items-end justify-between gap-3">
+        <section className="mt-8 grid gap-4 lg:grid-cols-[1fr_0.38fr]">
+          <div className="rounded-[28px] border border-white/8 bg-white/[0.025] p-5 sm:p-6">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">Что будет дальше</p>
-              <h2 className="mt-2 text-2xl font-semibold text-white">Один маршрут без выбора из десятков карточек</h2>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">Маршрут</p>
+              <h2 className="mt-2 text-2xl font-semibold text-white">5 коротких шагов</h2>
             </div>
-            <p className="text-sm text-gray-500">5 разделов · 3 проекта · понятный итог</p>
+
+            <ol className="mt-5 space-y-3">
+              {courseModules.map((module, index) => {
+                const lessons = courseLessons.filter((lesson) => lesson.module === module.name)
+                const completedCount = lessons.filter((lesson) => isCompleted('lesson', lesson.id)).length
+                const state: SprintState = completedCount === lessons.length
+                  ? 'done'
+                  : index === currentModuleIndex
+                    ? 'active'
+                    : 'queued'
+
+                return (
+                  <SprintNode
+                    key={module.name}
+                    index={index}
+                    sprint={module}
+                    state={state}
+                    completedCount={completedCount}
+                    lessonCount={lessons.length}
+                  />
+                )
+              })}
+            </ol>
           </div>
 
-          <ol className="-mx-4 mt-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 xl:grid-cols-5">
-            {courseModules.map((module, index) => {
-              const lessons = courseLessons.filter((lesson) => lesson.module === module.name)
-              const completedCount = lessons.filter((lesson) => isCompleted('lesson', lesson.id)).length
-              const state: SprintState = completedCount === lessons.length
-                ? 'done'
-                : index === currentModuleIndex
-                  ? 'active'
-                  : 'queued'
-
-              return (
-                <SprintNode
-                  key={module.name}
-                  index={index}
-                  sprint={module}
-                  state={state}
-                  completedCount={completedCount}
-                  lessonCount={lessons.length}
-                />
-              )
-            })}
-          </ol>
-        </section>
-
-        <section className="mt-8 grid gap-4 lg:grid-cols-[1.35fr_0.65fr]">
-          <div className="rounded-[28px] border border-white/8 bg-white/[0.025] p-6 sm:p-7">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-violet-300">Практический результат</p>
-                <h2 className="mt-2 text-xl font-semibold text-white">Три проекта для первого портфолио</h2>
-              </div>
-              <span className="font-mono text-xs text-gray-500">{completedProjects}/3 готово</span>
-            </div>
-
-            <div className="mt-5 grid gap-3 md:grid-cols-3">
-              {courseModules.slice(1, 4).map((module, projectIndex) => {
+          <aside className="rounded-[28px] border border-white/8 bg-[linear-gradient(145deg,rgba(34,211,238,0.06),rgba(139,92,246,0.06))] p-5 sm:p-6">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300">Результат</p>
+            <h2 className="mt-3 text-xl font-semibold text-white">После курса</h2>
+            <div className="mt-5 space-y-3">
+              {courseModules.slice(1, 4).map((module) => {
                 const lessons = courseLessons.filter((lesson) => lesson.module === module.name)
                 const done = lessons.every((lesson) => isCompleted('lesson', lesson.id))
-                const active = currentModule.name === module.name
 
                 return (
                   <Link
                     key={module.name}
                     href={`/guide/module/${encodeURIComponent(module.name)}`}
-                    className={`rounded-2xl border p-4 transition ${
-                      active
-                        ? 'border-violet-400/35 bg-violet-400/[0.08]'
-                        : 'border-white/8 bg-black/15 hover:border-white/16'
-                    }`}
+                    className="flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-black/15 px-4 py-3 text-sm transition hover:border-white/16"
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs text-gray-500">0{projectIndex + 1}</span>
-                      <span className={done ? 'text-emerald-300' : active ? 'text-violet-300' : 'text-gray-600'}>
-                        {done ? '✓' : active ? '●' : '○'}
-                      </span>
-                    </div>
-                    <p className="mt-5 text-sm font-semibold text-white">{module.project}</p>
-                    <p className="mt-1 text-xs text-gray-500">{sprintSkills[projectIndex + 1] ?? module.subtitle}</p>
+                    <span className="text-gray-300">{module.project}</span>
+                    <span className={done ? 'text-emerald-300' : 'text-gray-600'}>{done ? '✓' : '○'}</span>
                   </Link>
                 )
               })}
             </div>
-          </div>
-
-          <aside className="rounded-[28px] border border-white/8 bg-[linear-gradient(145deg,rgba(34,211,238,0.06),rgba(139,92,246,0.06))] p-6 sm:p-7">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300">Как двигаться</p>
-            <h2 className="mt-3 text-xl font-semibold text-white">Не выбирай всё сразу</h2>
-            <p className="mt-3 text-sm leading-6 text-gray-300">
-              Нажми главный урок сверху. После урока платформа покажет, что закрепить кодом и когда сохранить прогресс.
-            </p>
-            <div className="mt-5 flex items-center justify-between border-t border-white/8 pt-4 text-xs">
-              <span className="text-gray-500">После раздела</span>
-              <span className="font-medium text-cyan-200">+1 понятный навык</span>
+            <div className="mt-5 border-t border-white/8 pt-4">
+              <p className="text-sm leading-6 text-gray-300">
+                Итог: 3 проекта, GitHub-описание и заготовка для первого резюме.
+              </p>
             </div>
           </aside>
         </section>

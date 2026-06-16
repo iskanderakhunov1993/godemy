@@ -32,6 +32,14 @@ type resetPasswordInput struct {
 	NewPassword string `json:"newPassword" binding:"required,min=6"`
 }
 
+type verifyEmailInput struct {
+	Token string `json:"token" binding:"required,min=12"`
+}
+
+type resendVerificationInput struct {
+	Email string `json:"email" binding:"required,email"`
+}
+
 type updateMeInput struct {
 	FullName string `json:"fullName" binding:"required,min=3,max=120"`
 }
@@ -44,7 +52,7 @@ func (h *Handler) Register() gin.HandlerFunc {
 			return
 		}
 
-		token, user, err := h.auth.Register(input.Email, input.Username, input.Password)
+		verificationToken, user, err := h.auth.Register(input.Email, input.Username, input.Password)
 		if errors.Is(err, usecase.ErrConflict) {
 			c.JSON(http.StatusConflict, gin.H{"error": "Email or username already taken"})
 			return
@@ -54,7 +62,15 @@ func (h *Handler) Register() gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusCreated, gin.H{"token": token, "user": user})
+		if err := h.sendEmailVerificationEmail(user.Email, verificationToken); err != nil {
+			log.Printf("email verification send error for %s: %v", user.Email, err)
+		}
+
+		c.JSON(http.StatusCreated, gin.H{
+			"ok":      true,
+			"user":    user,
+			"message": "Аккаунт создан. Проверь email и подтверди регистрацию.",
+		})
 	}
 }
 
@@ -71,12 +87,63 @@ func (h *Handler) Login() gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 			return
 		}
+		if errors.Is(err, usecase.ErrEmailNotVerified) {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Email is not verified"})
+			return
+		}
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to login"})
 			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{"token": token, "user": user})
+	}
+}
+
+func (h *Handler) VerifyEmail() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var input verifyEmailInput
+		if err := c.ShouldBindJSON(&input); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		err := h.auth.VerifyEmail(strings.TrimSpace(input.Token))
+		if errors.Is(err, usecase.ErrInvalidInput) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid or expired token"})
+			return
+		}
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to verify email"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"ok": true, "message": "Email подтверждён. Теперь можно войти."})
+	}
+}
+
+func (h *Handler) ResendVerification() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var input resendVerificationInput
+		if err := c.ShouldBindJSON(&input); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		email := strings.TrimSpace(input.Email)
+		token, err := h.auth.RequestEmailVerification(email)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to resend verification"})
+			return
+		}
+
+		if token != "" {
+			if err := h.sendEmailVerificationEmail(email, token); err != nil {
+				log.Printf("email verification resend error for %s: %v", email, err)
+			}
+		}
+
+		c.JSON(http.StatusOK, gin.H{"ok": true, "message": "Если email есть в системе, письмо подтверждения отправлено"})
 	}
 }
 
@@ -176,13 +243,25 @@ func (h *Handler) sendPasswordResetEmail(email, token string) error {
 		"Здравствуйте!\\n\\nЧтобы сбросить пароль, перейдите по ссылке:\\n%s\\n\\nСсылка действует 60 минут.\\nЕсли вы не запрашивали сброс — просто проигнорируйте это письмо.\\n",
 		resetLink,
 	)
+	return h.sendPlainEmail(email, "Сброс пароля Golanger", body, "password-reset", resetLink)
+}
 
+func (h *Handler) sendEmailVerificationEmail(email, token string) error {
+	verifyLink := fmt.Sprintf("%s/auth/verify-email?token=%s", strings.TrimRight(h.cfg.FrontendURL, "/"), token)
+	body := fmt.Sprintf(
+		"Здравствуйте!\\n\\nПодтвердите email для аккаунта Godemy по ссылке:\\n%s\\n\\nСсылка действует 24 часа.\\nЕсли вы не создавали аккаунт — просто проигнорируйте это письмо.\\n",
+		verifyLink,
+	)
+	return h.sendPlainEmail(email, "Подтверждение email Godemy", body, "email-verification", verifyLink)
+}
+
+func (h *Handler) sendPlainEmail(email, subject, body, logPrefix, fallbackLink string) error {
 	// Fallback for local/dev where SMTP is not configured
 	if h.cfg.SMTPHost == "" || h.cfg.SMTPPort == "" || h.cfg.SMTPUser == "" || h.cfg.SMTPPassword == "" {
 		if strings.EqualFold(h.cfg.AppEnv, "production") {
 			return fmt.Errorf("SMTP is not configured")
 		}
-		log.Printf("[password-reset] SMTP not configured. Reset link for %s: %s", email, resetLink)
+		log.Printf("[%s] SMTP not configured. Link for %s: %s", logPrefix, email, fallbackLink)
 		return nil
 	}
 
@@ -193,7 +272,7 @@ func (h *Handler) sendPasswordResetEmail(email, token string) error {
 
 	msg := []byte("To: " + email + "\\r\\n" +
 		"From: " + from + "\\r\\n" +
-		"Subject: Сброс пароля Golanger\\r\\n" +
+		"Subject: " + subject + "\\r\\n" +
 		"MIME-Version: 1.0\\r\\n" +
 		"Content-Type: text/plain; charset=UTF-8\\r\\n\\r\\n" +
 		body)

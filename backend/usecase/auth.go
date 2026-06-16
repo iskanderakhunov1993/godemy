@@ -16,13 +16,14 @@ import (
 )
 
 type AuthUseCase struct {
-	users     repository.UserRepository
-	resets    repository.PasswordResetRepository
-	jwtSecret string
+	users         repository.UserRepository
+	resets        repository.PasswordResetRepository
+	verifications repository.EmailVerificationRepository
+	jwtSecret     string
 }
 
-func NewAuthUseCase(users repository.UserRepository, resets repository.PasswordResetRepository, jwtSecret string) *AuthUseCase {
-	return &AuthUseCase{users: users, resets: resets, jwtSecret: jwtSecret}
+func NewAuthUseCase(users repository.UserRepository, resets repository.PasswordResetRepository, verifications repository.EmailVerificationRepository, jwtSecret string) *AuthUseCase {
+	return &AuthUseCase{users: users, resets: resets, verifications: verifications, jwtSecret: jwtSecret}
 }
 
 func (u *AuthUseCase) Register(email, username, password string) (string, *models.User, error) {
@@ -33,21 +34,22 @@ func (u *AuthUseCase) Register(email, username, password string) (string, *model
 
 	pw := string(hashed)
 	user := &models.User{
-		Email:    email,
-		Username: username,
-		Password: &pw,
+		Email:         strings.TrimSpace(email),
+		Username:      strings.TrimSpace(username),
+		Password:      &pw,
+		EmailVerified: false,
 	}
 
 	if err := u.users.Create(user); err != nil {
 		return "", nil, ErrConflict
 	}
 
-	token, err := u.generateToken(user.ID)
+	verificationToken, err := u.createEmailVerificationToken(user.ID)
 	if err != nil {
 		return "", nil, err
 	}
 
-	return token, user, nil
+	return verificationToken, user, nil
 }
 
 func (u *AuthUseCase) Login(email, password string) (string, *models.User, error) {
@@ -65,12 +67,65 @@ func (u *AuthUseCase) Login(email, password string) (string, *models.User, error
 		return "", nil, ErrInvalidCredentials
 	}
 
+	if !user.EmailVerified {
+		return "", nil, ErrEmailNotVerified
+	}
+
 	token, err := u.generateToken(user.ID)
 	if err != nil {
 		return "", nil, err
 	}
 
 	return token, user, nil
+}
+
+func (u *AuthUseCase) VerifyEmail(rawToken string) error {
+	if len(rawToken) < 12 {
+		return ErrInvalidInput
+	}
+
+	hash := sha256.Sum256([]byte(rawToken))
+	token, err := u.verifications.FindValidByHash(hex.EncodeToString(hash[:]), time.Now())
+	if errors.Is(err, repository.ErrNotFound) {
+		return ErrInvalidInput
+	}
+	if err != nil {
+		return err
+	}
+
+	user, err := u.users.FindByID(token.UserID)
+	if errors.Is(err, repository.ErrNotFound) {
+		return ErrNotFound
+	}
+	if err != nil {
+		return err
+	}
+
+	user.EmailVerified = true
+	if err := u.users.Update(user); err != nil {
+		return err
+	}
+
+	if err := u.verifications.MarkUsed(token.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *AuthUseCase) RequestEmailVerification(email string) (string, error) {
+	user, err := u.users.FindByEmail(strings.TrimSpace(email))
+	if errors.Is(err, repository.ErrNotFound) {
+		return "", nil
+	}
+	if err != nil {
+		return "", err
+	}
+	if user.EmailVerified {
+		return "", nil
+	}
+
+	return u.createEmailVerificationToken(user.ID)
 }
 
 func (u *AuthUseCase) Me(userID uint) (*models.User, error) {
@@ -159,10 +214,11 @@ func (u *AuthUseCase) EnsureAdminAccount(adminLogin, adminPassword string) error
 	}
 
 	newUser := &models.User{
-		Email:    adminLogin,
-		Username: username,
-		Password: &passwordHash,
-		IsAdmin:  true,
+		Email:         adminLogin,
+		Username:      username,
+		Password:      &passwordHash,
+		IsAdmin:       true,
+		EmailVerified: true,
 	}
 
 	if err := u.users.Create(newUser); err != nil {
@@ -240,6 +296,7 @@ func (u *AuthUseCase) ResetPassword(rawToken, newPassword string) error {
 	}
 	pw := string(hashed)
 	user.Password = &pw
+	user.EmailVerified = true
 
 	if err := u.users.Update(user); err != nil {
 		return err
@@ -271,6 +328,7 @@ func (u *AuthUseCase) LoginOrCreateOAuth(provider, providerID, email, username s
 		if err == nil {
 			user.OAuthProvider = provider
 			user.OAuthProviderID = providerID
+			user.EmailVerified = true
 			_ = u.users.Update(user)
 			token, err := u.generateToken(user.ID)
 			return token, user, err
@@ -290,6 +348,7 @@ func (u *AuthUseCase) LoginOrCreateOAuth(provider, providerID, email, username s
 		Password:        nil,
 		OAuthProvider:   provider,
 		OAuthProviderID: providerID,
+		EmailVerified:   true,
 	}
 
 	if err := u.users.Create(newUser); err != nil {
@@ -305,6 +364,30 @@ func (u *AuthUseCase) LoginOrCreateOAuth(provider, providerID, email, username s
 		return "", nil, err
 	}
 	return token, newUser, nil
+}
+
+func (u *AuthUseCase) createEmailVerificationToken(userID uint) (string, error) {
+	if err := u.verifications.DeleteByUser(userID); err != nil {
+		return "", err
+	}
+
+	rawToken, err := generateSecureToken(32)
+	if err != nil {
+		return "", err
+	}
+
+	hash := sha256.Sum256([]byte(rawToken))
+	token := &models.EmailVerificationToken{
+		UserID:    userID,
+		TokenHash: hex.EncodeToString(hash[:]),
+		ExpiresAt: time.Now().Add(24 * time.Hour),
+	}
+
+	if err := u.verifications.Create(token); err != nil {
+		return "", err
+	}
+
+	return rawToken, nil
 }
 
 func (u *AuthUseCase) generateToken(userID uint) (string, error) {

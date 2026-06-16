@@ -11,16 +11,19 @@ const levels = [
     title: 'Junior',
     description: 'Учишься собирать понятные рабочие сервисы и уверенно решать первые продуктовые задачи.',
     bullets: ['Веб-сервис', 'База данных', 'Вход пользователей', 'Запуск проекта', 'Проверка'],
+    resume: 'Go backend service: REST API, PostgreSQL, auth, запуск проекта и базовые тесты.',
   },
   {
     title: 'Middle',
     description: 'Разбираешься, как проекты становятся сложнее: интеграции, устойчивость и порядок в архитектуре.',
     bullets: ['Кэш', 'Очереди', 'Интеграции', 'Автопроверки', 'Архитектура'],
+    resume: 'Проект с интеграциями: cache, queue, внешние API, автопроверки и понятная структура сервиса.',
   },
   {
     title: 'Senior',
     description: 'Учишься смотреть на систему целиком: скорость, безопасность, масштаб и качество решений.',
     bullets: ['Нагрузка', 'Безопасность', 'Проектирование', 'Инфраструктура', 'Скорость'],
+    resume: 'System design case: нагрузка, безопасность, инфраструктура, наблюдаемость и план масштабирования.',
   },
 ]
 
@@ -103,6 +106,10 @@ export default function BootcampPage() {
                     {item}
                   </span>
                 ))}
+              </div>
+              <div className="mt-6 rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.055] p-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-200">В резюме после блока</p>
+                <p className="mt-2 text-sm leading-6 text-slate-200">{level.resume}</p>
               </div>
             </article>
           ))}

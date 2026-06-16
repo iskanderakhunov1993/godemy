@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 
 interface Card {
   id: number
@@ -135,36 +135,18 @@ function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
+function buildQueue(s: SessionStatus) {
+  const again = ALL_CARDS.filter(c => s[c.id] === 'again')
+  const newCards = ALL_CARDS.filter(c => !s[c.id] || s[c.id] === 'new')
+  return shuffle([...again, ...newCards])
+}
+
 export default function FlashcardsTab() {
-  const [status, setStatus] = useState<SessionStatus>({})
-  const [queue, setQueue] = useState<Card[]>([])
+  const [status, setStatus] = useState<SessionStatus>(() => loadStatus())
+  const [queue, setQueue] = useState<Card[]>(() => buildQueue(loadStatus()))
   const [currentIdx, setCurrentIdx] = useState(0)
   const [showAnswer, setShowAnswer] = useState(false)
-  const [sessionDone, setSessionDone] = useState(false)
-  const [hydrated, setHydrated] = useState(false)
-
-  // Hydrate from localStorage
-  useEffect(() => {
-    const saved = loadStatus()
-    setStatus(saved)
-    setHydrated(true)
-  }, [])
-
-  // Build queue: again cards first, then new
-  const buildQueue = useCallback((s: SessionStatus) => {
-    const again = ALL_CARDS.filter(c => s[c.id] === 'again')
-    const newCards = ALL_CARDS.filter(c => !s[c.id] || s[c.id] === 'new')
-    return shuffle([...again, ...newCards])
-  }, [])
-
-  useEffect(() => {
-    if (!hydrated) return
-    const q = buildQueue(status)
-    setQueue(q)
-    setCurrentIdx(0)
-    setShowAnswer(false)
-    setSessionDone(q.length === 0)
-  }, [hydrated, buildQueue]) // only on hydration — not on every status change
+  const [sessionDone, setSessionDone] = useState(() => buildQueue(loadStatus()).length === 0)
 
   const currentCard = queue[currentIdx]
   const learnedCount = ALL_CARDS.filter(c => status[c.id] === 'learned').length
@@ -205,8 +187,6 @@ export default function FlashcardsTab() {
     setShowAnswer(false)
     setSessionDone(false)
   }
-
-  if (!hydrated) return null
 
   // Session done
   if (sessionDone) {

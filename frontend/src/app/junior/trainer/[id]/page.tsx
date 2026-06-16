@@ -77,7 +77,7 @@ export default function JuniorExercisePage() {
     } catch {
       return ['Начни с простого случая.', 'Проверь входные ограничения.']
     }
-  }, [exercise?.hints])
+  }, [exercise])
 
   const sprint = exercise ? getSprintNumber(exercise.category) : 1
   const sprintMap = useMemo(() => buildSprintMap(allExercises, isCompleted), [allExercises, isCompleted])

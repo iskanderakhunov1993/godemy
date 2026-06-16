@@ -1,14 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { getStreak } from '@/lib/streak'
 
 export default function StreakBadge() {
-  const [streak, setStreak] = useState(0)
-
-  useEffect(() => {
-    setStreak(getStreak())
-  }, [])
+  const [streak] = useState(() => getStreak())
 
   if (streak < 1) return null
 

@@ -31,6 +31,10 @@ func TestValidateAcceptsProductionConfig(t *testing.T) {
 		AdminSecret:    "abcdef0123456789abcdef0123456789",
 		DatabaseURL:    "host=db user=app password=strong-password dbname=app",
 		AllowedOrigins: []string{"https://example.com"},
+		SMTPHost:       "smtp.example.com",
+		SMTPPort:       "587",
+		SMTPUser:       "mailer@example.com",
+		SMTPPassword:   "smtp-password",
 	}
 	if err := cfg.Validate(); err != nil {
 		t.Fatalf("expected production config to be valid: %v", err)

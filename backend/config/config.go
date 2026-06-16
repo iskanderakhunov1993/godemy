@@ -120,5 +120,11 @@ func (c *Config) Validate() error {
 	if len(c.AllowedOrigins) == 0 {
 		return fmt.Errorf("CORS_ALLOWED_ORIGINS must be configured in production")
 	}
+	if strings.TrimSpace(c.SMTPHost) == "" ||
+		strings.TrimSpace(c.SMTPPort) == "" ||
+		strings.TrimSpace(c.SMTPUser) == "" ||
+		strings.TrimSpace(c.SMTPPassword) == "" {
+		return fmt.Errorf("SMTP_HOST, SMTP_PORT, SMTP_USER and SMTP_PASSWORD must be configured in production")
+	}
 	return nil
 }

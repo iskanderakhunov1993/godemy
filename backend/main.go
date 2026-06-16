@@ -32,6 +32,7 @@ func main() {
 
 	userRepo := repository.NewUserRepository(database.DB)
 	passwordResetRepo := repository.NewPasswordResetRepository(database.DB)
+	emailVerificationRepo := repository.NewEmailVerificationRepository(database.DB)
 	lessonRepo := repository.NewLessonRepository(database.DB)
 	exerciseRepo := repository.NewExerciseRepository(database.DB)
 	progressRepo := repository.NewProgressRepository(database.DB)
@@ -58,7 +59,7 @@ func main() {
 		log.Printf("REDIS_ADDR is not configured, starting without rate limit store")
 	}
 
-	authUC := usecase.NewAuthUseCase(userRepo, passwordResetRepo, cfg.JWTSecret)
+	authUC := usecase.NewAuthUseCase(userRepo, passwordResetRepo, emailVerificationRepo, cfg.JWTSecret)
 	contentUC := usecase.NewContentUseCase(lessonRepo, exerciseRepo, progressRepo, levelRepo, trainerTopicRepo, skillRepo)
 	runnerUC := usecase.NewRunnerUseCase(exerciseRepo, progressRepo)
 	h := httpdelivery.NewHandler(authUC, contentUC, runnerUC, cfg, rdb)
@@ -108,6 +109,8 @@ func main() {
 	auth.Use(middleware.RedisRateLimit(rdb, "auth", 30, time.Minute))
 	auth.POST("/register", h.Register())
 	auth.POST("/login", h.Login())
+	auth.POST("/verify-email", h.VerifyEmail())
+	auth.POST("/resend-verification", h.ResendVerification())
 	auth.POST("/forgot-password", h.ForgotPassword())
 	auth.POST("/reset-password", h.ResetPassword())
 	auth.GET("/me", middleware.AuthRequired(cfg.JWTSecret), h.Me())

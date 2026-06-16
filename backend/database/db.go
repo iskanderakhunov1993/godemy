@@ -18,6 +18,7 @@ func Init(dsn string) error {
 	err = db.AutoMigrate(
 		&models.User{},
 		&models.PasswordResetToken{},
+		&models.EmailVerificationToken{},
 		&models.Skill{},
 		&models.UserSkill{},
 		&models.Level{},

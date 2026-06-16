@@ -39,9 +39,12 @@ export function SearchModal({ open, onClose }: Props) {
   // Focus input on open
   useEffect(() => {
     if (open) {
-      setTimeout(() => inputRef.current?.focus(), 50)
-      setQuery('')
-      setSelected(0)
+      const timer = window.setTimeout(() => {
+        inputRef.current?.focus()
+        setQuery('')
+        setSelected(0)
+      }, 50)
+      return () => window.clearTimeout(timer)
     }
   }, [open])
 

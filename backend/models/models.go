@@ -170,3 +170,14 @@ type PasswordResetToken struct {
 	UpdatedAt time.Time      `json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
+
+type EmailVerificationToken struct {
+	ID        uint           `json:"id" gorm:"primaryKey"`
+	UserID    uint           `json:"userId" gorm:"not null;index"`
+	TokenHash string         `json:"-" gorm:"not null;uniqueIndex"`
+	ExpiresAt time.Time      `json:"expiresAt" gorm:"index"`
+	UsedAt    *time.Time     `json:"usedAt"`
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
+}

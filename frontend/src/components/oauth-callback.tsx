@@ -23,8 +23,8 @@ function OAuthCallbackContent({ providerLabel, exchange, successRedirect = '/gui
   useEffect(() => {
     const code = searchParams.get('code')
     if (!code) {
-      setError('Код авторизации не получен')
-      return
+      const timer = window.setTimeout(() => setError('Код авторизации не получен'), 0)
+      return () => window.clearTimeout(timer)
     }
 
     exchange(code)

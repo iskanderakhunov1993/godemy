@@ -31,7 +31,10 @@ export default function LoginPage() {
         router.push('/guide')
       }
     } catch (err) {
-      setError((err as Error).message)
+      const message = (err as Error).message
+      setError(message === 'Email is not verified'
+        ? 'Подтверди email по ссылке из письма. После этого вход станет доступен.'
+        : message)
     } finally {
       setLoading(false)
     }

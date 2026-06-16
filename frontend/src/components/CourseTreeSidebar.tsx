@@ -34,11 +34,10 @@ export default function CourseTreeSidebar({
 
   function renderNode(node: CourseTreeNode, parentId: string | null = null) {
     const isSelected = node.id === selectedId;
-    const [hovered, setHovered] = useState(false);
     return (
       <div
         key={node.id}
-        className={`group pl-2 border-l-2 border-cyan-900 my-1 rounded-lg transition-colors ${isSelected ? "bg-cyan-950 border-cyan-500" : hovered ? "bg-gray-900/60" : ""}`}
+        className={`group pl-2 border-l-2 border-cyan-900 my-1 rounded-lg transition-colors ${isSelected ? "bg-cyan-950 border-cyan-500" : "hover:bg-gray-900/60"}`}
         draggable
         onDragStart={() => setDraggedId(node.id)}
         onDragOver={e => e.preventDefault()}
@@ -46,8 +45,6 @@ export default function CourseTreeSidebar({
           if (draggedId && draggedId !== node.id) onMove(draggedId, node.id);
           setDraggedId(null);
         }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
       >
         <div className="flex items-center gap-2 py-1">
           <span

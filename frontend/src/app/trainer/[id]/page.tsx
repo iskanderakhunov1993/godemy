@@ -46,7 +46,6 @@ export default function ExercisePage() {
       return
     }
 
-    setLoading(true)
     api
       .getExercise(exerciseId)
       .then((data) => {
@@ -82,7 +81,10 @@ export default function ExercisePage() {
       ? readStoredTrainerProgress(window.localStorage.getItem(storageKey) || undefined, layout.tasks.length)
       : emptyStoredTrainerProgress(layout.tasks.length)
 
-    setTaskProgress(backendState || fromLocal)
+    const timer = window.setTimeout(() => {
+      setTaskProgress(backendState || fromLocal)
+    }, 0)
+    return () => window.clearTimeout(timer)
   }, [exercise, getProgressEntry, layout, storageKey, token])
 
   const persistTaskProgress = async (next: StoredTrainerProgress) => {

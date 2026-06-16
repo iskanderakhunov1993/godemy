@@ -40,7 +40,6 @@ function CertificateContent() {
 
   useEffect(() => {
     if (!token) {
-      setLoading(false)
       return
     }
 

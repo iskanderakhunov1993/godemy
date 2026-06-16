@@ -26,6 +26,13 @@ type PasswordResetRepository interface {
 	DeleteByUser(userID uint) error
 }
 
+type EmailVerificationRepository interface {
+	Create(token *models.EmailVerificationToken) error
+	FindValidByHash(tokenHash string, now time.Time) (*models.EmailVerificationToken, error)
+	MarkUsed(id uint) error
+	DeleteByUser(userID uint) error
+}
+
 type LevelRepository interface {
 	FindAll() ([]models.Level, error)
 	FindByID(id uint) (*models.Level, error)

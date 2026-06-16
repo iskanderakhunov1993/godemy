@@ -35,6 +35,7 @@ export interface User {
   fullName?: string
   isPremium: boolean
   isAdmin: boolean
+  emailVerified: boolean
   premiumUntil?: string
   createdAt: string
 }
@@ -261,7 +262,7 @@ export function getBackendBaseUrl(): string {
 export const api = {
   // Auth
   register: (email: string, username: string, password: string) =>
-    request<{ token: string; user: User }>('/api/auth/register', {
+    request<{ ok: boolean; user: User; message: string }>('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify({ email, username, password }),
     }),
@@ -270,6 +271,18 @@ export const api = {
     request<{ token: string; user: User }>('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
+    }),
+
+  verifyEmail: (token: string) =>
+    request<{ ok: boolean; message: string }>('/api/auth/verify-email', {
+      method: 'POST',
+      body: JSON.stringify({ token }),
+    }),
+
+  resendVerification: (email: string) =>
+    request<{ ok: boolean; message: string }>('/api/auth/resend-verification', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
     }),
 
   forgotPassword: (email: string) =>

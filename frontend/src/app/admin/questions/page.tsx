@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 interface InterviewQuestion {
   id: string
@@ -12,7 +12,17 @@ interface InterviewQuestion {
 }
 
 export default function AdminQuestionsPage() {
-  const [questions, setQuestions] = useState<InterviewQuestion[]>([])
+  const [questions, setQuestions] = useState<InterviewQuestion[]>(() => {
+    if (typeof window === 'undefined') return []
+    const saved = localStorage.getItem('interview-questions')
+    if (!saved) return []
+    try {
+      return JSON.parse(saved) as InterviewQuestion[]
+    } catch (e) {
+      console.error('Ошибка загрузки вопросов:', e)
+      return []
+    }
+  })
   const [newQuestion, setNewQuestion] = useState<Partial<InterviewQuestion>>({
     category: 'general',
     difficulty: 'medium',
@@ -25,18 +35,6 @@ export default function AdminQuestionsPage() {
   const [filter, setFilter] = useState<'all' | 'easy' | 'medium' | 'hard'>('all')
 
   const STORAGE_KEY = 'interview-questions'
-
-  // Загрузка вопросов из localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved) {
-      try {
-        setQuestions(JSON.parse(saved))
-      } catch (e) {
-        console.error('Ошибка загрузки вопросов:', e)
-      }
-    }
-  }, [])
 
   // Сохранение в localStorage
   const saveQuestions = (updatedQuestions: InterviewQuestion[]) => {
@@ -159,7 +157,7 @@ export default function AdminQuestionsPage() {
                 onChange={(e) =>
                   setNewQuestion({
                     ...newQuestion,
-                    difficulty: e.target.value as any,
+                    difficulty: e.target.value as InterviewQuestion['difficulty'],
                   })
                 }
                 className="w-full rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
