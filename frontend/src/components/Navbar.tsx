@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'
 import { useAuthStore } from '@/lib/store'
 import { useState, useCallback, useEffect } from 'react'
 import { SearchModal } from './SearchModal'
-import { useThemeStore } from '@/lib/theme'
 import { BrandLogo } from './BrandLogo'
 import { Menu, X } from 'lucide-react'
 
@@ -15,7 +14,6 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-  const { mode, toggleMode } = useThemeStore()
 
   const openSearch = useCallback(() => setSearchOpen(true), [])
 
@@ -34,7 +32,6 @@ export function Navbar() {
   const links = [
     { href: '/guide', label: 'Начать с нуля' },
     { href: '/trainer', label: 'Практика' },
-    { href: '/bootcamp', label: 'Продвинутый курс' },
   ]
 
   return (
@@ -60,6 +57,12 @@ export function Navbar() {
                 </Link>
               ))}
             </div>
+            <Link
+              href="/bootcamp"
+              className="hidden text-xs font-medium text-gray-600 transition-colors hover:text-violet-200 lg:inline"
+            >
+              Продвинутый курс
+            </Link>
           </div>
 
           <div className="flex items-center gap-2.5">
@@ -76,35 +79,16 @@ export function Navbar() {
               <kbd className="hidden sm:inline text-[10px] border border-gray-700 rounded px-1 py-0.5 text-gray-500">⌘K</kbd>
             </button>
 
-            {/* Dark / Light toggle */}
-            <button
-              onClick={toggleMode}
-              aria-label={mode === 'dark' ? 'Светлая тема' : 'Тёмная тема'}
-              className="hidden h-10 w-10 items-center justify-center rounded-full border border-white/8 bg-white/[0.04] text-gray-400 hover:border-white/16 hover:text-white sm:flex"
-            >
-              {mode === 'dark' ? (
-                /* Sun icon */
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-              ) : (
-                /* Moon icon */
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
-                </svg>
-              )}
-            </button>
-
             {user ? (
               <>
                 {user.isPremium ? (
-                  <span className="hidden sm:flex items-center rounded-full border border-violet-400/18 bg-violet-400/10 px-3 py-2 text-sm font-medium text-violet-200">
+                  <span className="hidden lg:flex items-center rounded-full border border-violet-400/15 bg-violet-400/5 px-3 py-2 text-xs font-medium text-violet-200/80">
                     Продвинутый курс
                   </span>
                 ) : (
                   <Link
                     href="/bootcamp/buy"
-                    className="hidden sm:flex items-center rounded-full border border-white/8 bg-white/[0.04] px-3 py-2 text-sm font-medium text-gray-300 hover:border-violet-400/30 hover:text-white"
+                    className="hidden lg:flex items-center text-xs font-medium text-gray-500 hover:text-violet-200"
                   >
                     Продвинутый курс
                   </Link>
@@ -178,8 +162,8 @@ export function Navbar() {
                 <Link href="/auth/login" className="hidden text-sm text-gray-400 hover:text-white sm:inline">
                   Войти
                 </Link>
-                <Link href="/auth/register" className="btn-primary text-sm px-4 py-2.5">
-                  Начать
+                <Link href="/guide" className="btn-primary text-sm px-4 py-2.5">
+                  Начать урок
                 </Link>
               </>
             )}
@@ -223,13 +207,13 @@ export function Navbar() {
               >
                 Поиск
               </button>
-              <button
-                type="button"
-                onClick={toggleMode}
-                className="rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-3 text-sm font-semibold text-gray-300"
+              <Link
+                href="/bootcamp"
+                onClick={() => setMobileNavOpen(false)}
+                className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-center text-sm font-semibold text-gray-400"
               >
-                {mode === 'dark' ? 'Светлая тема' : 'Тёмная тема'}
-              </button>
+                Продвинутый курс
+              </Link>
             </div>
           </div>
         )}

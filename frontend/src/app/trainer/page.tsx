@@ -213,6 +213,9 @@ export default function TrainerPage() {
   const completionPercent = conceptNodes.length
     ? Math.round((completedConcepts / conceptNodes.length) * 100)
     : 0
+  const visibleConceptGroups = conceptGroups.slice(0, currentGroupIndex + 1)
+  const hiddenConceptGroups = conceptGroups.slice(currentGroupIndex + 1)
+  const hiddenConceptCount = hiddenConceptGroups.reduce((total, group) => total + group.concepts.length, 0)
 
   return (
     <main className="min-h-screen bg-[#050914] text-white">
@@ -334,15 +337,15 @@ export default function TrainerPage() {
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">План практики</p>
-                <h2 className="mt-2 text-2xl font-semibold">14 разделов от простого к сложному</h2>
+                <h2 className="mt-2 text-2xl font-semibold">Ближайший раздел без перегруза</h2>
               </div>
               <p className="max-w-lg text-sm leading-6 text-gray-500">
-                Иди по порядку: сначала простая тема, потом пример, потом небольшое упражнение.
+                Сейчас показываем только доступный путь. Следующие разделы откроются, когда ты закончишь текущие темы.
               </p>
             </div>
 
             <div className="mt-6 space-y-4">
-              {conceptGroups.map((group, groupIndex) => (
+              {visibleConceptGroups.map((group, groupIndex) => (
                 <ConceptSection
                   key={group.category}
                   group={group}
@@ -350,6 +353,13 @@ export default function TrainerPage() {
                   active={groupIndex === currentGroupIndex}
                 />
               ))}
+              {hiddenConceptGroups.length > 0 && (
+                <LockedRoadmapSummary
+                  sectionsCount={hiddenConceptGroups.length}
+                  conceptsCount={hiddenConceptCount}
+                  nextSection={getCategoryLabel(hiddenConceptGroups[0].category)}
+                />
+              )}
             </div>
           </section>
         )}
@@ -404,6 +414,35 @@ export default function TrainerPage() {
         )}
       </div>
     </main>
+  )
+}
+
+function LockedRoadmapSummary({
+  sectionsCount,
+  conceptsCount,
+  nextSection,
+}: {
+  sectionsCount: number
+  conceptsCount: number
+  nextSection: string
+}) {
+  return (
+    <aside className="rounded-3xl border border-white/8 bg-white/[0.018] p-5 sm:p-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-500">Дальше по плану</p>
+          <h3 className="mt-2 text-lg font-semibold text-white">
+            Следующий раздел: {nextSection}
+          </h3>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-500">
+            Ещё {sectionsCount} разделов и {conceptsCount} тем спрятаны, чтобы не отвлекать от текущего шага.
+          </p>
+        </div>
+        <div className="rounded-2xl border border-white/8 bg-black/15 px-4 py-3 text-sm font-medium text-gray-400">
+          Откроется после прогресса
+        </div>
+      </div>
+    </aside>
   )
 }
 
