@@ -10,7 +10,7 @@ export default function ContinueBanner() {
   if (!last) return null
 
   const label = last.type === 'lesson' ? 'Урок' : 'Задача'
-  const title = /Project ZERO|Atlas Dev|стажиров/i.test(last.title)
+  const title = /Project ZERO|Atlas Dev|стажиров|^[A-Za-z\s·-]+$/i.test(last.title.trim())
     ? 'последний открытый шаг'
     : last.title
 

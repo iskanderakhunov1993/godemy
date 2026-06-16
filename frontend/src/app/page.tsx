@@ -39,7 +39,7 @@ const steps = [
   ['1 урок', 'Запустить первую Go-программу и изменить код.'],
   ['Мини-практика', 'Закрепить package main, func main и fmt.Println руками.'],
   ['Первый проект', 'Собрать маленький результат, который можно показать.'],
-  ['Сертификат', 'Сохранить прогресс и получить подтверждение бесплатной части.'],
+  ['Итог', 'Сохранить прогресс и увидеть, что уже получилось.'],
 ]
 
 const firstThirtyMinutes = [
@@ -56,10 +56,16 @@ const diagnostics = [
   ['Хочу практику', 'Открыть тренажёр и закреплять темы кодом.', '/trainer', 'Перейти к упражнениям'],
 ]
 
-const trustPoints = [
-  ['Без входа в начале', 'Первый урок можно открыть сразу. Аккаунт нужен только для сохранения прогресса.'],
-  ['Маршрут как у продукта', 'Каждая тема ведёт к действию: урок, практика, проект, понятный итог.'],
-  ['Не только теория', 'В бесплатной части пользователь собирает 3 проекта и видит, что положить в портфолио.'],
+const audienceFit = [
+  ['Подойдёт', 'если ты начинаешь с нуля, устал смотреть видео без практики или хочешь собрать первые Go-проекты.'],
+  ['Не подойдёт', 'если тебе нужен академический справочник по всему языку или глубокий backend senior-level сразу.'],
+  ['Формат', 'короткий урок, понятная мини-практика, затем проект с README и командами запуска.'],
+]
+
+const authorContext = [
+  'Курс собран как продуктовый маршрут: меньше развилок, больше одного понятного следующего шага.',
+  'Внутри нет обещания “выучишь всё за вечер”. Задача бесплатной части — дать первый рабочий результат.',
+  'Примеры проектов оформлены так, чтобы их можно было спокойно объяснить и положить в портфолио.',
 ]
 
 const faq = [
@@ -79,6 +85,12 @@ const previewCodeLines = [
   'func main() {',
   '    fmt.Println("Привет, Go")',
   '}',
+]
+
+const lessonPreviewSteps = [
+  ['Читаешь короткое объяснение', 'Зачем нужны package main, func main и fmt.Println.'],
+  ['Меняешь строку в коде', 'Пишешь свою фразу вместо готового текста.'],
+  ['Запускаешь и видишь результат', 'Сразу понятно, что именно сделал код.'],
 ]
 
 export default function Home() {
@@ -102,7 +114,7 @@ export default function Home() {
               </h1>
               <p className="mt-5 max-w-xl text-base leading-8 text-slate-300">
                 Открой урок, измени строку в коде и запусти результат. Аккаунт понадобится только тогда,
-                когда уже будет прогресс, который хочется сохранить.
+                когда уже появится прогресс, который хочется сохранить.
               </p>
 
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
@@ -129,7 +141,7 @@ export default function Home() {
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">Превью урока</p>
                   <h2 className="mt-2 max-w-md text-xl font-bold leading-snug text-white sm:text-2xl">
-                    Код слева, результат сразу под ним
+                    Так выглядит первый шаг внутри урока
                   </h2>
                 </div>
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-sm font-bold text-cyan-200">
@@ -160,11 +172,16 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                {firstThirtyMinutes.map((item, index) => (
-                  <div key={item} className="rounded-2xl border border-white/8 bg-white/[0.035] px-3 py-3">
-                    <p className="text-[11px] font-semibold text-cyan-300">0{index + 1}</p>
-                    <p className="mt-1 text-sm leading-6 text-slate-300">{item}</p>
+              <div className="mt-4 grid gap-2">
+                {lessonPreviewSteps.map(([title, text], index) => (
+                  <div key={title} className="flex gap-3 rounded-2xl border border-white/8 bg-white/[0.035] px-3 py-3">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-cyan-300/10 text-[11px] font-bold text-cyan-200">
+                      {index + 1}
+                    </span>
+                    <p className="text-sm leading-6 text-slate-300">
+                      <span className="block font-semibold text-white">{title}</span>
+                      <span className="text-slate-500">{text}</span>
+                    </p>
                   </div>
                 ))}
               </div>
@@ -174,10 +191,31 @@ export default function Home() {
       </section>
 
       <section className="page-wrap pb-18 sm:pb-24">
+        <div className="surface-card rounded-[28px] p-6 sm:p-8">
+          <div className="grid gap-6 lg:grid-cols-[0.65fr_1.35fr] lg:items-center">
+            <div>
+              <span className="eyebrow">Первые 30 минут</span>
+              <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] text-white">
+                Не “изучить всё”, а сделать первый запуск
+              </h2>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {firstThirtyMinutes.map((item, index) => (
+                <div key={item} className="rounded-2xl border border-white/8 bg-white/[0.035] p-4">
+                  <p className="text-[11px] font-semibold text-cyan-300">0{index + 1}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="page-wrap pb-18 sm:pb-24">
         <div className="mb-8">
           <span className="eyebrow">Один маршрут</span>
           <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-white sm:text-5xl">
-            Старт → урок → практика → проект → сертификат
+            Старт → урок → практика → проект → понятный итог
           </h2>
         </div>
 
@@ -278,28 +316,35 @@ export default function Home() {
       </section>
 
       <section className="page-wrap pb-18 sm:pb-24">
-        <div className="grid gap-6 lg:grid-cols-[0.88fr_1.12fr]">
+        <div className="grid gap-5 lg:grid-cols-3">
+          {audienceFit.map(([title, text]) => (
+            <div key={title} className="surface-card rounded-[26px] p-6">
+              <span className="eyebrow">{title}</span>
+              <p className="mt-4 text-base leading-8 text-slate-300">{text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="page-wrap pb-18 sm:pb-24">
+        <div className="grid gap-6 lg:grid-cols-[0.78fr_1.22fr]">
           <div className="surface-card rounded-[32px] p-7">
-            <span className="eyebrow">Доверие</span>
-            <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-white">Почему этому маршруту можно доверять</h2>
+            <span className="eyebrow">Авторский подход</span>
+            <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-white">
+              Не энциклопедия, а путь до первого результата
+            </h2>
             <p className="mt-4 text-base leading-8 text-slate-400">
-              Платформа не просит поверить на слово. Она быстро показывает продукт,
-              даёт попробовать урок и объясняет, какой результат останется после бесплатной части.
+              Godemy объясняет Go через действия: открыть урок, изменить код,
+              собрать проект и понять, что делать дальше.
             </p>
             <ul className="mt-6 space-y-3">
-              {trustPoints.map(([title, text]) => (
-                <li key={title} className="flex items-start gap-3 text-sm text-slate-300">
+              {authorContext.map((item) => (
+                <li key={item} className="flex items-start gap-3 text-sm leading-6 text-slate-300">
                   <span className="icon-chip h-8 w-8 rounded-xl text-sm">✓</span>
-                  <span>
-                    <span className="block font-semibold text-white">{title}</span>
-                    <span className="mt-1 block leading-6 text-slate-400">{text}</span>
-                  </span>
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
-            <Link href={firstLessonHref} className="btn-secondary mt-8 inline-flex">
-              Попробовать урок
-            </Link>
           </div>
 
           <div className="surface-highlight rounded-[32px] p-7">

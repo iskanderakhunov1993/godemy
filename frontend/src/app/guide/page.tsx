@@ -185,7 +185,7 @@ export default function GuidePage() {
                   Начать урок →
                 </Link>
                 <p className="text-xs leading-5 text-gray-500">
-                  Сначала урок, потом мини-практика, проект и сертификат.
+                  Сначала урок, потом мини-практика, проект и понятный итог.
                 </p>
               </div>
             </div>
@@ -209,7 +209,7 @@ export default function GuidePage() {
                 />
               </div>
               <div className="mt-5 grid gap-2 text-xs text-gray-400">
-                <span>Маршрут: старт → урок → практика → проект → сертификат</span>
+                <span>Маршрут: старт → урок → практика → проект → понятный итог</span>
                 <span>Текущий раздел: {currentModuleCompleted}/{currentModuleLessons.length} уроков</span>
               </div>
             </div>
