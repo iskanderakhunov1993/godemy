@@ -30,8 +30,8 @@ const freeProjects = [
 
 const stats = [
   { value: '3', label: 'бесплатных проекта' },
-  { value: '30', label: 'минут до первого кода' },
-  { value: '0', label: 'регистрации до старта' },
+  { value: '30 мин', label: 'до первого запуска' },
+  { value: 'без входа', label: 'до сохранения прогресса' },
 ]
 
 const steps = [
@@ -89,76 +89,82 @@ export default function Home() {
     <main className="page-shell">
       <ContinueBanner />
 
-      <section className="page-wrap pt-8 pb-18 sm:pt-12 sm:pb-24">
-        <div className="section-frame overflow-hidden rounded-[36px] px-6 py-8 sm:px-10 sm:py-12">
-          <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
-            <div>
-              <span className="eyebrow">Попробуй без регистрации</span>
-              <h1 className="mt-6 max-w-4xl text-5xl font-black leading-[0.98] tracking-[-0.05em] text-white sm:text-7xl">
-                Первый урок Go
-                <span className="block text-violet-300">за пару кликов</span>
+      <section className="page-wrap pt-8 pb-16 sm:pt-10 sm:pb-20">
+        <div className="overflow-hidden rounded-[30px] border border-white/10 bg-[radial-gradient(circle_at_78%_18%,rgba(34,211,238,0.12),transparent_30%),linear-gradient(135deg,rgba(15,23,42,0.98),rgba(8,12,24,0.98))] px-6 py-7 shadow-[0_28px_90px_rgba(2,6,23,0.28)] sm:px-8 sm:py-9">
+          <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+            <div className="max-w-2xl">
+              <span className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-200">
+                Первый урок без регистрации
+              </span>
+              <h1 className="mt-5 max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.04em] text-white sm:text-6xl">
+                Go с нуля:
+                <span className="block text-cyan-200">первый код за 30 минут</span>
               </h1>
-              <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
-                Открой первый урок сразу: старт, первая мини-практика, первый проект
-                и сертификат после бесплатной части. Аккаунт попросим только когда
-                появится прогресс, который стоит сохранить.
+              <p className="mt-5 max-w-xl text-base leading-8 text-slate-300">
+                Открой урок, измени строку в коде и запусти результат. Аккаунт понадобится только тогда,
+                когда уже будет прогресс, который хочется сохранить.
               </p>
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link href={firstLessonHref} className="btn-primary text-center text-sm sm:text-base">
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                <Link href={firstLessonHref} className="btn-primary justify-center text-sm sm:text-base">
                   Начать первый урок
                 </Link>
-                <Link href="/trainer" className="btn-secondary text-center text-sm sm:text-base">
-                  Перейти к практике
+                <Link href="/trainer" className="btn-secondary justify-center text-sm sm:text-base">
+                  Открыть тренажёр
                 </Link>
               </div>
 
-              <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              <div className="mt-7 grid gap-3 sm:grid-cols-3">
                 {stats.map((item) => (
-                  <div key={item.label} className="stat-card rounded-3xl p-4">
-                    <div className="text-3xl font-black tracking-tight text-white">{item.value}</div>
-                    <div className="mt-2 text-sm text-slate-400">{item.label}</div>
+                  <div key={item.label} className="rounded-2xl border border-white/8 bg-white/[0.035] px-4 py-3">
+                    <div className="text-xl font-black tracking-tight text-white">{item.value}</div>
+                    <div className="mt-1 text-xs leading-5 text-slate-500">{item.label}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="surface-card rounded-[32px] p-6">
-              <div className="flex items-center justify-between">
+            <div className="rounded-[26px] border border-white/10 bg-[#090f1d]/90 p-4 shadow-[0_24px_80px_rgba(2,6,23,0.34)] sm:p-5">
+              <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-300">Превью первого урока</p>
-                  <h2 className="mt-2 text-2xl font-bold text-white">Ты видишь код, результат и следующий шаг</h2>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">Превью урока</p>
+                  <h2 className="mt-2 max-w-md text-xl font-bold leading-snug text-white sm:text-2xl">
+                    Код слева, результат сразу под ним
+                  </h2>
                 </div>
-                <div className="icon-chip">◎</div>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-sm font-bold text-cyan-200">
+                  Go
+                </div>
               </div>
 
-              <div className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-[#060b16]">
-                <div className="flex items-center gap-2 border-b border-white/8 px-4 py-3">
+              <div className="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-[#050914]">
+                <div className="flex items-center gap-2 border-b border-white/8 px-4 py-2.5">
                   <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
                   <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
                   <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
                   <span className="ml-2 text-xs text-slate-500">first.go</span>
                 </div>
-                <pre className="overflow-x-auto px-5 py-4 text-sm leading-7 text-slate-200">
+                <pre className="overflow-x-auto px-4 py-4 text-[13px] leading-6 text-slate-200 sm:px-5 sm:text-sm">
                   <code>
                     {previewCodeLines.map((line, index) => (
-                      <span key={`${line}-${index}`} className="block min-h-7">
-                        {line || ' '}
+                      <span key={`${line}-${index}`} className="grid min-h-6 grid-cols-[2rem_1fr] gap-3">
+                        <span className="select-none text-right text-slate-600">{index + 1}</span>
+                        <span>{line || ' '}</span>
                       </span>
                     ))}
                   </code>
                 </pre>
-                <div className="border-t border-white/8 bg-white/[0.03] px-5 py-4">
+                <div className="border-t border-white/8 bg-emerald-300/[0.045] px-4 py-3 sm:px-5">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">Результат</p>
                   <p className="mt-2 font-mono text-sm text-emerald-300">Привет, Go</p>
                 </div>
               </div>
 
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <div className="mt-4 grid gap-2 sm:grid-cols-2">
                 {firstThirtyMinutes.map((item, index) => (
-                  <div key={item} className="surface-subcard rounded-2xl p-4">
-                    <p className="text-xs font-semibold text-violet-300">0{index + 1}</p>
-                    <p className="mt-2 text-sm leading-6 text-slate-300">{item}</p>
+                  <div key={item} className="rounded-2xl border border-white/8 bg-white/[0.035] px-3 py-3">
+                    <p className="text-[11px] font-semibold text-cyan-300">0{index + 1}</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-300">{item}</p>
                   </div>
                 ))}
               </div>
