@@ -155,6 +155,9 @@ func main() {
 	admin := api.Group("/admin")
 	admin.Use(middleware.AuthRequired(cfg.JWTSecret), middleware.AdminRequired(authUC))
 	admin.POST("/activate", h.ActivatePremium())
+	admin.GET("/users", h.AdminListUsers())
+	admin.GET("/users/:id", h.AdminGetUser())
+	admin.PUT("/users/:id", h.AdminUpdateUser())
 
 	// Admin: Lessons CRUD
 	admin.GET("/lessons", h.AdminGetLessons())

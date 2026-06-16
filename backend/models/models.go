@@ -45,20 +45,22 @@ type Topic struct {
 }
 
 type User struct {
-	ID              uint           `json:"id" gorm:"primaryKey"`
-	Email           string         `json:"email" gorm:"uniqueIndex;not null"`
-	Username        string         `json:"username" gorm:"uniqueIndex;not null"`
-	FullName        string         `json:"fullName" gorm:"default:''"`
-	Password        *string        `json:"-"`
-	OAuthProvider   string         `json:"-" gorm:"index;default:''"`
-	OAuthProviderID string         `json:"-" gorm:"index;default:''"`
-	IsPremium       bool           `json:"isPremium" gorm:"default:false"`
-	IsAdmin         bool           `json:"isAdmin" gorm:"default:false"`
-	PremiumUntil    *time.Time     `json:"premiumUntil" gorm:"index"`
-	JuniorReadiness int            `json:"juniorReadiness" gorm:"default:0"` // 0-100% готовность как junior в Go
-	CreatedAt       time.Time      `json:"createdAt"`
-	UpdatedAt       time.Time      `json:"updatedAt"`
-	DeletedAt       gorm.DeletedAt `json:"-" gorm:"index"`
+	ID               uint           `json:"id" gorm:"primaryKey"`
+	Email            string         `json:"email" gorm:"uniqueIndex;not null"`
+	Username         string         `json:"username" gorm:"uniqueIndex;not null"`
+	FullName         string         `json:"fullName" gorm:"default:''"`
+	Password         *string        `json:"-"`
+	OAuthProvider    string         `json:"-" gorm:"index;default:''"`
+	OAuthProviderID  string         `json:"-" gorm:"index;default:''"`
+	IsPremium        bool           `json:"isPremium" gorm:"default:false"`
+	IsAdmin          bool           `json:"isAdmin" gorm:"default:false"`
+	EmailVerified    bool           `json:"emailVerified" gorm:"default:false"`
+	AdminDescription string         `json:"adminDescription" gorm:"type:text;default:''"`
+	PremiumUntil     *time.Time     `json:"premiumUntil" gorm:"index"`
+	JuniorReadiness  int            `json:"juniorReadiness" gorm:"default:0"` // 0-100% готовность как junior в Go
+	CreatedAt        time.Time      `json:"createdAt"`
+	UpdatedAt        time.Time      `json:"updatedAt"`
+	DeletedAt        gorm.DeletedAt `json:"-" gorm:"index"`
 
 	Progresses []Progress  `json:"progresses,omitempty"`
 	Skills     []UserSkill `json:"skills,omitempty" gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`

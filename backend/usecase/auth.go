@@ -97,6 +97,29 @@ func (u *AuthUseCase) FindUserByEmail(email string) (*models.User, error) {
 	return user, err
 }
 
+func (u *AuthUseCase) FindUserByID(id uint) (*models.User, error) {
+	user, err := u.users.FindByID(id)
+	if errors.Is(err, repository.ErrNotFound) {
+		return nil, ErrNotFound
+	}
+	return user, err
+}
+
+func (u *AuthUseCase) ListUsers() ([]models.User, error) {
+	users, err := u.users.FindAll()
+	if err != nil {
+		return nil, err
+	}
+	now := time.Now()
+	for i := range users {
+		if users[i].IsPremium && users[i].PremiumUntil != nil && users[i].PremiumUntil.Before(now) {
+			users[i].IsPremium = false
+			_ = u.users.Update(&users[i])
+		}
+	}
+	return users, nil
+}
+
 func (u *AuthUseCase) UpdateUser(user *models.User) error {
 	return u.users.Update(user)
 }

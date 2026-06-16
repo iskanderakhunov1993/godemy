@@ -19,6 +19,12 @@ func (r *userRepo) Create(user *models.User) error {
 	return r.db.Create(user).Error
 }
 
+func (r *userRepo) FindAll() ([]models.User, error) {
+	var users []models.User
+	err := r.db.Order("created_at DESC").Find(&users).Error
+	return users, err
+}
+
 func (r *userRepo) FindByEmail(email string) (*models.User, error) {
 	var user models.User
 	err := r.db.Where("email = ?", email).First(&user).Error

@@ -424,7 +424,56 @@ export interface AdminLevel {
   description?: string
 }
 
+export interface AdminUserActivity {
+  id: number
+  entityType: 'lesson' | 'exercise' | 'exercise_tasks'
+  entityId: number
+  status: 'started' | 'completed'
+  payload?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AdminUser {
+  id: number
+  email: string
+  username: string
+  fullName: string
+  isPremium: boolean
+  isAdmin: boolean
+  emailVerified: boolean
+  adminDescription: string
+  premiumUntil?: string | null
+  juniorReadiness: number
+  createdAt: string
+  updatedAt: string
+  plan: 'basic' | 'subscription'
+  progressTotal: number
+  completedTotal: number
+  hasCertificate: boolean
+  certificatesEarned: number
+  lastActivityAt?: string | null
+  recentActivity?: AdminUserActivity[]
+}
+
 export const adminApi = {
+  // Users
+  getUsers: () =>
+    request<AdminUser[]>('/api/admin/users', { headers: adminHeaders() }),
+
+  getUser: (id: number) =>
+    request<AdminUser>(`/api/admin/users/${id}`, { headers: adminHeaders() }),
+
+  updateUser: (
+    id: number,
+    data: Partial<Pick<AdminUser, 'fullName' | 'emailVerified' | 'adminDescription' | 'isPremium' | 'premiumUntil' | 'juniorReadiness'>>
+  ) =>
+    request<AdminUser>(`/api/admin/users/${id}`, {
+      method: 'PUT',
+      headers: adminHeaders(),
+      body: JSON.stringify(data),
+    }),
+
   // Lessons
   getLessons: (secret = '') => {
     void secret

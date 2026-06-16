@@ -2,6 +2,7 @@ package http
 
 import (
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -24,6 +25,47 @@ type createModuleInput struct {
 
 type renameModuleInput struct {
 	NewName string `json:"newName" binding:"required"`
+}
+
+type adminUserInput struct {
+	FullName         *string `json:"fullName"`
+	EmailVerified    *bool   `json:"emailVerified"`
+	AdminDescription *string `json:"adminDescription"`
+	IsPremium        *bool   `json:"isPremium"`
+	PremiumUntil     *string `json:"premiumUntil"`
+	JuniorReadiness  *int    `json:"juniorReadiness"`
+}
+
+type adminUserActivityDTO struct {
+	ID         uint      `json:"id"`
+	EntityType string    `json:"entityType"`
+	EntityID   uint      `json:"entityId"`
+	Status     string    `json:"status"`
+	Payload    string    `json:"payload,omitempty"`
+	CreatedAt  time.Time `json:"createdAt"`
+	UpdatedAt  time.Time `json:"updatedAt"`
+}
+
+type adminUserDTO struct {
+	ID                 uint                   `json:"id"`
+	Email              string                 `json:"email"`
+	Username           string                 `json:"username"`
+	FullName           string                 `json:"fullName"`
+	IsPremium          bool                   `json:"isPremium"`
+	IsAdmin            bool                   `json:"isAdmin"`
+	EmailVerified      bool                   `json:"emailVerified"`
+	AdminDescription   string                 `json:"adminDescription"`
+	PremiumUntil       *time.Time             `json:"premiumUntil"`
+	JuniorReadiness    int                    `json:"juniorReadiness"`
+	CreatedAt          time.Time              `json:"createdAt"`
+	UpdatedAt          time.Time              `json:"updatedAt"`
+	Plan               string                 `json:"plan"`
+	ProgressTotal      int                    `json:"progressTotal"`
+	CompletedTotal     int                    `json:"completedTotal"`
+	HasCertificate     bool                   `json:"hasCertificate"`
+	CertificatesEarned int                    `json:"certificatesEarned"`
+	LastActivityAt     *time.Time             `json:"lastActivityAt"`
+	RecentActivity     []adminUserActivityDTO `json:"recentActivity,omitempty"`
 }
 
 // ActivatePremium godoc
@@ -57,6 +99,243 @@ func (h *Handler) ActivatePremium() gin.HandlerFunc {
 			"premiumUntil": until.Format(time.RFC3339),
 		})
 	}
+}
+
+func (h *Handler) AdminListUsers() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		users, err := h.auth.ListUsers()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to load users"})
+			return
+		}
+
+		lessons, err := h.content.GetAllLessons()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to load lessons"})
+			return
+		}
+		exercises, err := h.content.GetAllExercises()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to load exercises"})
+			return
+		}
+
+		result := make([]adminUserDTO, 0, len(users))
+		for i := range users {
+			progresses, err := h.content.GetProgress(users[i].ID)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to load user progress"})
+				return
+			}
+			result = append(result, buildAdminUserDTO(&users[i], progresses, lessons, exercises, false))
+		}
+
+		c.JSON(http.StatusOK, result)
+	}
+}
+
+func (h *Handler) AdminGetUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+			return
+		}
+
+		user, err := h.auth.FindUserByID(uint(id))
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+			return
+		}
+
+		progresses, err := h.content.GetProgress(user.ID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to load user progress"})
+			return
+		}
+		lessons, err := h.content.GetAllLessons()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to load lessons"})
+			return
+		}
+		exercises, err := h.content.GetAllExercises()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to load exercises"})
+			return
+		}
+
+		c.JSON(http.StatusOK, buildAdminUserDTO(user, progresses, lessons, exercises, true))
+	}
+}
+
+func (h *Handler) AdminUpdateUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+			return
+		}
+
+		user, err := h.auth.FindUserByID(uint(id))
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+			return
+		}
+
+		var input adminUserInput
+		if err := c.ShouldBindJSON(&input); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		if input.FullName != nil {
+			user.FullName = strings.TrimSpace(*input.FullName)
+		}
+		if input.EmailVerified != nil {
+			user.EmailVerified = *input.EmailVerified
+		}
+		if input.AdminDescription != nil {
+			user.AdminDescription = strings.TrimSpace(*input.AdminDescription)
+		}
+		if input.JuniorReadiness != nil {
+			if *input.JuniorReadiness < 0 || *input.JuniorReadiness > 100 {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "juniorReadiness must be between 0 and 100"})
+				return
+			}
+			user.JuniorReadiness = *input.JuniorReadiness
+		}
+		if input.IsPremium != nil {
+			user.IsPremium = *input.IsPremium
+			if !user.IsPremium {
+				user.PremiumUntil = nil
+			}
+		}
+		if input.PremiumUntil != nil {
+			premiumUntil, err := parseAdminDate(*input.PremiumUntil)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "premiumUntil must be RFC3339 or YYYY-MM-DD"})
+				return
+			}
+			user.PremiumUntil = premiumUntil
+			if premiumUntil != nil {
+				user.IsPremium = true
+			}
+		}
+
+		if err := h.auth.UpdateUser(user); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update user"})
+			return
+		}
+
+		progresses, err := h.content.GetProgress(user.ID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to load user progress"})
+			return
+		}
+		lessons, err := h.content.GetAllLessons()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to load lessons"})
+			return
+		}
+		exercises, err := h.content.GetAllExercises()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to load exercises"})
+			return
+		}
+
+		c.JSON(http.StatusOK, buildAdminUserDTO(user, progresses, lessons, exercises, true))
+	}
+}
+
+func parseAdminDate(value string) (*time.Time, error) {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return nil, nil
+	}
+	if parsed, err := time.Parse(time.RFC3339, value); err == nil {
+		return &parsed, nil
+	}
+	parsed, err := time.Parse("2006-01-02", value)
+	if err != nil {
+		return nil, err
+	}
+	endOfDay := parsed.Add(23*time.Hour + 59*time.Minute + 59*time.Second)
+	return &endOfDay, nil
+}
+
+func buildAdminUserDTO(user *models.User, progresses []models.Progress, lessons []models.Lesson, exercises []models.Exercise, includeActivity bool) adminUserDTO {
+	sort.Slice(progresses, func(i, j int) bool {
+		return progresses[i].UpdatedAt.After(progresses[j].UpdatedAt)
+	})
+
+	completed := 0
+	var lastActivityAt *time.Time
+	for i := range progresses {
+		if progresses[i].Status == "completed" {
+			completed++
+		}
+		if lastActivityAt == nil || progresses[i].UpdatedAt.After(*lastActivityAt) {
+			value := progresses[i].UpdatedAt
+			lastActivityAt = &value
+		}
+	}
+
+	earned := 0
+	certificates := buildCertificates(user, progresses, lessons, exercises)
+	for i := range certificates {
+		if certificates[i].Earned {
+			earned++
+		}
+	}
+
+	dto := adminUserDTO{
+		ID:                 user.ID,
+		Email:              user.Email,
+		Username:           user.Username,
+		FullName:           user.FullName,
+		IsPremium:          user.IsPremium,
+		IsAdmin:            user.IsAdmin,
+		EmailVerified:      user.EmailVerified,
+		AdminDescription:   user.AdminDescription,
+		PremiumUntil:       user.PremiumUntil,
+		JuniorReadiness:    user.JuniorReadiness,
+		CreatedAt:          user.CreatedAt,
+		UpdatedAt:          user.UpdatedAt,
+		Plan:               adminUserPlan(user),
+		ProgressTotal:      len(progresses),
+		CompletedTotal:     completed,
+		HasCertificate:     earned > 0,
+		CertificatesEarned: earned,
+		LastActivityAt:     lastActivityAt,
+	}
+
+	if includeActivity {
+		limit := len(progresses)
+		if limit > 20 {
+			limit = 20
+		}
+		dto.RecentActivity = make([]adminUserActivityDTO, 0, limit)
+		for i := 0; i < limit; i++ {
+			dto.RecentActivity = append(dto.RecentActivity, adminUserActivityDTO{
+				ID:         progresses[i].ID,
+				EntityType: progresses[i].EntityType,
+				EntityID:   progresses[i].EntityID,
+				Status:     progresses[i].Status,
+				Payload:    progresses[i].Payload,
+				CreatedAt:  progresses[i].CreatedAt,
+				UpdatedAt:  progresses[i].UpdatedAt,
+			})
+		}
+	}
+
+	return dto
+}
+
+func adminUserPlan(user *models.User) string {
+	if user.IsPremium && (user.PremiumUntil == nil || user.PremiumUntil.After(time.Now())) {
+		return "subscription"
+	}
+	return "basic"
 }
 
 // --- Lessons CRUD ---
