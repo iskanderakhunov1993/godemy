@@ -2,50 +2,50 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Godemy Pro — подписка на Bootcamp',
-  description: 'Подписка на практический Bootcamp Go: уровни Junior, Middle и Senior, проекты, тренажёр и сертификаты.',
+  title: 'Godemy Pro — продвинутый курс',
+  description: 'Доступ к следующему этапу после бесплатной базы: проекты, практика, проверка прогресса и сертификаты.',
 }
 
 const included = [
-  'Уровни Junior, Middle и Senior',
+  'Путь роста от первых рабочих задач к сложным проектам',
   'Практические проекты для портфолио',
-  'Все задачи Bootcamp в тренажёре',
+  'Все продвинутые упражнения в практике',
   'Проверка прогресса по каждому уровню',
   'PDF-сертификаты без доплаты',
 ]
 
 const outcomes = [
-  ['Junior', 'Начинаешь сам собирать backend-фичи и уверенно проходишь базовый production-flow.'],
-  ['Middle', 'Понимаешь интеграции, очереди, устойчивость систем и архитектурные компромиссы.'],
-  ['Senior', 'Мыслишь системой целиком: нагрузка, безопасность, производительность и лидерство решений.'],
+  ['Первый рабочий уровень', 'Начинаешь сам собирать небольшие сервисы и понимать типовые задачи продукта.'],
+  ['Уверенный уровень', 'Понимаешь интеграции, устойчивость, очереди и почему проекту нужна архитектура.'],
+  ['Системный уровень', 'Смотришь на проект целиком: нагрузка, безопасность, скорость и качество решений.'],
 ]
 
 export default function BuyPage() {
   return (
     <main className="mx-auto max-w-5xl px-4 py-14 sm:px-6">
       <Link href="/bootcamp" className="text-sm text-gray-500 transition-colors hover:text-white">
-        ← Назад к Bootcamp
+        ← Назад к продвинутому курсу
       </Link>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_390px]">
         <section>
           <span className="inline-flex rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-2 text-sm font-bold text-violet-300">
-            Godemy Pro
+            Следующий этап
           </span>
           <h1 className="mt-6 text-4xl font-black text-white sm:text-5xl">
-            Один понятный доступ
+            Доступ к продвинутой практике
             <span className="block text-violet-400">для профессионального роста</span>
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-gray-400">
             Бесплатный курс и основной тренажёр остаются доступны всем.
-            Подписка открывает Bootcamp, проекты уровней и сертификаты.
+            Доступ открывает более длинные проекты, уровни роста и сертификаты.
           </p>
 
           <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-5">
             <p className="text-[11px] uppercase tracking-[0.24em] text-violet-300">Что ты покупаешь по сути</p>
             <p className="mt-2 text-sm leading-6 text-gray-300">
-              Не “доступ к урокам”, а следующий слой роста после бесплатных 3 проектов:
-              длинные инженерные задачи, уровни развития и более взрослые backend-сценарии.
+              Не “ещё набор уроков”, а следующий слой роста после бесплатных 3 проектов:
+              длинные практические задачи, понятные уровни развития и больше самостоятельности.
             </p>
           </div>
 
@@ -82,7 +82,7 @@ export default function BuyPage() {
         </section>
 
         <aside className="h-fit rounded-3xl border border-violet-500/30 bg-gray-900 p-6 shadow-2xl">
-          <p className="text-sm font-bold text-violet-300">Подписка Godemy Pro</p>
+          <p className="text-sm font-bold text-violet-300">Доступ Godemy Pro</p>
           <div className="mt-5 flex items-end gap-2">
             <span className="text-5xl font-black text-white">2 490 ₽</span>
             <span className="mb-1 text-gray-500">/ месяц</span>
@@ -107,7 +107,7 @@ export default function BuyPage() {
             <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Подходит, если</p>
             <ul className="mt-3 space-y-2 text-sm leading-6 text-gray-300">
               <li>• ты уже понял, что хочешь расти в Go дальше бесплатной базы;</li>
-              <li>• тебе нужны проекты сильнее, чем стартовые CLI/API-задачи;</li>
+              <li>• тебе нужны проекты сильнее, чем стартовые упражнения;</li>
               <li>• ты хочешь дойти до сертификатов и уровневой системы роста.</li>
             </ul>
           </div>

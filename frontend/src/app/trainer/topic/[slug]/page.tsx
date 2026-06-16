@@ -21,6 +21,41 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
 
 type WorkspaceMode = 'browser' | 'local'
 
+const topicTitleLabels: Record<string, string> = {
+  'go-program-structure': 'Как устроена первая программа',
+  variables: 'Переменные: как хранить значения',
+  'data-types': 'Типы данных: числа, текст и логика',
+  constants: 'Постоянные значения',
+  'input-output': 'Ввод и вывод',
+  'string-formatting': 'Как красиво собрать текст',
+  comments: 'Комментарии в коде',
+  'if-else': 'Условия: если случилось одно или другое',
+  switch: 'Выбор из нескольких вариантов',
+  loops: 'Повторение действий',
+  range: 'Перебор элементов',
+  functions: 'Функции: отдельные части программы',
+  parameters: 'Параметры функции',
+  'return-values': 'Возврат результата',
+}
+
+const topicSummaryLabels: Record<string, string> = {
+  'go-program-structure': 'В этой теме ты поймёшь, из каких частей состоит простая Go-программа и где начинается выполнение кода.',
+  variables: 'Переменные помогают программе запоминать значения и использовать их в следующих шагах.',
+  'data-types': 'Типы данных объясняют программе, с чем она работает: числом, текстом или логическим ответом.',
+  constants: 'Константы нужны для значений, которые не должны меняться во время работы программы.',
+  'input-output': 'Ввод и вывод помогают программе общаться с пользователем: принять данные и показать результат.',
+  'string-formatting': 'Форматирование строк помогает собирать понятный текст из разных значений.',
+  comments: 'Комментарии помогают объяснить код будущему себе и другим людям.',
+}
+
+function getTopicTitle(slug: string, fallback: string) {
+  return topicTitleLabels[slug] ?? fallback
+}
+
+function getTopicSummary(slug: string, fallback: string) {
+  return topicSummaryLabels[slug] ?? fallback
+}
+
 const fallbackCode = `package main
 
 import "fmt"
@@ -51,14 +86,14 @@ function parseHints(raw?: string): string[] {
 function buildFallbackSections(topic: TrainerTopic, syntax: string, pattern: string, examples: TopicExample[]): ConceptSection[] {
   return [
     {
-      title: `About ${topic.title}`,
+      title: `Зачем нужна тема`,
       paragraphs: [
         topic.explanation || 'Этот концепт объясняет одну важную идею Go и сразу переводит её в практику.',
         'Сначала зафиксируй форму решения, а потом уже запоминай частные случаи.',
       ],
     },
     {
-      title: 'Syntax',
+      title: 'Как это выглядит в коде',
       paragraphs: [
         'Синтаксис — это не то, что нужно зубрить посимвольно. Важнее заметить форму: где вход, где логика и где результат.',
       ],
@@ -72,7 +107,7 @@ function buildFallbackSections(topic: TrainerTopic, syntax: string, pattern: str
         }]
       : []),
     {
-      title: 'Reusable pattern',
+      title: 'Шаблон решения',
       paragraphs: [
         'Возьми этот каркас как форму решения. Меняй входные данные и центральную проверку под свою задачу.',
       ],
@@ -81,22 +116,22 @@ function buildFallbackSections(topic: TrainerTopic, syntax: string, pattern: str
   ]
 }
 
-function buildFallbackRail(activeExercise: Exercise | null, topic: TrainerTopic): PracticeRailItem[] {
+function buildFallbackRail(activeExercise: Exercise | null): PracticeRailItem[] {
   return [
     {
-      title: activeExercise?.title || `${topic.title} drill`,
+      title: activeExercise?.title || `Практика по теме`,
       description: activeExercise?.description || 'Начни с одного базового упражнения по теме.',
       difficulty: 'easy',
       status: 'recommended',
     },
     {
-      title: 'Pattern replay',
+      title: 'Повторить похожую задачу',
       description: 'Повтори этот же шаблон с другими входными данными.',
       difficulty: 'easy',
       status: 'learning',
     },
     {
-      title: 'Edge cases',
+      title: 'Проверить сложные случаи',
       description: 'Проверь, как код ведёт себя на пустых и пограничных значениях.',
       difficulty: 'medium',
       status: 'locked',
@@ -253,19 +288,21 @@ function TrainerTopicContent({ slug }: { slug: string }) {
   const practiceRail: PracticeRailItem[] =
     'practiceRail' in topic && Array.isArray(topic.practiceRail) && topic.practiceRail.length > 0
       ? topic.practiceRail
-      : buildFallbackRail(activeExercise, topic)
+      : buildFallbackRail(activeExercise)
 
   const scrollToLab = () => {
     document.getElementById('quick-lab')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
+  const displayTitle = getTopicTitle(slug, topic.title)
+  const displaySummary = getTopicSummary(slug, summary)
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       <div className="rounded-[34px] border border-[#d6ddfb] bg-[#eef2ff] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.08)] sm:p-8">
         <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500">
-          <Link href="/trainer" className="transition-colors hover:text-slate-950">Тренажёр</Link>
+          <Link href="/trainer" className="transition-colors hover:text-slate-950">Практика</Link>
           <span>→</span>
-          <span className="text-slate-700">{topic.title}</span>
+          <span className="text-slate-700">{displayTitle}</span>
         </div>
 
         <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
@@ -276,17 +313,17 @@ function TrainerTopicContent({ slug }: { slug: string }) {
               </div>
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-4xl font-black tracking-tight text-[#201a61] sm:text-5xl">{topic.title}</h1>
-                  <span className="text-lg text-slate-500">in Go</span>
+                  <h1 className="text-4xl font-black tracking-tight text-[#201a61] sm:text-5xl">{displayTitle}</h1>
+                  <span className="text-lg text-slate-500">на Go</span>
                 </div>
                 <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-slate-600">
                   <span className="inline-flex items-center gap-2">
                     <span className="text-[#2a266d]">↔</span>
-                    {practiceRail.length} exercises
+                    {practiceRail.length} упражнения
                   </span>
                   {completed && (
                     <span className="rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                      Concept complete
+                      Тема пройдена
                     </span>
                   )}
                   {builtInRelatedSprint && (
@@ -299,8 +336,8 @@ function TrainerTopicContent({ slug }: { slug: string }) {
             </header>
 
             <div className="mt-6 rounded-[28px] border border-[#d9def4] bg-white p-6 sm:p-8">
-              <SectionTitle title={`About ${topic.title}`} />
-              <p className="mt-4 text-[17px] leading-8 text-slate-700">{summary}</p>
+              <SectionTitle title="Зачем нужна эта тема" />
+              <p className="mt-4 text-[17px] leading-8 text-slate-700">{displaySummary}</p>
 
               {conceptSections.map((section) => (
                 <div key={section.title} className="mt-8">
@@ -315,7 +352,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
               ))}
 
               <div className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5">
-                <p className="text-sm font-bold uppercase tracking-[0.22em] text-amber-700">Watch out</p>
+                <p className="text-sm font-bold uppercase tracking-[0.22em] text-amber-700">Обрати внимание</p>
                 <ul className="mt-3 space-y-2 text-sm leading-7 text-slate-700">
                   {(builtInCommonMistakes.length > 0 ? builtInCommonMistakes : [
                     'не смешивай вывод в консоль и вычисление результата',
@@ -336,7 +373,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
             <div className="rounded-[28px] border border-[#d9def4] bg-white p-5">
               <div className="flex items-center gap-2 text-sm font-bold text-[#2a266d]">
                 <span>⌘</span>
-                <span>Learn {topic.title}</span>
+                <span>Пройти тему</span>
               </div>
 
               <button
@@ -347,16 +384,16 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                   <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#dff6ff] text-2xl">🧪</div>
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="font-bold text-[#1e1b5f]">{activeExercise?.title || `${topic.title} practice`}</p>
+                      <p className="font-bold text-[#1e1b5f]">{activeExercise?.title || 'Практика по теме'}</p>
                       <span className="rounded-full border border-[#d8cffd] bg-[#f5f1ff] px-2.5 py-1 text-[11px] font-semibold text-[#5a4bd6]">
-                        Recommended
+                        Рекомендуем
                       </span>
                       <span className="rounded-full border border-[#d8cffd] bg-[#f7f8ff] px-2.5 py-1 text-[11px] font-semibold text-slate-600">
-                        Learning Exercise
+                        Учебное упражнение
                       </span>
                     </div>
                     <p className="mt-2 text-sm leading-6 text-slate-600">
-                      {activeExercise?.description || 'Открой quick lab и закрепи концепт на одном компактном упражнении.'}
+                      {activeExercise?.description || 'Открой практику и закрепи тему на одном компактном упражнении.'}
                     </p>
                   </div>
                 </div>
@@ -367,7 +404,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 text-sm font-bold text-[#2a266d]">
                   <span>↔</span>
-                  <span>Unlock {Math.max(practiceRail.length - 1, 0)} more exercises to practice {topic.title}</span>
+                  <span>Ещё {Math.max(practiceRail.length - 1, 0)} упражнения для закрепления</span>
                 </div>
               </div>
 
@@ -379,7 +416,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
             </div>
 
             <div className="rounded-[28px] border border-[#d9def4] bg-white p-5">
-              <p className="text-sm font-bold text-[#2a266d]">You will practice</p>
+              <p className="text-sm font-bold text-[#2a266d]">Что ты потренируешь</p>
               <ul className="mt-4 space-y-2 text-sm leading-7 text-slate-700">
                 {(builtInMicroSkills.length > 0 ? builtInMicroSkills : [
                   'понять форму решения',
@@ -401,7 +438,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
         <div className="border-b border-gray-800 px-6 py-5 sm:px-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.26em] text-cyan-300">Quick lab</p>
+              <p className="text-xs font-bold uppercase tracking-[0.26em] text-cyan-300">Практика</p>
               <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">{activeExercise?.title || 'Практика по концепту'}</h2>
               <p className="mt-3 max-w-3xl text-sm leading-7 text-gray-400">
                 Сначала попробуй сам, потом запусти код и только после этого отправь решение на проверку.
@@ -412,7 +449,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                 href={`/trainer/topic/${nextTopic.slug}`}
                 className="rounded-2xl border border-violet-500/30 bg-violet-500/10 px-4 py-2.5 text-sm font-semibold text-violet-200 transition hover:border-violet-400/50 hover:bg-violet-500/15"
               >
-                Следующий концепт →
+                Следующая тема →
               </Link>
             )}
           </div>
@@ -427,7 +464,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                   workspaceMode === 'browser' ? 'bg-violet-500 text-white' : 'text-gray-500 hover:text-white'
                 }`}
               >
-                Browser sandbox
+                В браузере
               </button>
               <button
                 onClick={() => setWorkspaceMode('local')}
@@ -435,7 +472,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                   workspaceMode === 'local' ? 'bg-violet-500 text-white' : 'text-gray-500 hover:text-white'
                 }`}
               >
-                Local workflow
+                На компьютере
               </button>
             </div>
 
@@ -444,7 +481,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                 <div className="flex items-center justify-between border-b border-gray-800 px-4 py-3">
                   <div>
                     <p className="text-xs font-bold text-white">main.go</p>
-                    <p className="text-[11px] text-gray-600">Run, inspect output and submit when ready</p>
+                    <p className="text-[11px] text-gray-600">Запусти код, посмотри результат и отправь решение</p>
                   </div>
                   <button
                     onClick={() => {
@@ -453,7 +490,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                     }}
                     className="text-xs text-gray-500 hover:text-white"
                   >
-                    Reset
+                    Сбросить
                   </button>
                 </div>
 
@@ -530,7 +567,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                   {copied ? 'Команда скопирована ✓' : 'Скопировать стартовую команду'}
                 </button>
                 <p className="mt-4 text-xs leading-5 text-gray-600">
-                  После локальной проверки вернись в браузерный sandbox и отправь решение, если хочешь зафиксировать прогресс.
+                  После проверки на компьютере вернись во вкладку “В браузере” и отправь решение, если хочешь зафиксировать прогресс.
                 </p>
               </div>
             )}
@@ -546,7 +583,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
             </InfoPanel>
 
             {builtInTopic?.expectedOutput && (
-              <InfoPanel title="Expected output">
+              <InfoPanel title="Ожидаемый результат">
                 <code className="block rounded-xl border border-gray-800 bg-slate-950 px-3 py-3 font-mono text-sm text-cyan-200">
                   {builtInTopic.expectedOutput}
                 </code>
@@ -554,7 +591,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
             )}
 
             {hints.length > 0 && (
-              <InfoPanel title="Hints">
+              <InfoPanel title="Подсказки">
                 <ul className="space-y-2 text-sm leading-6 text-gray-300">
                   {hints.slice(0, 3).map((hint) => (
                     <li key={hint} className="flex gap-3">

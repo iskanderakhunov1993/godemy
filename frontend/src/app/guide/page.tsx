@@ -9,11 +9,11 @@ import { useFlagshipCourse } from '@/lib/useFlagshipCourse'
 type SprintState = 'done' | 'active' | 'queued'
 
 const sprintSkills = [
-  'Команда и Jira',
-  'Go и CLI',
-  'HTTP и JSON',
-  'CRUD и данные',
-  'Демо и оффер',
+  'Первый день',
+  'Основы Go',
+  'Данные из интернета',
+  'Проект с записями',
+  'Итог и портфолио',
 ]
 
 const sprintSymbols = ['◎', '01', '02', '03', '✓']
@@ -76,7 +76,7 @@ function SprintNode({
         </div>
 
         <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-gray-500">
-          {sprint.sprint}
+          Шаг {index + 1}
         </p>
         <h2 className="mt-2 text-base font-semibold leading-snug text-white">
           {sprintSkills[index] ?? sprint.name}
@@ -85,7 +85,7 @@ function SprintNode({
 
         <div className="mt-auto pt-5">
           <div className="flex items-center justify-between text-[11px] text-gray-500">
-            <span>{completedCount}/{lessonCount} задач</span>
+            <span>{completedCount}/{lessonCount} уроков</span>
             <span className="text-gray-400 transition group-hover:text-white">Открыть →</span>
           </div>
           <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/8">
@@ -158,29 +158,29 @@ export default function GuidePage() {
             <div>
               <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
-                Atlas Dev · Internship
+                Бесплатный курс · Go с нуля
               </div>
               <div className="mt-4 inline-flex rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-[11px] font-semibold text-emerald-200">
-                Бесплатный флагманский курс
+                Бесплатный курс
               </div>
               <h1 className="mt-5 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                Рабочий стол стажёра
+                Твой путь обучения
               </h1>
               <p className="mt-3 max-w-md text-sm leading-6 text-gray-400">
-                Закрывай задачи, выпускай проекты и дойди до финального ревью.
+                Проходи уроки по порядку, собирай проекты и видь понятный прогресс.
               </p>
             </div>
 
             <div className="mt-8">
               <div className="flex items-end justify-between gap-4">
                 <div>
-                  <p className="text-xs text-gray-500">Прогресс стажировки</p>
+                  <p className="text-xs text-gray-500">Прогресс обучения</p>
                   <p className="mt-1 text-2xl font-semibold text-white">{progressPercent}%</p>
                 </div>
                 <p className="text-right text-xs leading-5 text-gray-500">
                   {completedProjects} из 3 проектов
                   <br />
-                  {completedLessons} из {courseLessons.length} задач
+                  {completedLessons} из {courseLessons.length} уроков
                 </p>
               </div>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/8">
@@ -196,18 +196,18 @@ export default function GuidePage() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <span className="rounded-lg bg-violet-400/12 px-2.5 py-1 font-mono text-xs text-violet-300">
-                  {currentModule.ticket}
+                  Раздел {currentModuleIndex + 1}
                 </span>
-                <span className="text-xs text-gray-500">{currentModule.sprint}</span>
+                <span className="text-xs text-gray-500">Шаг {currentModuleIndex + 1}</span>
               </div>
               <span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-[11px] font-medium text-amber-200">
-                Активная миссия
+                Текущий шаг
               </span>
             </div>
 
             <div className="mt-6 grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
               <div>
-                <p className="text-xs font-medium text-cyan-300">Следующая задача</p>
+                <p className="text-xs font-medium text-cyan-300">Следующий урок</p>
                 <h2 className="mt-2 max-w-2xl text-2xl font-semibold leading-tight text-white sm:text-3xl">
                   {currentLesson.title}
                 </h2>
@@ -219,19 +219,19 @@ export default function GuidePage() {
                 href={`/guide/${currentLesson.slug}?module=${encodeURIComponent(currentLesson.module)}&topic=${encodeURIComponent(currentLesson.category)}`}
                 className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-cyan-300 px-5 text-sm font-bold text-slate-950 shadow-[0_12px_35px_rgba(34,211,238,0.18)] hover:-translate-y-0.5 hover:bg-cyan-200"
               >
-                Взять задачу →
+                Начать урок →
               </Link>
             </div>
 
             <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-white/8 pt-5 text-xs">
               <span className="text-gray-500">
-                Роль <strong className="ml-1 font-medium text-gray-200">{currentModule.role}</strong>
+                Направление <strong className="ml-1 font-medium text-gray-200">Go-разработка</strong>
               </span>
               <span className="text-gray-500">
-                Спринт <strong className="ml-1 font-medium text-gray-200">{currentModuleCompleted}/{currentModuleLessons.length}</strong>
+                Раздел <strong className="ml-1 font-medium text-gray-200">{currentModuleCompleted}/{currentModuleLessons.length}</strong>
               </span>
               <span className="text-gray-500">
-                Готово когда <strong className="ml-1 font-medium text-gray-200">{currentModule.deliverable}</strong>
+                Цель <strong className="ml-1 font-medium text-gray-200">завершить уроки раздела</strong>
               </span>
             </div>
           </div>
@@ -240,10 +240,10 @@ export default function GuidePage() {
         <section className="mt-8">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">Карта кампании</p>
-              <h2 className="mt-2 text-2xl font-semibold text-white">Путь до оффера</h2>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">План курса</p>
+              <h2 className="mt-2 text-2xl font-semibold text-white">От первого урока до проекта</h2>
             </div>
-            <p className="text-sm text-gray-500">5 спринтов · 3 проекта · 1 финальное ревью</p>
+            <p className="text-sm text-gray-500">5 разделов · 3 проекта · понятный итог</p>
           </div>
 
           <ol className="-mx-4 mt-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 xl:grid-cols-5">
@@ -274,10 +274,10 @@ export default function GuidePage() {
           <div className="rounded-[28px] border border-white/8 bg-white/[0.025] p-6 sm:p-7">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-violet-300">Проектный трек</p>
-                <h2 className="mt-2 text-xl font-semibold text-white">Три релиза для портфолио</h2>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-violet-300">Практический результат</p>
+                <h2 className="mt-2 text-xl font-semibold text-white">Три проекта для первого портфолио</h2>
               </div>
-              <span className="font-mono text-xs text-gray-500">{completedProjects}/3 shipped</span>
+              <span className="font-mono text-xs text-gray-500">{completedProjects}/3 готово</span>
             </div>
 
             <div className="mt-5 grid gap-3 md:grid-cols-3">
@@ -316,16 +316,16 @@ export default function GuidePage() {
                 TL
               </span>
               <div>
-                <p className="text-sm font-semibold text-white">Тимлид · Atlas Dev</p>
-                <p className="text-xs text-emerald-300">в сети</p>
+                <p className="text-sm font-semibold text-white">Наставник курса</p>
+                <p className="text-xs text-emerald-300">подсказывает маршрут</p>
               </div>
             </div>
             <blockquote className="mt-5 text-sm leading-6 text-gray-300">
-              «Не пытайся пройти всё сразу. Закрой текущую задачу и принеси результат на ревью».
+              «Не пытайся пройти всё сразу. Сделай текущий урок, закрепи практикой и переходи дальше».
             </blockquote>
             <div className="mt-5 flex items-center justify-between border-t border-white/8 pt-4 text-xs">
-              <span className="text-gray-500">Награда спринта</span>
-              <span className="font-medium text-cyan-200">+1 уровень роли</span>
+              <span className="text-gray-500">После раздела</span>
+              <span className="font-medium text-cyan-200">+1 понятный навык</span>
             </div>
           </aside>
         </section>

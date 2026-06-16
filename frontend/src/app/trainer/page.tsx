@@ -40,26 +40,97 @@ type ConceptGroup = {
 }
 
 const viewOptions: Array<{ id: View; label: string; description: string }> = [
-  { id: 'concepts', label: 'Концепции', description: 'Рабочий маршрут по трём проектам' },
-  { id: 'practice', label: 'Практика', description: 'Самостоятельные backend-задачи' },
+  { id: 'concepts', label: 'Темы', description: 'Понятный маршрут по основам' },
+  { id: 'practice', label: 'Практика', description: 'Самостоятельные упражнения' },
   { id: 'cards', label: 'Повторение', description: 'Быстрые карточки для закрепления' },
 ]
 
 const categoryMeta: Record<string, { ticket: string; mission: string }> = {
-  Foundations: { ticket: 'ZERO-FOUND', mission: 'Подготовить основу Project 1' },
-  Logic: { ticket: 'ZERO-LOGIC', mission: 'Реализовать бизнес-решения' },
-  Functions: { ticket: 'ZERO-FUNC', mission: 'Разделить код на рабочие блоки' },
-  'Working With Data': { ticket: 'ZERO-DATA', mission: 'Описать данные продукта' },
-  'Packages & Project Organization': { ticket: 'ZERO-ORG', mission: 'Собрать командный Go-проект' },
-  'Error Handling': { ticket: 'ZERO-ERR', mission: 'Сделать ошибки управляемыми' },
-  'Files & Data Storage': { ticket: 'ZERO-FILE', mission: 'Сохранить данные локально' },
-  'HTTP & APIs': { ticket: 'ZERO-HTTP', mission: 'Понять контракт API' },
-  Environment: { ticket: 'ZERO-ENV', mission: 'Вынести настройки из кода' },
-  'Backend Development': { ticket: 'ZERO-BACK', mission: 'Собрать HTTP-сервис' },
-  Database: { ticket: 'ZERO-DB', mission: 'Подключить PostgreSQL' },
-  'Testing & Debugging': { ticket: 'ZERO-QA', mission: 'Найти и доказать ошибки' },
-  Docker: { ticket: 'ZERO-DOCKER', mission: 'Упаковать сервис' },
-  'Career / Real Work': { ticket: 'ZERO-TEAM', mission: 'Передать работу команде' },
+  Foundations: { ticket: 'Раздел 1', mission: 'Понять, как выглядит первая программа' },
+  Logic: { ticket: 'Раздел 2', mission: 'Научить программу принимать решения' },
+  Functions: { ticket: 'Раздел 3', mission: 'Разделить код на понятные части' },
+  'Working With Data': { ticket: 'Раздел 4', mission: 'Описывать и хранить данные в коде' },
+  'Packages & Project Organization': { ticket: 'Раздел 5', mission: 'Навести порядок в проекте' },
+  'Error Handling': { ticket: 'Раздел 6', mission: 'Понимать ошибки и спокойно их исправлять' },
+  'Files & Data Storage': { ticket: 'Раздел 7', mission: 'Сохранять данные между запусками' },
+  'HTTP & APIs': { ticket: 'Раздел 8', mission: 'Получать данные из интернета' },
+  Environment: { ticket: 'Раздел 9', mission: 'Хранить настройки отдельно от кода' },
+  'Backend Development': { ticket: 'Раздел 10', mission: 'Собрать простой веб-сервис' },
+  Database: { ticket: 'Раздел 11', mission: 'Понять, как проект хранит данные' },
+  'Testing & Debugging': { ticket: 'Раздел 12', mission: 'Проверять работу и искать причины ошибок' },
+  Docker: { ticket: 'Раздел 13', mission: 'Подготовить проект к запуску на другом компьютере' },
+  'Career / Real Work': { ticket: 'Раздел 14', mission: 'Оформить работу так, чтобы её поняли другие' },
+}
+
+const categoryLabels: Record<string, string> = {
+  Foundations: 'Основы',
+  Logic: 'Логика программы',
+  Functions: 'Функции',
+  'Working With Data': 'Работа с данными',
+  'Packages & Project Organization': 'Структура проекта',
+  'Error Handling': 'Ошибки',
+  'Files & Data Storage': 'Файлы и хранение',
+  'HTTP & APIs': 'Данные из интернета',
+  Environment: 'Настройки проекта',
+  'Backend Development': 'Веб-сервис',
+  Database: 'База данных',
+  'Testing & Debugging': 'Проверка и отладка',
+  Docker: 'Запуск проекта',
+  'Career / Real Work': 'Портфолио и рабочие привычки',
+}
+
+const conceptTitleLabels: Record<string, string> = {
+  'go-program-structure': 'Как устроена первая программа',
+  variables: 'Переменные: как хранить значения',
+  'data-types': 'Типы данных: числа, текст и логика',
+  constants: 'Постоянные значения',
+  'input-output': 'Ввод и вывод',
+  'string-formatting': 'Как красиво собрать текст',
+  comments: 'Комментарии в коде',
+}
+
+const conceptDescriptionLabels: Record<string, string> = {
+  'go-program-structure': 'Поймёшь, из каких частей состоит простая программа и где начинается выполнение кода.',
+  variables: 'Научишься сохранять значения, чтобы программа могла использовать их позже.',
+  'data-types': 'Разберёшься, почему текст, числа и логические значения записываются по-разному.',
+  constants: 'Поймёшь, когда значение должно оставаться неизменным.',
+  'input-output': 'Научишься получать данные от пользователя и показывать результат.',
+  'string-formatting': 'Потренируешься собирать понятные сообщения из текста и значений.',
+  comments: 'Поймёшь, как оставлять пояснения в коде для себя и команды.',
+}
+
+const conceptMicroSkillLabels: Record<string, string[]> = {
+  'go-program-structure': [
+    'увидеть основные части программы',
+    'изменить минимальный пример',
+    'проверить результат вручную',
+  ],
+  variables: [
+    'создать переменную',
+    'изменить значение',
+    'вывести результат',
+  ],
+  'data-types': [
+    'отличать текст от чисел',
+    'выбирать подходящий тип',
+    'замечать ошибки типов',
+  ],
+}
+
+function getCategoryLabel(category: string) {
+  return categoryLabels[category] ?? category
+}
+
+function getConceptTitle(slug: string, fallback: string) {
+  return conceptTitleLabels[slug] ?? fallback
+}
+
+function getConceptDescription(slug: string, fallback: string) {
+  return conceptDescriptionLabels[slug] ?? fallback
+}
+
+function getConceptMicroSkills(slug: string, fallback: string[]) {
+  return conceptMicroSkillLabels[slug] ?? fallback
 }
 
 export default function TrainerPage() {
@@ -105,11 +176,11 @@ export default function TrainerPage() {
 
       return {
         code: topic.conceptCode || String(index + 1).padStart(2, '0'),
-        title: topic.title,
-        description: topic.summary || topic.explanation,
+        title: getConceptTitle(topic.slug, topic.title),
+        description: getConceptDescription(topic.slug, topic.summary || topic.explanation),
         slug: topic.slug,
         category: getGoConceptCategory(topic.slug),
-        microSkills: topic.microSkills.slice(0, 3),
+        microSkills: getConceptMicroSkills(topic.slug, topic.microSkills.slice(0, 3)),
         completed,
         unlocked,
         current: unlocked && !completed,
@@ -151,29 +222,29 @@ export default function TrainerPage() {
             <div className="border-b border-white/8 p-6 sm:p-8 lg:border-b-0 lg:border-r">
               <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
-                Project ZERO · Knowledge Base
+                Практика · Go с нуля
               </div>
               <div className="mt-5 flex items-center gap-4">
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 font-mono text-lg font-black text-cyan-200">
                   Go
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">Инженерная база стажёра</p>
-                  <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Концепции Go</h1>
+                  <p className="text-xs text-gray-500">Темы для закрепления</p>
+                  <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Практика Go</h1>
                 </div>
               </div>
               <p className="mt-5 max-w-md text-sm leading-6 text-gray-400">
-                Только знания, которые нужны, чтобы выпустить три проекта. Без академического обхода языка по кругу.
+                Короткие темы и упражнения, чтобы не просто читать, а постепенно привыкать писать код.
               </p>
 
               <div className="mt-8">
                 <div className="flex items-end justify-between gap-4">
                   <div>
-                    <p className="text-xs text-gray-500">Готовность базы</p>
+                    <p className="text-xs text-gray-500">Прогресс практики</p>
                     <p className="mt-1 text-2xl font-semibold">{completionPercent}%</p>
                   </div>
                   <p className="text-right text-xs leading-5 text-gray-500">
-                    {completedConcepts} из {conceptNodes.length} закрыто
+                    {completedConcepts} из {conceptNodes.length} пройдено
                     <br />
                     раздел {currentGroupIndex + 1} из {conceptGroups.length}
                   </p>
@@ -191,19 +262,19 @@ export default function TrainerPage() {
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <span className="rounded-lg bg-violet-400/12 px-2.5 py-1 font-mono text-xs text-violet-300">
-                    {categoryMeta[currentConcept?.category]?.ticket ?? 'ZERO-GO'}
+                    {categoryMeta[currentConcept?.category]?.ticket ?? 'Раздел'}
                   </span>
-                  <span className="text-xs text-gray-500">{currentConcept?.category}</span>
+                  <span className="text-xs text-gray-500">{getCategoryLabel(currentConcept?.category ?? '')}</span>
                 </div>
                 <span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-[11px] font-medium text-amber-200">
-                  Текущая задача
+                  Следующее упражнение
                 </span>
               </div>
 
               <div className="mt-6 grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
                 <div>
                   <p className="text-xs font-medium text-cyan-300">
-                    {categoryMeta[currentConcept?.category]?.mission ?? 'Продолжить инженерный маршрут'}
+                    {categoryMeta[currentConcept?.category]?.mission ?? 'Продолжить практику'}
                   </p>
                   <h2 className="mt-2 max-w-2xl text-2xl font-semibold leading-tight sm:text-3xl">
                     {currentConcept?.title}
@@ -217,7 +288,7 @@ export default function TrainerPage() {
                     href={`/trainer/topic/${currentConcept.slug}`}
                     className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-cyan-300 px-5 text-sm font-bold text-slate-950 shadow-[0_12px_35px_rgba(34,211,238,0.18)] hover:-translate-y-0.5 hover:bg-cyan-200"
                   >
-                    Открыть задачу
+                    Начать практику
                     <ChevronRight className="h-4 w-4" />
                   </Link>
                 )}
@@ -262,11 +333,11 @@ export default function TrainerPage() {
           <section className="mt-9">
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">Рабочий backlog</p>
-                <h2 className="mt-2 text-2xl font-semibold">14 разделов инженерной базы</h2>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">План практики</p>
+                <h2 className="mt-2 text-2xl font-semibold">14 разделов от простого к сложному</h2>
               </div>
               <p className="max-w-lg text-sm leading-6 text-gray-500">
-                Каждый раздел закрывает конкретную потребность проекта. Иди по порядку и открывай следующую задачу после проверки текущей.
+                Иди по порядку: сначала простая тема, потом пример, потом небольшое упражнение.
               </p>
             </div>
 
@@ -287,11 +358,11 @@ export default function TrainerPage() {
           <section className="mt-9">
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">Practice Queue</p>
-                <h2 className="mt-2 text-2xl font-semibold">Самостоятельные задачи</h2>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">Упражнения</p>
+                <h2 className="mt-2 text-2xl font-semibold">Самостоятельные упражнения</h2>
               </div>
               <p className="max-w-lg text-sm leading-6 text-gray-500">
-                Здесь меньше подсказок: бери задачу после concept card и проверяй, можешь ли применить форму решения самостоятельно.
+                Здесь меньше подсказок: выбирай упражнение после темы и проверяй, получается ли применить идею самому.
               </p>
             </div>
 
@@ -317,7 +388,7 @@ export default function TrainerPage() {
                     <h3 className="mt-5 text-lg font-semibold">{exercise.title}</h3>
                     <p className="mt-2 line-clamp-2 text-sm leading-6 text-gray-500">{exercise.description}</p>
                     <p className="mt-5 flex items-center gap-1 text-xs font-semibold text-cyan-300">
-                      Взять задачу <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                      Начать упражнение <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                     </p>
                   </Link>
                 )
@@ -372,11 +443,11 @@ function ConceptSection({
             <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-violet-300">{meta?.ticket}</span>
             {active && <span className="rounded-full bg-cyan-300/10 px-2 py-0.5 text-[10px] font-semibold text-cyan-200">Сейчас</span>}
           </div>
-          <h3 className="mt-1 text-lg font-semibold">{group.category}</h3>
+          <h3 className="mt-1 text-lg font-semibold">{getCategoryLabel(group.category)}</h3>
           <p className="mt-1 text-sm text-gray-500">{meta?.mission}</p>
         </div>
         <div className="sm:text-right">
-          <p className="text-sm font-medium text-gray-300">{group.completedCount}/{group.concepts.length} задач</p>
+          <p className="text-sm font-medium text-gray-300">{group.completedCount}/{group.concepts.length} тем</p>
           <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/8 sm:w-28">
             <div
               className={`h-full rounded-full ${complete ? 'bg-emerald-400' : 'bg-cyan-300'}`}
@@ -434,7 +505,7 @@ function ConceptTaskCard({
       <p className="mt-2 line-clamp-2 text-xs leading-5 text-gray-600">{concept.description}</p>
       <div className="mt-5 flex items-center justify-between border-t border-white/6 pt-3">
         <span className="text-[10px] uppercase tracking-[0.14em] text-gray-600">
-          {concept.completed ? 'Закрыто' : concept.current ? 'В работе' : 'В очереди'}
+          {concept.completed ? 'Пройдено' : concept.current ? 'Сейчас' : 'Позже'}
         </span>
         {concept.unlocked && <Play className="h-3.5 w-3.5 fill-current text-cyan-300" />}
       </div>
@@ -454,7 +525,7 @@ function ConceptTaskCard({
 
   return (
     <div
-      title={sectionLocked ? 'Сначала закрой предыдущий раздел' : 'Сначала закрой предыдущую задачу'}
+      title={sectionLocked ? 'Сначала пройди предыдущий раздел' : 'Сначала пройди предыдущую тему'}
       className="rounded-2xl border border-white/[0.055] bg-black/10 p-4 opacity-75"
     >
       {content}

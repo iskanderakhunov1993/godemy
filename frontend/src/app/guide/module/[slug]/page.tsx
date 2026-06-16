@@ -80,20 +80,20 @@ export default function ModulePage() {
               <p className="mt-2 text-sm leading-6 text-gray-300">{moduleMeta.subtitle}</p>
             </div>
             <div className="grid gap-2 text-sm text-gray-300">
-              <p><span className="text-gray-500">Jira:</span> <span className="font-mono text-cyan-300">{moduleMeta.ticket}</span></p>
-              <p><span className="text-gray-500">Ритуал:</span> {moduleMeta.ritual}</p>
-              <p><span className="text-gray-500">Результат:</span> {moduleMeta.deliverable}</p>
+              <p><span className="text-gray-500">Раздел:</span> <span className="font-mono text-cyan-300">{moduleMeta.sprint}</span></p>
+              <p><span className="text-gray-500">Как проходить:</span> уроки и практика по порядку</p>
+              <p><span className="text-gray-500">Результат:</span> завершить уроки раздела</p>
             </div>
           </div>
         )}
         <div className="mt-5 rounded-2xl border border-gray-800 bg-gray-900 p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.24em] text-violet-300">Как учиться в этом спринте</p>
+          <p className="text-xs font-bold uppercase tracking-[0.24em] text-violet-300">Как учиться в этом разделе</p>
           <p className="mt-2 text-sm leading-6 text-gray-300">
-            Сначала пройди уроки этого спринта по порядку, потом добей узкие навыки в тренажёре.
-            Так ты получишь и продуктовый контекст, и короткие технические повторы без перегруза.
+            Сначала пройди уроки по порядку, потом закрепи узкие навыки в практике.
+            Так ты получишь понятный контекст и короткие повторы без перегруза.
           </p>
           <Link href="/trainer" className="mt-3 inline-flex text-sm font-semibold text-violet-300 hover:text-violet-200">
-            Открыть тренажёр →
+            Открыть практику →
           </Link>
         </div>
       </div>

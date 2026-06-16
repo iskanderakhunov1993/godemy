@@ -33,13 +33,13 @@ export default function RegisterPage() {
   return (
     <div className="auth-shell">
       <div className="auth-card">
-        <p className="eyebrow">Create Account</p>
-        <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-white">Регистрация</h1>
-        <p className="mt-3 text-sm leading-6 text-slate-400">Создай аккаунт, чтобы сохранять прогресс, получать доступ к сертификатам и двигаться по спринтам без потерь.</p>
+        <p className="eyebrow">Новый аккаунт</p>
+        <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-white">Начать обучение</h1>
+        <p className="mt-3 text-sm leading-6 text-slate-400">Создай аккаунт, чтобы сохранять прогресс, возвращаться к урокам и получать сертификаты.</p>
 
         <form onSubmit={onSubmit} className="mt-8 space-y-4">
           <div>
-            <label className="app-label">Username</label>
+            <label className="app-label">Имя на платформе</label>
             <input
               type="text"
               value={username}
@@ -47,7 +47,7 @@ export default function RegisterPage() {
               required
               minLength={3}
               className="app-input"
-              placeholder="gopher_dev"
+              placeholder="например, Анна"
             />
           </div>
 
@@ -110,7 +110,7 @@ export default function RegisterPage() {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M14.341 13.56L9.506 24H6.65l5.12-11.064L7.028 0h2.905l4.408 10.63L18.76 0H21.6l-7.259 13.56z" />
               </svg>
-              Зарегистрироваться через Яндекс
+              Продолжить через Яндекс
             </a>
             <a
               href="/api/auth/google"
@@ -122,7 +122,7 @@ export default function RegisterPage() {
                 <path fill="#FBBC05" d="M5.5 14.24a5.99 5.99 0 0 1 0-4.48L2.05 7.08a10 10 0 0 0 0 9.84l3.45-2.68z" />
                 <path fill="#34A853" d="M12 20c2.7 0 4.98-.89 6.64-2.42l-3.48-2.7c-.96.65-2.19 1.1-3.16 1.1-4.1 0-5.33-2.4-5.57-3.64H2.05A10 10 0 0 0 12 20z" />
               </svg>
-              Зарегистрироваться через Google
+              Продолжить через Google
             </a>
           </div>
         </div>

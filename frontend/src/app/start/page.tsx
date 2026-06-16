@@ -55,7 +55,7 @@ export default function StartPage() {
                 </div>
               </div>
               <p className="mt-5 max-w-2xl text-gray-400">
-                Изучи основы Go и примени их последовательно: CLI-приложение, REST API и сервис с PostgreSQL.
+                Изучи основы Go и примени их последовательно: простая программа, сервис с данными из интернета и проект с хранением записей.
               </p>
               {token && lessonsTotal > 0 && (
                 <div className="mt-6 max-w-xl">
@@ -82,11 +82,11 @@ export default function StartPage() {
                 <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500 font-black text-white">2</span>
                 <div>
                   <p className="text-xs font-bold uppercase tracking-widest text-violet-300">Практикуйся параллельно</p>
-                  <h2 className="text-2xl font-black text-white">Тренажёр Go</h2>
+                  <h2 className="text-2xl font-black text-white">Практика Go</h2>
                 </div>
               </div>
               <p className="mt-5 max-w-2xl text-gray-400">
-                Используй его после каждой темы: решай задачи, повторяй материал по карточкам и готовься к собеседованиям.
+                Используй её после каждой темы: решай упражнения, повторяй материал по карточкам и закрепляй новые идеи.
               </p>
               {token && exercisesTotal > 0 && (
                 <div className="mt-6 max-w-xl">
@@ -101,7 +101,7 @@ export default function StartPage() {
               )}
             </div>
             <Link href="/trainer" className="whitespace-nowrap rounded-xl bg-violet-500 px-6 py-3 font-bold text-white transition-colors hover:bg-violet-400">
-              Открыть тренажёр →
+              Открыть практику →
             </Link>
           </div>
         </section>
@@ -112,12 +112,12 @@ export default function StartPage() {
               <div className="flex items-center gap-3">
                 <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400 font-black text-gray-950">3</span>
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-amber-300">Godemy Pro</p>
-                  <h2 className="text-2xl font-black text-white">Bootcamp: Junior → Middle → Senior</h2>
+                  <p className="text-xs font-bold uppercase tracking-widest text-amber-300">Следующий этап</p>
+                  <h2 className="text-2xl font-black text-white">Продвинутый курс</h2>
                 </div>
               </div>
               <p className="mt-5 max-w-2xl text-gray-400">
-                Переходи в Bootcamp, когда готов строить более сложные проекты, подтверждать уровни и собирать профессиональное портфолио.
+                Переходи дальше, когда готов строить более сложные проекты, подтверждать уровни и собирать профессиональное портфолио.
               </p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {['Проекты', 'Задачи', 'Проверка навыков', 'Сертификаты'].map((item) => (
@@ -131,7 +131,7 @@ export default function StartPage() {
               href={user?.isPremium ? '/junior' : '/bootcamp'}
               className="whitespace-nowrap rounded-xl bg-amber-400 px-6 py-3 text-center font-bold text-gray-950 transition-colors hover:bg-amber-300"
             >
-              {user?.isPremium ? 'Продолжить Bootcamp →' : 'Посмотреть Bootcamp →'}
+              {user?.isPremium ? 'Продолжить курс →' : 'Посмотреть следующий этап →'}
             </Link>
           </div>
         </section>

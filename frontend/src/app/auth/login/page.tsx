@@ -40,9 +40,9 @@ export default function LoginPage() {
   return (
     <div className="auth-shell">
       <div className="auth-card">
-        <p className="eyebrow">Account Access</p>
+        <p className="eyebrow">Возвращение к курсу</p>
         <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-white">Вход</h1>
-        <p className="mt-3 text-sm leading-6 text-slate-400">Войди, чтобы сохранять прогресс, открывать сертификаты и продолжать курс с того же места.</p>
+        <p className="mt-3 text-sm leading-6 text-slate-400">Войди, чтобы продолжить обучение с того же места и не потерять прогресс.</p>
 
         <form onSubmit={onSubmit} className="mt-8 space-y-4">
           <div>

@@ -2,9 +2,9 @@ import Link from 'next/link'
 import { BrandLogo } from './BrandLogo'
 
 const navLinks = [
-  { label: 'Курс по Go',     href: '/guide' },
-  { label: 'Тренажёр задач', href: '/trainer' },
-  { label: 'Bootcamp',       href: '/bootcamp' },
+  { label: 'Начать с нуля',       href: '/guide' },
+  { label: 'Практика',            href: '/trainer' },
+  { label: 'Продвинутый курс',    href: '/bootcamp' },
   { label: 'Сертификаты',    href: '/certificates' },
   { label: 'Профиль',        href: '/profile' },
 ]
@@ -19,7 +19,7 @@ export function Footer() {
               <BrandLogo />
             </Link>
             <p className="max-w-sm text-sm leading-relaxed text-gray-500">
-              Спокойная и практичная платформа для изучения Go: бесплатный курс, тренажёр задач и bootcamp для роста в профессию.
+              Спокойная и практичная платформа для изучения Go: бесплатный курс, упражнения и следующий этап для роста в профессию.
             </p>
             <div className="mt-5 flex items-center gap-3">
               <a
@@ -73,8 +73,8 @@ export function Footer() {
             <p className="mb-4 text-sm font-semibold text-white">Как устроен путь</p>
             <ul className="space-y-2.5 text-sm text-gray-500 leading-relaxed">
               <li>Бесплатный курс с тремя проектами</li>
-              <li>Отдельный тренажёр для практики</li>
-              <li>Bootcamp: Junior → Middle → Senior</li>
+              <li>Отдельная практика для закрепления</li>
+              <li>Продвинутый курс после базы</li>
               <li>Сертификаты за подтверждённые навыки</li>
             </ul>
           </div>
@@ -88,8 +88,8 @@ export function Footer() {
           </p>
           <div className="flex items-center gap-4 text-xs text-gray-600">
             <Link href="/guide" className="hover:text-gray-400">Курс</Link>
-            <Link href="/trainer" className="hover:text-gray-400">Тренажёр</Link>
-            <Link href="/bootcamp" className="hover:text-gray-400">Bootcamp</Link>
+            <Link href="/trainer" className="hover:text-gray-400">Практика</Link>
+            <Link href="/bootcamp" className="hover:text-gray-400">Продвинутый курс</Link>
           </div>
         </div>
       </div>

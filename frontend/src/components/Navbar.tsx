@@ -7,11 +7,13 @@ import { useState, useCallback, useEffect } from 'react'
 import { SearchModal } from './SearchModal'
 import { useThemeStore } from '@/lib/theme'
 import { BrandLogo } from './BrandLogo'
+import { Menu, X } from 'lucide-react'
 
 export function Navbar() {
   const { user, logout } = useAuthStore()
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const { mode, toggleMode } = useThemeStore()
 
@@ -30,9 +32,9 @@ export function Navbar() {
   }, [openSearch])
 
   const links = [
-    { href: '/guide', label: 'Бесплатный курс' },
-    { href: '/trainer', label: 'Тренажёр' },
-    { href: '/bootcamp', label: 'Bootcamp Pro' },
+    { href: '/guide', label: 'Начать с нуля' },
+    { href: '/trainer', label: 'Практика' },
+    { href: '/bootcamp', label: 'Продвинутый курс' },
   ]
 
   return (
@@ -65,7 +67,7 @@ export function Navbar() {
             <button
               onClick={openSearch}
               aria-label="Поиск"
-              className="flex h-10 items-center gap-2 rounded-full border border-white/8 bg-white/[0.04] px-3.5 text-gray-400 hover:border-white/16 hover:text-white"
+              className="hidden h-10 items-center gap-2 rounded-full border border-white/8 bg-white/[0.04] px-3.5 text-gray-400 hover:border-white/16 hover:text-white sm:flex"
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -78,7 +80,7 @@ export function Navbar() {
             <button
               onClick={toggleMode}
               aria-label={mode === 'dark' ? 'Светлая тема' : 'Тёмная тема'}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/8 bg-white/[0.04] text-gray-400 hover:border-white/16 hover:text-white"
+              className="hidden h-10 w-10 items-center justify-center rounded-full border border-white/8 bg-white/[0.04] text-gray-400 hover:border-white/16 hover:text-white sm:flex"
             >
               {mode === 'dark' ? (
                 /* Sun icon */
@@ -97,14 +99,14 @@ export function Navbar() {
               <>
                 {user.isPremium ? (
                   <span className="hidden sm:flex items-center rounded-full border border-violet-400/18 bg-violet-400/10 px-3 py-2 text-sm font-medium text-violet-200">
-                    Godemy Pro
+                    Продвинутый курс
                   </span>
                 ) : (
                   <Link
                     href="/bootcamp/buy"
                     className="hidden sm:flex items-center rounded-full border border-white/8 bg-white/[0.04] px-3 py-2 text-sm font-medium text-gray-300 hover:border-violet-400/30 hover:text-white"
                   >
-                    Godemy Pro
+                    Продвинутый курс
                   </Link>
                 )}
 
@@ -156,7 +158,7 @@ export function Navbar() {
                             className="block px-5 py-2.5 text-sm text-gray-300 hover:bg-white/[0.06] hover:text-white"
                             onClick={() => setMenuOpen(false)}
                           >
-                            Получить Godemy Pro
+                            Открыть продвинутый курс
                           </Link>
                         )}
                         <div className="my-1.5 border-t border-white/8" />
@@ -173,16 +175,64 @@ export function Navbar() {
               </>
             ) : (
               <>
-                <Link href="/auth/login" className="text-sm text-gray-400 hover:text-white">
+                <Link href="/auth/login" className="hidden text-sm text-gray-400 hover:text-white sm:inline">
                   Войти
                 </Link>
                 <Link href="/auth/register" className="btn-primary text-sm px-4 py-2.5">
-                  Регистрация
+                  Начать
                 </Link>
               </>
             )}
+            <button
+              type="button"
+              onClick={() => setMobileNavOpen((open) => !open)}
+              aria-label={mobileNavOpen ? 'Закрыть меню' : 'Открыть меню'}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/8 bg-white/[0.04] text-gray-300 hover:border-white/16 hover:text-white md:hidden"
+            >
+              {mobileNavOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
           </div>
         </div>
+
+        {mobileNavOpen && (
+          <div className="border-t border-white/8 bg-[#070b14]/96 px-4 py-4 backdrop-blur-xl md:hidden">
+            <div className="grid gap-2">
+              {links.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setMobileNavOpen(false)}
+                  className={`rounded-2xl px-4 py-3 text-sm font-semibold ${
+                    pathname.startsWith(l.href)
+                      ? 'bg-white text-slate-950'
+                      : 'bg-white/[0.04] text-gray-300'
+                  }`}
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  openSearch()
+                  setMobileNavOpen(false)
+                }}
+                className="rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-3 text-sm font-semibold text-gray-300"
+              >
+                Поиск
+              </button>
+              <button
+                type="button"
+                onClick={toggleMode}
+                className="rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-3 text-sm font-semibold text-gray-300"
+              >
+                {mode === 'dark' ? 'Светлая тема' : 'Тёмная тема'}
+              </button>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Global search modal */}
