@@ -36,8 +36,8 @@ const pillars = [
 
 const stats = [
   { value: '3', label: 'бесплатных проекта' },
-  { value: '1', label: 'понятный маршрут' },
-  { value: '∞', label: 'меньше хаоса и перегруза' },
+  { value: '12+', label: 'коротких тем для старта' },
+  { value: '100%', label: 'практика после теории' },
 ]
 
 const steps = [
@@ -58,12 +58,12 @@ export default function Home() {
             <div>
               <span className="eyebrow">Старт без IT-бэкграунда</span>
               <h1 className="mt-6 max-w-4xl text-5xl font-black leading-[0.98] tracking-[-0.05em] text-white sm:text-7xl">
-                Научись Go
-                <span className="block text-violet-300">с понятного первого шага</span>
+                Go с нуля
+                <span className="block text-violet-300">до первых проектов</span>
               </h1>
               <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
-                Godemy ведёт тебя по простому маршруту: сначала объяснение человеческим языком,
-                потом практика и три проекта, которые помогают почувствовать реальный прогресс.
+                Godemy помогает спокойно войти в backend-разработку: короткая теория,
+                практика сразу после темы и проекты, которые можно собрать своими руками.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -89,7 +89,7 @@ export default function Home() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-300">Как устроено обучение</p>
-                  <h2 className="mt-2 text-2xl font-bold text-white">Один следующий шаг вместо хаоса</h2>
+                  <h2 className="mt-2 text-2xl font-bold text-white">От первого урока к рабочему проекту</h2>
                 </div>
                 <div className="icon-chip">◎</div>
               </div>
@@ -151,13 +151,13 @@ export default function Home() {
             <span className="eyebrow">Практика</span>
             <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-white">Короткие темы и упражнения сразу рядом</h2>
             <p className="mt-4 text-base leading-8 text-slate-400">
-              Практика устроена не как энциклопедия, а как рабочее место ученика:
-              объяснение, пример и небольшое задание находятся в одном потоке.
+              После каждой темы есть понятное закрепление: пример, маленькая задача
+              и следующий шаг, который помогает двигаться без пауз.
             </p>
             <ul className="mt-6 space-y-3">
               {[
-                'Понятные темы без перегруза',
-                'Минимум отвлекающих элементов',
+                'Понятные темы простым языком',
+                'Примеры на Go рядом с объяснением',
                 'Практика сразу после объяснения',
               ].map((item) => (
                 <li key={item} className="flex items-center gap-3 text-sm text-slate-300">
