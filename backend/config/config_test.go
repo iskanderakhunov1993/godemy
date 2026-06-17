@@ -40,3 +40,17 @@ func TestValidateAcceptsProductionConfig(t *testing.T) {
 		t.Fatalf("expected production config to be valid: %v", err)
 	}
 }
+
+func TestValidateAcceptsProductionConfigWithoutSMTP(t *testing.T) {
+	cfg := &Config{
+		AppEnv:         "production",
+		JWTSecret:      "0123456789abcdef0123456789abcdef",
+		AdminLogin:     "admin@godemy.ru",
+		AdminSecret:    "abcdef0123456789abcdef0123456789",
+		DatabaseURL:    "host=db user=app password=strong-password dbname=app",
+		AllowedOrigins: []string{"https://example.com"},
+	}
+	if err := cfg.Validate(); err != nil {
+		t.Fatalf("expected production config without SMTP to be valid: %v", err)
+	}
+}
