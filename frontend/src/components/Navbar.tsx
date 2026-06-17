@@ -61,7 +61,7 @@ export function Navbar() {
             </div>
             <Link
               href="/bootcamp"
-              className="hidden text-xs font-medium text-gray-600 transition-colors hover:text-violet-200 lg:inline"
+              className="hidden text-xs font-medium text-gray-600 transition-colors hover:text-cyan-200 lg:inline"
             >
               Продвинутый курс
             </Link>
@@ -84,13 +84,13 @@ export function Navbar() {
             {user ? (
               <>
                 {user.isPremium ? (
-                  <span className="hidden lg:flex items-center rounded-full border border-violet-400/15 bg-violet-400/5 px-3 py-2 text-xs font-medium text-violet-200/80">
+                  <span className="hidden lg:flex items-center rounded-full border border-cyan-400/15 bg-cyan-400/5 px-3 py-2 text-xs font-medium text-cyan-200/80">
                     Продвинутый курс
                   </span>
                 ) : (
                   <Link
                     href="/bootcamp/buy"
-                    className="hidden lg:flex items-center text-xs font-medium text-gray-500 hover:text-violet-200"
+                    className="hidden lg:flex items-center text-xs font-medium text-gray-500 hover:text-cyan-200"
                   >
                     Продвинутый курс
                   </Link>
@@ -100,7 +100,7 @@ export function Navbar() {
                 <div className="relative">
                   <button
                     onClick={() => setMenuOpen(!menuOpen)}
-                    className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/[0.07] text-sm font-bold text-white hover:border-violet-400/30"
+                    className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/[0.07] text-sm font-bold text-white hover:border-cyan-400/30"
                   >
                     {user.username[0].toUpperCase()}
                   </button>
@@ -118,7 +118,7 @@ export function Navbar() {
                         {user.isAdmin && (
                           <Link
                             href="/admin"
-                            className="block px-5 py-2.5 text-sm text-violet-300 hover:bg-white/[0.06] hover:text-white"
+                            className="block px-5 py-2.5 text-sm text-cyan-300 hover:bg-white/[0.06] hover:text-white"
                             onClick={() => setMenuOpen(false)}
                           >
                             Админка

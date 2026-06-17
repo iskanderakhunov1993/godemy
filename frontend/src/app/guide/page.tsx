@@ -182,7 +182,7 @@ export default function GuidePage() {
               <p className="mt-2 text-3xl font-semibold text-white">{progressPercent}%</p>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/8">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-400 to-violet-400 transition-all duration-700"
+                  className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-cyan-300 to-sky-400 transition-all duration-700"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
@@ -226,7 +226,7 @@ export default function GuidePage() {
             </ol>
           </div>
 
-          <aside className="rounded-[28px] border border-white/8 bg-[linear-gradient(145deg,rgba(34,211,238,0.06),rgba(139,92,246,0.06))] p-5 sm:p-6">
+          <aside className="rounded-[28px] border border-cyan-300/12 bg-[linear-gradient(145deg,rgba(16,185,129,0.08),rgba(34,211,238,0.06))] p-5 sm:p-6">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300">Результат</p>
             <h2 className="mt-3 text-xl font-semibold text-white">После курса</h2>
             <div className="mt-5 space-y-3">

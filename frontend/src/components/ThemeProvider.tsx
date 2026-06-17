@@ -12,7 +12,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     ;(['accent-cyan', 'accent-blue', 'accent-violet', 'accent-green', 'accent-orange'] as const).forEach(
       (c) => html.classList.remove(c)
     )
-    html.classList.add('accent-violet')
+    html.classList.add('accent-cyan')
   }, [mode])
 
   return <>{children}</>
