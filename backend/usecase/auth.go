@@ -33,11 +33,17 @@ func (u *AuthUseCase) Register(email, username, password string) (string, *model
 	}
 
 	pw := string(hashed)
+	cleanEmail := strings.TrimSpace(strings.ToLower(email))
+	cleanUsername := strings.TrimSpace(username)
+	if cleanUsername == "" {
+		cleanUsername = usernameFromEmail(cleanEmail)
+	}
+
 	user := &models.User{
-		Email:         strings.TrimSpace(email),
-		Username:      strings.TrimSpace(username),
+		Email:         cleanEmail,
+		Username:      cleanUsername,
 		Password:      &pw,
-		EmailVerified: false,
+		EmailVerified: true,
 	}
 
 	if err := u.users.Create(user); err != nil {
@@ -53,7 +59,7 @@ func (u *AuthUseCase) Register(email, username, password string) (string, *model
 }
 
 func (u *AuthUseCase) Login(email, password string) (string, *models.User, error) {
-	user, err := u.users.FindByEmail(email)
+	user, err := u.users.FindByEmail(strings.TrimSpace(strings.ToLower(email)))
 	if err != nil {
 		_ = bcrypt.CompareHashAndPassword([]byte("$2a$10$dummy"), []byte(password))
 		return "", nil, ErrInvalidCredentials
@@ -67,16 +73,55 @@ func (u *AuthUseCase) Login(email, password string) (string, *models.User, error
 		return "", nil, ErrInvalidCredentials
 	}
 
-	if !user.EmailVerified {
-		return "", nil, ErrEmailNotVerified
-	}
-
 	token, err := u.generateToken(user.ID)
 	if err != nil {
 		return "", nil, err
 	}
 
 	return token, user, nil
+}
+
+func usernameFromEmail(email string) string {
+	local := "user"
+	if at := strings.Index(email, "@"); at > 0 {
+		local = email[:at]
+	}
+
+	var b strings.Builder
+	for _, r := range local {
+		switch {
+		case r >= 'a' && r <= 'z':
+			b.WriteRune(r)
+		case r >= 'A' && r <= 'Z':
+			b.WriteRune(r + ('a' - 'A'))
+		case r >= '0' && r <= '9':
+			b.WriteRune(r)
+		case r == '_' || r == '-' || r == '.':
+			b.WriteRune('_')
+		}
+	}
+
+	name := strings.Trim(b.String(), "_")
+	if len(name) < 3 {
+		name = "user_" + name
+	}
+	if len(name) > 13 {
+		name = name[:13]
+	}
+	return name + "_" + randomSuffix(6)
+}
+
+func randomSuffix(length int) string {
+	bytes := make([]byte, length)
+	if _, err := rand.Read(bytes); err != nil {
+		return "000000"
+	}
+
+	const alphabet = "abcdefghijklmnopqrstuvwxyz0123456789"
+	for i, b := range bytes {
+		bytes[i] = alphabet[int(b)%len(alphabet)]
+	}
+	return string(bytes)
 }
 
 func (u *AuthUseCase) VerifyEmail(rawToken string) error {

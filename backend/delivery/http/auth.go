@@ -1,12 +1,15 @@
 package http
 
 import (
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"net/smtp"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"golanger/backend/usecase"
@@ -14,7 +17,7 @@ import (
 
 type registerInput struct {
 	Email    string `json:"email" binding:"required,email"`
-	Username string `json:"username" binding:"required,min=3,max=20"`
+	Username string `json:"username" binding:"omitempty,min=3,max=20"`
 	Password string `json:"password" binding:"required,min=6"`
 }
 
@@ -62,14 +65,12 @@ func (h *Handler) Register() gin.HandlerFunc {
 			return
 		}
 
-		if err := h.sendEmailVerificationEmail(user.Email, verificationToken); err != nil {
-			log.Printf("email verification send error for %s: %v", user.Email, err)
-		}
+		_ = verificationToken
 
 		c.JSON(http.StatusCreated, gin.H{
 			"ok":      true,
 			"user":    user,
-			"message": "Аккаунт создан. Проверь email и подтверди регистрацию.",
+			"message": "Аккаунт создан. Теперь можно войти по email и паролю.",
 		})
 	}
 }
@@ -138,9 +139,11 @@ func (h *Handler) ResendVerification() gin.HandlerFunc {
 		}
 
 		if token != "" {
-			if err := h.sendEmailVerificationEmail(email, token); err != nil {
-				log.Printf("email verification resend error for %s: %v", email, err)
-			}
+			go func() {
+				if err := h.sendEmailVerificationEmail(email, token); err != nil {
+					log.Printf("email verification resend error for %s: %v", email, err)
+				}
+			}()
 		}
 
 		c.JSON(http.StatusOK, gin.H{"ok": true, "message": "Если email есть в системе, письмо подтверждения отправлено"})
@@ -162,9 +165,12 @@ func (h *Handler) ForgotPassword() gin.HandlerFunc {
 		}
 
 		if token != "" {
-			if err := h.sendPasswordResetEmail(strings.TrimSpace(input.Email), token); err != nil {
-				log.Printf("password reset email send error for %s: %v", input.Email, err)
-			}
+			email := strings.TrimSpace(input.Email)
+			go func() {
+				if err := h.sendPasswordResetEmail(email, token); err != nil {
+					log.Printf("password reset email send error for %s: %v", email, err)
+				}
+			}()
 		}
 
 		// Always return success-like response to prevent email enumeration
@@ -279,5 +285,56 @@ func (h *Handler) sendPlainEmail(email, subject, body, logPrefix, fallbackLink s
 
 	auth := smtp.PlainAuth("", h.cfg.SMTPUser, h.cfg.SMTPPassword, h.cfg.SMTPHost)
 	addr := fmt.Sprintf("%s:%s", h.cfg.SMTPHost, h.cfg.SMTPPort)
-	return smtp.SendMail(addr, auth, from, []string{email}, msg)
+	return sendMailWithTimeout(addr, h.cfg.SMTPHost, auth, from, []string{email}, msg, 8*time.Second)
+}
+
+func sendMailWithTimeout(addr, host string, auth smtp.Auth, from string, to []string, msg []byte, timeout time.Duration) error {
+	conn, err := (&net.Dialer{Timeout: timeout}).Dial("tcp", addr)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	client, err := smtp.NewClient(conn, host)
+	if err != nil {
+		return err
+	}
+	defer client.Close()
+
+	if ok, _ := client.Extension("STARTTLS"); ok {
+		if err := client.StartTLS(&tls.Config{ServerName: host, MinVersion: tls.VersionTLS12}); err != nil {
+			return err
+		}
+	}
+
+	if auth != nil {
+		if ok, _ := client.Extension("AUTH"); ok {
+			if err := client.Auth(auth); err != nil {
+				return err
+			}
+		}
+	}
+
+	if err := client.Mail(from); err != nil {
+		return err
+	}
+	for _, addr := range to {
+		if err := client.Rcpt(addr); err != nil {
+			return err
+		}
+	}
+
+	writer, err := client.Data()
+	if err != nil {
+		return err
+	}
+	if _, err := writer.Write(msg); err != nil {
+		_ = writer.Close()
+		return err
+	}
+	if err := writer.Close(); err != nil {
+		return err
+	}
+
+	return client.Quit()
 }

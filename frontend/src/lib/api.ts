@@ -261,7 +261,7 @@ export function getBackendBaseUrl(): string {
 
 export const api = {
   // Auth
-  register: (email: string, username: string, password: string) =>
+  register: (email: string, password: string, username = '') =>
     request<{ ok: boolean; user: User; message: string }>('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify({ email, username, password }),

@@ -5,11 +5,9 @@ import Link from 'next/link'
 import { api } from '@/lib/api'
 
 export default function RegisterPage() {
-  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [resending, setResending] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
@@ -19,25 +17,12 @@ export default function RegisterPage() {
     setSuccess('')
     setLoading(true)
     try {
-      const res = await api.register(email, username, password)
+      const res = await api.register(email, password)
       setSuccess(res.message)
     } catch (err) {
       setError((err as Error).message)
     } finally {
       setLoading(false)
-    }
-  }
-
-  const resendVerification = async () => {
-    setError('')
-    setResending(true)
-    try {
-      const res = await api.resendVerification(email)
-      setSuccess(res.message)
-    } catch (err) {
-      setError((err as Error).message)
-    } finally {
-      setResending(false)
     }
   }
 
@@ -47,45 +32,22 @@ export default function RegisterPage() {
         <p className="eyebrow">Новый аккаунт</p>
         <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-white">Начать обучение</h1>
         <p className="mt-3 text-sm leading-6 text-slate-400">
-          Создай аккаунт, подтверди email и сохраняй прогресс без риска потерять доступ.
+          Создай аккаунт по email, чтобы сохранять прогресс и входить с любого устройства.
         </p>
 
         {success ? (
           <div className="mt-8 rounded-3xl border border-emerald-300/20 bg-emerald-300/10 p-5">
-            <p className="text-lg font-semibold text-white">Письмо отправлено</p>
+            <p className="text-lg font-semibold text-white">Аккаунт создан</p>
             <p className="mt-2 text-sm leading-6 text-emerald-100">{success}</p>
             <p className="mt-3 text-sm leading-6 text-slate-400">
-              Открой ссылку из письма, затем вернись на страницу входа.
+              Используй этот email и пароль на странице входа.
             </p>
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-              <Link href="/auth/login" className="btn-primary justify-center text-sm">
-                Перейти ко входу
-              </Link>
-              <button
-                type="button"
-                disabled={resending || !email}
-                onClick={resendVerification}
-                className="btn-secondary justify-center text-sm disabled:opacity-50"
-              >
-                {resending ? 'Отправляем...' : 'Отправить ещё раз'}
-              </button>
-            </div>
+            <Link href="/auth/login" className="btn-primary mt-5 inline-flex justify-center text-sm">
+              Перейти ко входу
+            </Link>
           </div>
         ) : (
           <form onSubmit={onSubmit} className="mt-8 space-y-4">
-            <div>
-              <label className="app-label">Имя на платформе</label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                minLength={3}
-                className="app-input"
-                placeholder="например, Анна"
-              />
-            </div>
-
             <div>
               <label className="app-label">Email</label>
               <input
@@ -135,7 +97,7 @@ export default function RegisterPage() {
 
         {!success && (
           <div className="mt-5 rounded-2xl border border-white/8 bg-white/[0.035] p-4 text-sm leading-6 text-slate-400">
-            После регистрации мы отправим ссылку подтверждения. Это нужно для восстановления пароля и защиты аккаунта.
+            Email будет твоим логином. Данные аккаунта и прогресс сохраняются в базе после регистрации.
           </div>
         )}
 
