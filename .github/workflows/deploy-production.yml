@@ -19,21 +19,27 @@ jobs:
           SSH_KEY: ${{ secrets.PRODUCTION_SSH_PRIVATE_KEY }}
         run: |
           set -euo pipefail
-          
+
           # Validate required secrets
           [[ -n "$DEPLOY_HOST" ]] || { echo "❌ PRODUCTION_DEPLOY_HOST is not set"; exit 1; }
           [[ -n "$DEPLOY_PATH" ]] || { echo "❌ PRODUCTION_DEPLOY_PATH is not set"; exit 1; }
           [[ -n "$SSH_KEY" ]] || { echo "❌ PRODUCTION_SSH_PRIVATE_KEY is not set"; exit 1; }
-          
+
           # Setup SSH
           mkdir -p ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
-          
-          # Deploy
-          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=accept-new root@"$DEPLOY_HOST" \
-            "bash -s -- '$DEPLOY_PATH'" <<'EOF'
+
+          # Deploy. GitHub-hosted runners can occasionally hit transient SSH
+          # timeouts, so retry the whole remote command a few times.
+          deploy_remote() {
+            ssh \
+              -i ~/.ssh/id_ed25519 \
+              -o StrictHostKeyChecking=accept-new \
+              -o ConnectTimeout=20 \
+              root@"$DEPLOY_HOST" \
+              "bash -s -- '$DEPLOY_PATH'" <<'EOF'
           set -euo pipefail
           DEPLOY_PATH="$1"
           cd "$DEPLOY_PATH"
@@ -45,5 +51,18 @@ jobs:
           docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build --remove-orphans
           docker image prune -f
           EOF
-          
+          }
+
+          for attempt in 1 2 3 4 5; do
+            if deploy_remote; then
+              break
+            fi
+            if [[ "$attempt" == "5" ]]; then
+              echo "❌ Production deployment failed after $attempt attempts"
+              exit 1
+            fi
+            echo "SSH/deploy attempt $attempt failed; retrying in 15s..."
+            sleep 15
+          done
+
           echo "✓ Production deployment completed"
