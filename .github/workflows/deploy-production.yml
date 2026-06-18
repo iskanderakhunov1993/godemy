@@ -38,6 +38,8 @@ jobs:
               -i ~/.ssh/id_ed25519 \
               -o StrictHostKeyChecking=accept-new \
               -o ConnectTimeout=20 \
+              -o ServerAliveInterval=30 \
+              -o ServerAliveCountMax=20 \
               root@"$DEPLOY_HOST" \
               "bash -s -- '$DEPLOY_PATH'" <<'EOF'
           set -euo pipefail
@@ -47,8 +49,8 @@ jobs:
           git checkout main
           git reset --hard origin/main
           test -f .env.production
-          docker compose --env-file .env.production -f docker-compose.prod.yml --profile runner-build build runner-image
-          docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build --remove-orphans
+          docker compose --progress=plain --env-file .env.production -f docker-compose.prod.yml --profile runner-build build runner-image
+          docker compose --progress=plain --env-file .env.production -f docker-compose.prod.yml up -d --build --remove-orphans
           docker image prune -f
           EOF
           }
