@@ -41,7 +41,7 @@ export function CodeEditor({ initialCode, exerciseId, onSuccess }: Props) {
         <div className="flex items-center gap-2 px-4 py-2 bg-gray-900 border-b border-gray-700">
           <div className="w-3 h-3 rounded-full bg-red-500/60" />
           <div className="w-3 h-3 rounded-full bg-amber-500/60" />
-          <div className="w-3 h-3 rounded-full bg-emerald-500/60" />
+          <div className="w-3 h-3 rounded-full bg-[#FFD60A]/60" />
           <span className="ml-2 text-xs text-gray-500 font-mono">solution.go</span>
         </div>
         <MonacoEditor
@@ -93,7 +93,7 @@ export function CodeEditor({ initialCode, exerciseId, onSuccess }: Props) {
         <div className="flex items-center border-b border-gray-700 bg-gray-900">
           <button
             onClick={() => setActiveTab('output')}
-            className={`px-4 py-2 text-xs font-medium transition-colors ${activeTab === 'output' ? 'text-cyan-400 border-b-2 border-cyan-400' : 'text-gray-500 hover:text-gray-300'}`}
+            className={`px-4 py-2 text-xs font-medium transition-colors ${activeTab === 'output' ? 'text-[#FFD60A] border-b-2 border-[#FFD60A]' : 'text-gray-500 hover:text-gray-300'}`}
           >
             Вывод
           </button>
@@ -105,7 +105,7 @@ export function CodeEditor({ initialCode, exerciseId, onSuccess }: Props) {
           {result && !loading && (
             <>
               {result.passed && (
-                <div className="text-emerald-400 mb-2 font-semibold">✓ Все тесты прошли!</div>
+                <div className="text-[#FFD60A] mb-2 font-semibold">✓ Все тесты прошли!</div>
               )}
               {result.output && (
                 <pre className="text-gray-200 whitespace-pre-wrap">{result.output}</pre>

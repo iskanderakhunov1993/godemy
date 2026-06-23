@@ -173,9 +173,9 @@ function LessonContent() {
                   <Link
                     key={l.slug}
                     href={`/guide/${l.slug}${querySuffix}`}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${l.slug === slug ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'text-gray-400 hover:text-white hover:bg-gray-800'}`}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${l.slug === slug ? 'bg-cyan-500/10 text-[#FFD60A] border border-cyan-500/20' : 'text-gray-400 hover:text-white hover:bg-gray-800'}`}
                   >
-                    <div className={`w-4 h-4 rounded-full border flex-shrink-0 flex items-center justify-center ${done ? 'bg-emerald-500 border-emerald-500' : 'border-gray-600'}`}>
+                    <div className={`w-4 h-4 rounded-full border flex-shrink-0 flex items-center justify-center ${done ? 'bg-[#FFD60A] border-emerald-500' : 'border-gray-600'}`}>
                       {done && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                     </div>
                     <span className="truncate">{l.title}</span>
@@ -203,13 +203,13 @@ function LessonContent() {
             <section className="mt-10 rounded-3xl border border-cyan-500/20 bg-cyan-500/5 p-6">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.24em] text-cyan-300">Подкрепить навык</p>
+                  <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#FFD60A]">Подкрепить навык</p>
                   <h2 className="mt-2 text-2xl font-semibold text-white">Что потренировать после урока</h2>
                   <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-300">
                     Курс даёт сюжет и проектный контекст, а тренажёр помогает быстро добить конкретный навык руками.
                   </p>
                 </div>
-                <Link href="/trainer" className="text-sm font-semibold text-cyan-300 hover:text-cyan-200">
+                <Link href="/trainer" className="text-sm font-semibold text-[#FFD60A] hover:text-[#FFD60A]">
                   Открыть весь тренажёр →
                 </Link>
               </div>
@@ -219,7 +219,7 @@ function LessonContent() {
                   <Link
                     key={concept.slug}
                     href={`/trainer/topic/${concept.slug}`}
-                    className="rounded-2xl border border-white/10 bg-gray-950/50 p-5 transition-colors hover:border-cyan-400/40 hover:bg-gray-900"
+                    className="rounded-2xl border border-white/10 bg-gray-950/50 p-5 transition-colors hover:border-[#FFD60A]/40 hover:bg-gray-900"
                   >
                     <p className="text-sm font-semibold text-white">{concept.title}</p>
                     <p className="mt-2 text-sm leading-6 text-gray-400">{concept.summary}</p>
@@ -240,7 +240,7 @@ function LessonContent() {
           <div className="mt-10 pt-6 border-t border-gray-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             {token ? (
               completed ? (
-                <div className="flex items-center gap-2 text-emerald-400">
+                <div className="flex items-center gap-2 text-[#FFD60A]">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -249,7 +249,7 @@ function LessonContent() {
               ) : (
                   tasksStatus && tasksStatus.total > 0 ? (
                     <div className="text-sm text-gray-400">
-                      Выполни задания: <span className="text-cyan-400 font-semibold">{tasksStatus.done}/{tasksStatus.total}</span>
+                      Выполни задания: <span className="text-[#FFD60A] font-semibold">{tasksStatus.done}/{tasksStatus.total}</span>
                       {tasksStatus.done < tasksStatus.total && (
                         <span className="ml-2 text-xs text-gray-600">— нельзя перейти далее, пока не выполнены все задания</span>
                       )}
@@ -261,12 +261,12 @@ function LessonContent() {
                   )
               )
             ) : (
-              <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/[0.06] px-4 py-3">
-                <p className="text-sm font-semibold text-cyan-200">Сохрани прогресс</p>
+              <div className="rounded-2xl border border-[#FFD60A]/20 bg-[#FFD60A]/[0.06] px-4 py-3">
+                <p className="text-sm font-semibold text-[#FFD60A]">Сохрани прогресс</p>
                 <p className="mt-1 text-xs leading-5 text-gray-400">
                   Урок можно читать без регистрации. Аккаунт пригодится, чтобы продолжить с этого места.
                 </p>
-                <Link href="/auth/register" className="mt-2 inline-flex text-sm font-semibold text-cyan-300 hover:text-cyan-200">
+                <Link href="/auth/register" className="mt-2 inline-flex text-sm font-semibold text-[#FFD60A] hover:text-[#FFD60A]">
                   Создать аккаунт →
                 </Link>
               </div>

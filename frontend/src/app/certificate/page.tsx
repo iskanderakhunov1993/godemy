@@ -7,7 +7,7 @@ import { api, type CertificateStatus, type UserProfile } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
 
 const CERT_THEME: Record<CertificateStatus['id'], { accent: string; glow: string; ribbon: string }> = {
-  course: { accent: '#8b5cf6', glow: 'rgba(139,92,246,0.28)', ribbon: 'Основы Go' },
+  course: { accent: '#FFD60A', glow: 'rgba(139,92,246,0.28)', ribbon: 'Основы Go' },
   trainer: { accent: '#06b6d4', glow: 'rgba(6,182,212,0.28)', ribbon: 'Тренажёр Go' },
   bootcamp: { accent: '#f59e0b', glow: 'rgba(245,158,11,0.26)', ribbon: 'Bootcamp Junior' },
 }
@@ -174,7 +174,7 @@ function CertificateContent() {
 
       {flashMessage && (
         <div className="no-print max-w-6xl mx-auto px-4">
-          <div className="rounded-2xl border border-violet-500/20 bg-violet-500/10 px-4 py-3 text-sm text-violet-100">
+          <div className="rounded-2xl border border-violet-500/20 bg-violet-500/10 px-4 py-3 text-sm text-[#FFF8DC]">
             {flashMessage}
           </div>
         </div>
@@ -196,7 +196,7 @@ function CertificateContent() {
             <aside className="relative border-r border-white/10 bg-[linear-gradient(180deg,#16112f_0%,#120d27_100%)] px-8 py-10">
               <div className="rounded-2xl border border-violet-500/20 bg-white/5 px-5 py-4 text-violet-200">
                 <div className="text-3xl font-black tracking-tight">[ godemy ]</div>
-                <p className="mt-4 text-xs leading-6 text-violet-100/70">
+                <p className="mt-4 text-xs leading-6 text-[#FFF8DC]/70">
                   Практическое обучение
                   <br />
                   для разработчиков
@@ -236,7 +236,7 @@ function CertificateContent() {
                   <p className="mt-5 text-xl text-white/70">успешно завершил(а) курс</p>
                   <p className="mt-2 text-5xl font-black">{certificate.courseName}</p>
                 </div>
-                <div className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-300">
+                <div className="rounded-full border border-emerald-500/20 bg-[#FFD60A]/10 px-4 py-2 text-sm font-semibold text-[#FFD60A]">
                   Курс завершён
                 </div>
               </div>

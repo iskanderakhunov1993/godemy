@@ -51,7 +51,7 @@ export default function ForgotPasswordPage() {
           )}
 
           {success && (
-            <div className="text-sm text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2">
+            <div className="text-sm text-[#FFD60A] bg-[#FFD60A]/10 border border-emerald-500/20 rounded-lg px-3 py-2">
               {success}
             </div>
           )}
@@ -67,7 +67,7 @@ export default function ForgotPasswordPage() {
 
         <p className="mt-5 text-sm text-gray-500">
           Вспомнил пароль?{' '}
-          <Link href="/auth/login" className="text-cyan-400 hover:text-cyan-300">
+          <Link href="/auth/login" className="text-[#FFD60A] hover:text-[#FFD60A]">
             Войти
           </Link>
         </p>

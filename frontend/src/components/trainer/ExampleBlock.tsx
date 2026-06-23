@@ -9,7 +9,7 @@ type ExampleBlockProps = {
 export default function ExampleBlock({ code, preview, onRun, hasRun, monoClassName = '' }: ExampleBlockProps) {
   return (
     <div className="grid grid-cols-[1fr_220px] gap-3">
-      <pre className={`rounded-2xl border border-[#1f2937] bg-[#020617] p-4 text-sm text-cyan-200 whitespace-pre-wrap overflow-x-auto ${monoClassName}`}>
+      <pre className={`rounded-2xl border border-[#1f2937] bg-[#020617] p-4 text-sm text-[#FFD60A] whitespace-pre-wrap overflow-x-auto ${monoClassName}`}>
         {code}
       </pre>
 
@@ -21,7 +21,7 @@ export default function ExampleBlock({ code, preview, onRun, hasRun, monoClassNa
         <button
           onClick={onRun}
           className={`mt-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
-            hasRun ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40' : 'bg-cyan-500 text-slate-900 hover:bg-cyan-400'
+            hasRun ? 'bg-[#FFD60A]/20 text-[#FFD60A] border border-emerald-400/40' : 'bg-cyan-500 text-slate-900 hover:bg-[#FFD60A]'
           }`}
         >
           {hasRun ? 'Run выполнен ✓' : 'Run'}

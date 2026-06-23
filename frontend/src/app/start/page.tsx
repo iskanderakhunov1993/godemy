@@ -36,7 +36,7 @@ export default function StartPage() {
   return (
     <main className="mx-auto max-w-5xl px-4 py-14 sm:px-6">
       <div className="max-w-2xl">
-        <p className="text-sm font-bold uppercase tracking-[0.2em] text-cyan-400">Твой маршрут</p>
+        <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#FFD60A]">Твой маршрут</p>
         <h1 className="mt-3 text-4xl font-black text-white sm:text-5xl">Всегда один понятный следующий шаг</h1>
         <p className="mt-5 text-lg leading-relaxed text-gray-400">
           Не пытайся пройти всё сразу. Сначала собери базу бесплатно, затем переходи к профессиональной практике.
@@ -50,7 +50,7 @@ export default function StartPage() {
               <div className="flex items-center gap-3">
                 <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500 font-black text-gray-950">1</span>
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-emerald-400">Бесплатно</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#FFD60A]">Бесплатно</p>
                   <h2 className="text-2xl font-black text-white">Курс и 3 учебных проекта</h2>
                 </div>
               </div>
@@ -64,7 +64,7 @@ export default function StartPage() {
                     <span>{completedLessons} / {lessonsTotal}</span>
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-gray-800">
-                    <div className="h-full rounded-full bg-cyan-400" style={{ width: `${lessonProgress}%` }} />
+                    <div className="h-full rounded-full bg-[#FFD60A]" style={{ width: `${lessonProgress}%` }} />
                   </div>
                 </div>
               )}
@@ -81,7 +81,7 @@ export default function StartPage() {
               <div className="flex items-center gap-3">
                 <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500 font-black text-white">2</span>
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-violet-300">Практикуйся параллельно</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#FFD60A]">Практикуйся параллельно</p>
                   <h2 className="text-2xl font-black text-white">Практика Go</h2>
                 </div>
               </div>

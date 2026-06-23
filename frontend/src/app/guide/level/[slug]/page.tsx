@@ -43,7 +43,7 @@ export default function LevelPage() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-16 text-center">
         <p className="text-gray-400">Уровень не найден.</p>
-        <Link href="/guide" className="mt-4 inline-block text-cyan-400 hover:underline">← Назад к курсу</Link>
+        <Link href="/guide" className="mt-4 inline-block text-[#FFD60A] hover:underline">← Назад к курсу</Link>
       </div>
     )
   }
@@ -57,7 +57,7 @@ export default function LevelPage() {
       </nav>
 
       <header className="mb-8 rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
-        <p className="text-[11px] uppercase tracking-[0.24em] text-cyan-300/80">Campaign</p>
+        <p className="text-[11px] uppercase tracking-[0.24em] text-[#FFD60A]/80">Campaign</p>
         <h1 className="mt-3 text-3xl font-semibold text-white">{levelInfo.title}</h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-gray-300">{levelInfo.description}</p>
         <p className="mt-4 text-sm text-gray-400">
@@ -75,9 +75,9 @@ export default function LevelPage() {
             <li key={moduleItem.name}>
               <Link
                 href={`/guide/module/${encodeURIComponent(moduleItem.name)}`}
-                className="group flex items-center gap-4 rounded-2xl border border-gray-800 bg-gray-900 px-6 py-4 transition-all hover:border-cyan-300/30 hover:bg-gray-800"
+                className="group flex items-center gap-4 rounded-2xl border border-gray-800 bg-gray-900 px-6 py-4 transition-all hover:border-[#FFD60A]/30 hover:bg-gray-800"
               >
-                <div className={`flex h-10 w-10 items-center justify-center rounded-2xl text-sm font-bold ${completed ? 'bg-emerald-500/20 text-emerald-300' : 'bg-gray-800 text-gray-400'}`}>
+                <div className={`flex h-10 w-10 items-center justify-center rounded-2xl text-sm font-bold ${completed ? 'bg-[#FFD60A]/20 text-[#FFD60A]' : 'bg-gray-800 text-gray-400'}`}>
                   {completed ? '✓' : index + 1}
                 </div>
                 <div className="min-w-0 flex-1">
@@ -86,7 +86,7 @@ export default function LevelPage() {
                     {moduleItem.topics.size} тем · {done} / {moduleItem.lessonCount} уроков
                   </p>
                 </div>
-                <span className="text-gray-600 transition-colors group-hover:text-cyan-200">→</span>
+                <span className="text-gray-600 transition-colors group-hover:text-[#FFD60A]">→</span>
               </Link>
             </li>
           )

@@ -205,7 +205,7 @@ function ChoiceBlock({ blockKey, content, onDone, isDone }: BlockProps) {
     <div className={`my-4 rounded-xl border p-4 transition-colors ${isDone ? 'border-emerald-700/60 bg-emerald-950/20' : 'border-purple-800/40 bg-purple-950/20'}`}>
       <div className="text-[11px] uppercase tracking-wider text-purple-400 font-semibold mb-3">
         ☑ Задание: выбор ответа
-        {isDone && <span className="ml-2 text-emerald-400">✓ Выполнено</span>}
+        {isDone && <span className="ml-2 text-[#FFD60A]">✓ Выполнено</span>}
       </div>
       <p className="text-white font-medium mb-3 text-sm">{question}</p>
       <div className="space-y-2">
@@ -218,10 +218,10 @@ function ChoiceBlock({ blockKey, content, onDone, isDone }: BlockProps) {
                 ? 'bg-gray-800/60 text-gray-200 border-gray-700 hover:border-purple-600 hover:bg-gray-700/60'
                 : selected === i
                 ? opt.correct
-                  ? 'bg-emerald-900/60 text-emerald-100 border-emerald-600'
+                  ? 'bg-emerald-900/60 text-[#FFE44D] border-emerald-600'
                   : 'bg-red-900/60 text-red-100 border-red-600'
                 : opt.correct && selected !== null
-                ? 'bg-emerald-900/30 text-emerald-300 border-emerald-800/40'
+                ? 'bg-emerald-900/30 text-[#FFD60A] border-emerald-800/40'
                 : 'bg-gray-800/40 text-gray-500 border-gray-800'
             }`}
           >
@@ -240,7 +240,7 @@ function ChoiceBlock({ blockKey, content, onDone, isDone }: BlockProps) {
         </button>
       )}
       {revealed && selected !== null && (
-        <p className={`mt-3 text-sm font-medium ${options[selected]?.correct ? 'text-emerald-400' : 'text-red-400'}`}>
+        <p className={`mt-3 text-sm font-medium ${options[selected]?.correct ? 'text-[#FFD60A]' : 'text-red-400'}`}>
           {options[selected]?.correct ? '✓ Правильно!' : '✗ Неверно — попробуй ещё'}
         </p>
       )}
@@ -282,7 +282,7 @@ function SortBlock({ blockKey, content, onDone, isDone }: BlockProps) {
     <div className={`my-4 rounded-xl border p-4 transition-colors ${isDone ? 'border-emerald-700/60 bg-emerald-950/20' : 'border-blue-800/40 bg-blue-950/20'}`}>
       <div className="text-[11px] uppercase tracking-wider text-blue-400 font-semibold mb-3">
         ↕ Задание: сортировка
-        {isDone && <span className="ml-2 text-emerald-400">✓ Выполнено</span>}
+        {isDone && <span className="ml-2 text-[#FFD60A]">✓ Выполнено</span>}
       </div>
       <p className="text-white font-medium mb-3 text-sm">{question}</p>
       <div className="space-y-2">
@@ -305,7 +305,7 @@ function SortBlock({ blockKey, content, onDone, isDone }: BlockProps) {
         </button>
       )}
       {checked && (
-        <p className={`mt-2 text-sm font-medium ${isCorrect ? 'text-emerald-400' : 'text-red-400'}`}>
+        <p className={`mt-2 text-sm font-medium ${isCorrect ? 'text-[#FFD60A]' : 'text-red-400'}`}>
           {isCorrect ? '✓ Правильный порядок!' : '✗ Порядок неверный, попробуй ещё'}
         </p>
       )}
@@ -371,9 +371,9 @@ function CodeTaskBlock({ blockKey, content, lang = 'go', onDone, isDone }: Block
 
   return (
     <div className={`my-4 rounded-xl border p-4 transition-colors ${isDone ? 'border-emerald-700/60 bg-emerald-950/20' : 'border-emerald-800/40 bg-emerald-950/10'}`}>
-      <div className="text-[11px] uppercase tracking-wider text-emerald-400 font-semibold mb-3">
+      <div className="text-[11px] uppercase tracking-wider text-[#FFD60A] font-semibold mb-3">
         {'<>'} Задание: написать код ({lang})
-        {isDone && <span className="ml-2 text-emerald-400">✓ Выполнено</span>}
+        {isDone && <span className="ml-2 text-[#FFD60A]">✓ Выполнено</span>}
       </div>
       <p className="text-white font-medium mb-3 text-sm">{question}</p>
 
@@ -401,7 +401,7 @@ function CodeTaskBlock({ blockKey, content, lang = 'go', onDone, isDone }: Block
       </div>
 
       {output !== null && (
-        <div className={`rounded-lg border p-3 font-mono text-xs whitespace-pre-wrap ${hasError ? 'border-red-800/50 bg-red-950/20 text-red-300' : 'border-emerald-800/40 bg-gray-950 text-emerald-200'}`}>
+        <div className={`rounded-lg border p-3 font-mono text-xs whitespace-pre-wrap ${hasError ? 'border-red-800/50 bg-red-950/20 text-red-300' : 'border-emerald-800/40 bg-gray-950 text-[#FFD60A]'}`}>
           <div className={`text-[10px] uppercase tracking-wider mb-1.5 font-semibold ${hasError ? 'text-red-500' : 'text-emerald-500'}`}>
             {hasError ? '✗ Ошибка' : '✓ Вывод'}
           </div>
@@ -616,7 +616,7 @@ const markdownComponents = {
         href={href}
         target={isExternal ? '_blank' : undefined}
         rel={isExternal ? 'noopener noreferrer' : undefined}
-        className="text-cyan-300 underline underline-offset-4 transition hover:text-cyan-200"
+        className="text-[#FFD60A] underline underline-offset-4 transition hover:text-[#FFD60A]"
       >
         {children}
       </a>

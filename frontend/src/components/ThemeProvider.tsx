@@ -9,10 +9,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const html = document.documentElement
     html.classList.toggle('light', mode === 'light')
-    ;(['accent-cyan', 'accent-blue', 'accent-violet', 'accent-green', 'accent-orange'] as const).forEach(
-      (c) => html.classList.remove(c)
-    )
-    html.classList.add('accent-cyan')
   }, [mode])
 
   return <>{children}</>

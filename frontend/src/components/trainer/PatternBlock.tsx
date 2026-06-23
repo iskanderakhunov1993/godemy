@@ -8,7 +8,7 @@ type PatternBlockProps = {
 export default function PatternBlock({ code, onApply, applied, monoClassName = '' }: PatternBlockProps) {
   return (
     <div className="space-y-3">
-      <pre className={`rounded-2xl border border-[#1f2937] bg-[#020617] p-4 text-sm text-cyan-200 whitespace-pre-wrap overflow-x-auto ${monoClassName}`}>
+      <pre className={`rounded-2xl border border-[#1f2937] bg-[#020617] p-4 text-sm text-[#FFD60A] whitespace-pre-wrap overflow-x-auto ${monoClassName}`}>
         {code}
       </pre>
 
@@ -16,8 +16,8 @@ export default function PatternBlock({ code, onApply, applied, monoClassName = '
         onClick={onApply}
         className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
           applied
-            ? 'border border-emerald-400/40 bg-emerald-500/20 text-emerald-300'
-            : 'bg-cyan-500 text-slate-900 hover:bg-cyan-400'
+            ? 'border border-emerald-400/40 bg-[#FFD60A]/20 text-[#FFD60A]'
+            : 'bg-cyan-500 text-slate-900 hover:bg-[#FFD60A]'
         }`}
       >
         {applied ? 'Паттерн применён ✓' : 'Применить паттерн'}

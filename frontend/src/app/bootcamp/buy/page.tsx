@@ -29,12 +29,12 @@ export default function BuyPage() {
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_390px]">
         <section>
-          <span className="inline-flex rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-2 text-sm font-bold text-violet-300">
+          <span className="inline-flex rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-2 text-sm font-bold text-[#FFD60A]">
             Следующий этап
           </span>
           <h1 className="mt-6 text-4xl font-black text-white sm:text-5xl">
             Доступ к продвинутой практике
-            <span className="block text-violet-400">для профессионального роста</span>
+            <span className="block text-[#FFD60A]">для профессионального роста</span>
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-gray-400">
             Бесплатный курс и основной тренажёр остаются доступны всем.
@@ -42,7 +42,7 @@ export default function BuyPage() {
           </p>
 
           <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-5">
-            <p className="text-[11px] uppercase tracking-[0.24em] text-violet-300">Что ты покупаешь по сути</p>
+            <p className="text-[11px] uppercase tracking-[0.24em] text-[#FFD60A]">Что ты покупаешь по сути</p>
             <p className="mt-2 text-sm leading-6 text-gray-300">
               Не “ещё набор уроков”, а следующий слой роста после бесплатных 3 проектов:
               длинные практические задачи, понятные уровни развития и больше самостоятельности.
@@ -52,18 +52,18 @@ export default function BuyPage() {
           <div className="mt-10 space-y-3">
             {included.map((item) => (
               <div key={item} className="flex items-center gap-3 rounded-2xl border border-gray-800 bg-gray-900 p-4">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-sm text-emerald-300">✓</span>
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#FFD60A]/10 text-sm text-[#FFD60A]">✓</span>
                 <span className="text-gray-200">{item}</span>
               </div>
             ))}
           </div>
 
           <div className="mt-8 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5">
-            <p className="font-semibold text-cyan-200">Сначала хочешь проверить платформу?</p>
+            <p className="font-semibold text-[#FFD60A]">Сначала хочешь проверить платформу?</p>
             <p className="mt-2 text-sm text-gray-400">
               Пройди бесплатный путь и собери три проекта. Подписка понадобится только для следующего уровня.
             </p>
-            <Link href="/guide" className="mt-4 inline-flex text-sm font-bold text-cyan-300 hover:text-cyan-200">
+            <Link href="/guide" className="mt-4 inline-flex text-sm font-bold text-[#FFD60A] hover:text-[#FFD60A]">
               Начать бесплатно →
             </Link>
           </div>
@@ -73,7 +73,7 @@ export default function BuyPage() {
             <div className="mt-4 space-y-3">
               {outcomes.map(([level, description]) => (
                 <div key={level} className="rounded-xl border border-gray-800 bg-gray-950/70 p-4">
-                  <p className="font-semibold text-violet-300">{level}</p>
+                  <p className="font-semibold text-[#FFD60A]">{level}</p>
                   <p className="mt-2 text-sm leading-6 text-gray-400">{description}</p>
                 </div>
               ))}
@@ -82,7 +82,7 @@ export default function BuyPage() {
         </section>
 
         <aside className="h-fit rounded-3xl border border-violet-500/30 bg-gray-900 p-6 shadow-2xl">
-          <p className="text-sm font-bold text-violet-300">Доступ Godemy Pro</p>
+          <p className="text-sm font-bold text-[#FFD60A]">Доступ Godemy Pro</p>
           <div className="mt-5 flex items-end gap-2">
             <span className="text-5xl font-black text-white">2 490 ₽</span>
             <span className="mb-1 text-gray-500">/ месяц</span>

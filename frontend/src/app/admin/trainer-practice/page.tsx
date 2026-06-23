@@ -54,7 +54,7 @@ export default function TrainerPracticeAdminPage() {
                 <td className="px-4 py-3">
                   <span className={`rounded-full px-2 py-0.5 text-xs ${
                     exercise.trainerLayout?.trim()
-                      ? 'bg-emerald-500/15 text-emerald-300'
+                      ? 'bg-[#FFD60A]/15 text-[#FFD60A]'
                       : 'bg-gray-800 text-gray-400'
                   }`}>
                     {exercise.trainerLayout?.trim() ? 'Настроен' : 'Пусто'}
@@ -63,7 +63,7 @@ export default function TrainerPracticeAdminPage() {
                 <td className="px-4 py-3 text-right">
                   <Link
                     href={`/admin/trainer-practice/${exercise.id}`}
-                    className="text-violet-400 hover:text-violet-300 transition-colors"
+                    className="text-[#FFD60A] hover:text-[#FFD60A] transition-colors"
                   >
                     Открыть редактор
                   </Link>

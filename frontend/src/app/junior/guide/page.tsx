@@ -6,9 +6,9 @@ import { api, Lesson } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
 
 const categoryColors: Record<string, string> = {
-  'Sprint 0': 'bg-violet-500/10 text-violet-300 border-violet-500/20',
-  'Sprint 1': 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-  'Sprint 2': 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
+  'Sprint 0': 'bg-violet-500/10 text-[#FFD60A] border-violet-500/20',
+  'Sprint 1': 'bg-cyan-500/10 text-[#FFD60A] border-cyan-500/20',
+  'Sprint 2': 'bg-[#FFD60A]/10 text-[#FFD60A] border-emerald-500/20',
   'Sprint 3': 'bg-amber-500/10 text-amber-300 border-amber-500/20',
   'Sprint 4': 'bg-orange-500/10 text-orange-300 border-orange-500/20',
   'Sprint 5': 'bg-rose-500/10 text-rose-300 border-rose-500/20',
@@ -40,7 +40,7 @@ export default function JuniorGuidePage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
       <div className="mb-8">
-        <div className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 mb-3">
+        <div className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-cyan-500/10 text-[#FFD60A] border border-cyan-500/20 mb-3">
           3 модуль
         </div>
         <h1 className="text-3xl font-bold text-white mb-2">Junior Course</h1>
@@ -71,7 +71,7 @@ export default function JuniorGuidePage() {
                         href={`/junior/guide/${lesson.slug}`}
                         className="flex items-center gap-4 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl px-5 py-4 transition-colors group"
                       >
-                        <div className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${done ? 'bg-emerald-500 border-emerald-500' : 'border-gray-600 group-hover:border-cyan-500'}`}>
+                        <div className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${done ? 'bg-[#FFD60A] border-emerald-500' : 'border-gray-600 group-hover:border-cyan-500'}`}>
                           {done && (
                             <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -79,7 +79,7 @@ export default function JuniorGuidePage() {
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium text-white group-hover:text-cyan-400 transition-colors">
+                          <div className="font-medium text-white group-hover:text-[#FFD60A] transition-colors">
                             {lesson.title}
                           </div>
                           <div className="text-sm text-gray-500 truncate">{lesson.description}</div>

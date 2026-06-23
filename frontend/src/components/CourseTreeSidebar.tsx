@@ -48,7 +48,7 @@ export default function CourseTreeSidebar({
       >
         <div className="flex items-center gap-2 py-1">
           <span
-            className={`cursor-pointer font-semibold transition-colors ${isSelected ? "text-cyan-400" : "group-hover:text-cyan-300 text-white"}`}
+            className={`cursor-pointer font-semibold transition-colors ${isSelected ? "text-[#FFD60A]" : "group-hover:text-[#FFD60A] text-white"}`}
             onClick={() => onSelect(node.id)}
           >
             {iconForType(node.type)} {node.title}
@@ -88,9 +88,9 @@ export default function CourseTreeSidebar({
   return (
     <aside className="w-80 min-h-screen bg-white dark:bg-gradient-to-b dark:from-gray-950 dark:to-gray-900 border-r border-gray-200 dark:border-cyan-900 p-6 overflow-y-auto shadow-2xl font-sans transition-all">
       <div className="flex justify-between items-center mb-6">
-        <span className="text-xl font-bold text-cyan-600 dark:text-cyan-400 tracking-wide select-none">Структура курса</span>
+        <span className="text-xl font-bold text-cyan-600 dark:text-[#FFD60A] tracking-wide select-none">Структура курса</span>
         <button onClick={() => onAdd(null, "level")}
-          className="text-xs bg-cyan-500 hover:bg-cyan-400 text-white rounded-lg px-3 py-1 shadow font-semibold transition-colors">
+          className="text-xs bg-cyan-500 hover:bg-[#FFD60A] text-white rounded-lg px-3 py-1 shadow font-semibold transition-colors">
           ＋ Уровень
         </button>
       </div>

@@ -230,7 +230,7 @@ export default function ExercisePage() {
     <div className="min-h-screen bg-[#020617] text-white px-4 sm:px-6 py-6">
       <div className="mx-auto max-w-[1500px] space-y-5">
         <div className="text-sm text-gray-400 flex items-center gap-2">
-          <Link href="/trainer" className="hover:text-cyan-300 transition-colors">Тренажер</Link>
+          <Link href="/trainer" className="hover:text-[#FFD60A] transition-colors">Тренажер</Link>
           <span>›</span>
           <span>{exercise.title}</span>
         </div>
@@ -239,16 +239,16 @@ export default function ExercisePage() {
           <section className="space-y-5">
             <section className="rounded-2xl border border-[#1f2937] bg-[#111827] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.28)]">
               <h1 className="text-2xl sm:text-3xl font-bold mb-2">{layout.title || exercise.title}</h1>
-              <p className="text-sm sm:text-base text-cyan-300 mb-4">{layout.theme || `${exercise.category} • ${exercise.difficulty}`}</p>
+              <p className="text-sm sm:text-base text-[#FFD60A] mb-4">{layout.theme || `${exercise.category} • ${exercise.difficulty}`}</p>
               <p className="text-sm sm:text-base text-gray-300 mb-4">{layout.heroDescription || exercise.description}</p>
 
               {layout.firstExample ? (
                 <div className="rounded-xl border border-[#1f2937] bg-[#0b1220] p-4">
                   <p className="text-xs uppercase tracking-wide text-gray-400 mb-2">{layout.firstExample.title}</p>
-                  <pre className={`rounded-xl border border-[#1f2937] bg-[#020617] p-4 text-sm text-cyan-200 whitespace-pre-wrap overflow-x-auto ${monoClassName}`}>
+                  <pre className={`rounded-xl border border-[#1f2937] bg-[#020617] p-4 text-sm text-[#FFD60A] whitespace-pre-wrap overflow-x-auto ${monoClassName}`}>
                     {layout.firstExample.code}
                   </pre>
-                  <p className="text-sm text-emerald-300 mt-3">{layout.firstExample.result}</p>
+                  <p className="text-sm text-[#FFD60A] mt-3">{layout.firstExample.result}</p>
                 </div>
               ) : null}
             </section>
@@ -256,7 +256,7 @@ export default function ExercisePage() {
             <section className="rounded-2xl border border-[#1f2937] bg-[#111827] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.28)]">
               <h2 className="text-lg font-semibold mb-3">Короткая теория и синтаксис</h2>
               <p className="text-sm text-gray-300 mb-3">{layout.shortTheory || 'Разбивай решение на короткие шаги и проверяй каждую функцию отдельно.'}</p>
-              <pre className={`rounded-xl border border-[#1f2937] bg-[#020617] p-4 text-sm text-cyan-200 whitespace-pre-wrap overflow-x-auto ${monoClassName}`}>
+              <pre className={`rounded-xl border border-[#1f2937] bg-[#020617] p-4 text-sm text-[#FFD60A] whitespace-pre-wrap overflow-x-auto ${monoClassName}`}>
                 {layout.syntax || exercise.starterCode}
               </pre>
             </section>
@@ -268,7 +268,7 @@ export default function ExercisePage() {
                   {layout.implementations.map((item) => (
                     <div key={`${item.title}-${item.code}`} className="rounded-xl border border-[#1f2937] bg-[#0b1220] p-4">
                       <p className="text-sm text-white mb-2">{item.title}</p>
-                      <pre className={`rounded-xl border border-[#1f2937] bg-[#020617] p-3 text-xs sm:text-sm text-cyan-200 whitespace-pre-wrap overflow-x-auto ${monoClassName}`}>
+                      <pre className={`rounded-xl border border-[#1f2937] bg-[#020617] p-3 text-xs sm:text-sm text-[#FFD60A] whitespace-pre-wrap overflow-x-auto ${monoClassName}`}>
                         {item.code}
                       </pre>
                       {item.description ? <p className="mt-2 text-sm text-gray-400">{item.description}</p> : null}
@@ -280,7 +280,7 @@ export default function ExercisePage() {
 
             <section className="rounded-2xl border border-[#1f2937] bg-[#111827] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.28)]">
               <h2 className="text-lg font-semibold mb-3">Паттерн решения</h2>
-              <pre className={`rounded-xl border border-[#1f2937] bg-[#020617] p-4 text-sm text-cyan-200 whitespace-pre-wrap overflow-x-auto ${monoClassName}`}>
+              <pre className={`rounded-xl border border-[#1f2937] bg-[#020617] p-4 text-sm text-[#FFD60A] whitespace-pre-wrap overflow-x-auto ${monoClassName}`}>
                 {layout.pattern || exercise.starterCode}
               </pre>
             </section>
@@ -290,9 +290,9 @@ export default function ExercisePage() {
             {showCelebration ? (
               <section className="rounded-2xl border-2 border-emerald-400 bg-gradient-to-r from-emerald-950 to-emerald-900 p-5 shadow-[0_10px_30px_rgba(16,185,129,0.3)] animate-pulse">
                 <div className="text-center">
-                  <p className="text-xl sm:text-2xl font-bold text-emerald-300 mb-2">🎉 Отлично!</p>
-                  <p className="text-sm sm:text-base text-emerald-200">Все mini-задачи закрыты.</p>
-                  <p className="text-lg font-bold text-emerald-300 mt-3">+1 шаг к полному решению</p>
+                  <p className="text-xl sm:text-2xl font-bold text-[#FFD60A] mb-2">🎉 Отлично!</p>
+                  <p className="text-sm sm:text-base text-[#FFD60A]">Все mini-задачи закрыты.</p>
+                  <p className="text-lg font-bold text-[#FFD60A] mt-3">+1 шаг к полному решению</p>
                 </div>
               </section>
             ) : null}
@@ -304,7 +304,7 @@ export default function ExercisePage() {
                 <h2 className="text-lg font-semibold">{layout.taskSectionTitle || 'Mini-задачи'}</h2>
                 <div className="flex items-center gap-2">
                   <span className={`text-sm font-semibold px-2 py-1 rounded-lg ${
-                    completedCount === layout.tasks.length ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-200'
+                    completedCount === layout.tasks.length ? 'bg-[#FFD60A] text-white' : 'bg-gray-700 text-gray-200'
                   }`}>
                     {completedCount}/{layout.tasks.length}
                   </span>
@@ -322,7 +322,7 @@ export default function ExercisePage() {
                 <div className="mb-3 bg-gray-700 rounded-full h-2 overflow-hidden">
                   <div
                     className={`h-full transition-all duration-500 ${
-                      completedCount === layout.tasks.length ? 'bg-emerald-500' : 'bg-cyan-400'
+                      completedCount === layout.tasks.length ? 'bg-[#FFD60A]' : 'bg-[#FFD60A]'
                     }`}
                     style={{ width: `${(completedCount / layout.tasks.length) * 100}%` }}
                   />
@@ -351,7 +351,7 @@ export default function ExercisePage() {
                         </div>
                         <span className={`shrink-0 rounded-lg px-2 py-1 text-xs font-semibold ${
                           passed
-                            ? 'bg-emerald-500 text-white'
+                            ? 'bg-[#FFD60A] text-white'
                             : status === 'failed'
                               ? 'bg-rose-500/20 text-rose-200'
                               : 'bg-gray-700 text-gray-200'
@@ -364,19 +364,19 @@ export default function ExercisePage() {
                         value={taskProgress.answers[index] || ''}
                         onChange={(event) => handleTaskAnswerChange(index, event.target.value)}
                         placeholder={task.placeholder}
-                        className={`mb-2 min-h-[130px] w-full rounded-xl border bg-[#020617] px-3 py-2 text-xs text-cyan-100 outline-none transition-colors ${monoClassName} ${
+                        className={`mb-2 min-h-[130px] w-full rounded-xl border bg-[#020617] px-3 py-2 text-xs text-[#FFE44D] outline-none transition-colors ${monoClassName} ${
                           passed
                             ? 'border-emerald-500/50'
                             : status === 'failed'
                               ? 'border-rose-500/40'
-                              : 'border-[#1f2937] focus:border-cyan-400/60'
+                              : 'border-[#1f2937] focus:border-[#FFD60A]/60'
                         }`}
                       />
 
                       <div className="flex items-center justify-between gap-3">
                         <p className={`text-xs ${
                           passed
-                            ? 'text-emerald-200'
+                            ? 'text-[#FFD60A]'
                             : status === 'failed'
                               ? 'text-rose-200'
                               : 'text-gray-400'
@@ -393,7 +393,7 @@ export default function ExercisePage() {
                         <button
                           type="button"
                           onClick={() => void handleTaskCheck(index)}
-                          className="shrink-0 rounded-xl bg-cyan-400 px-3 py-2 text-xs font-semibold text-slate-900 transition-colors hover:bg-cyan-300"
+                          className="shrink-0 rounded-xl bg-[#FFD60A] px-3 py-2 text-xs font-semibold text-slate-900 transition-colors hover:bg-[#FFD60A]"
                         >
                           Проверить
                         </button>

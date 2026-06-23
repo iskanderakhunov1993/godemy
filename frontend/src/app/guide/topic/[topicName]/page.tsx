@@ -30,7 +30,7 @@ function TopicContent() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-16 text-center">
         <p className="text-gray-400">Тема не найдена.</p>
-        <Link href="/guide" className="mt-4 inline-block text-cyan-400 hover:underline">← Назад к курсу</Link>
+        <Link href="/guide" className="mt-4 inline-block text-[#FFD60A] hover:underline">← Назад к курсу</Link>
       </div>
     )
   }
@@ -73,14 +73,14 @@ function TopicContent() {
                 href={href}
                 className="group flex items-center gap-4 rounded-xl border border-transparent px-5 py-4 transition-colors hover:border-gray-800 hover:bg-gray-900"
               >
-                <div className={`flex h-8 w-8 items-center justify-center rounded-xl border text-sm font-bold ${done ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-300' : 'border-gray-700 bg-gray-900 text-gray-500'}`}>
+                <div className={`flex h-8 w-8 items-center justify-center rounded-xl border text-sm font-bold ${done ? 'border-emerald-500/40 bg-[#FFD60A]/20 text-[#FFD60A]' : 'border-gray-700 bg-gray-900 text-gray-500'}`}>
                   {done ? '✓' : index + 1}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className={`text-sm font-medium ${done ? 'text-gray-400' : 'text-white'}`}>{lesson.title}</p>
                   <p className="mt-0.5 truncate text-xs text-gray-500">{lesson.description}</p>
                 </div>
-                <span className="text-gray-600 transition-colors group-hover:text-cyan-200">→</span>
+                <span className="text-gray-600 transition-colors group-hover:text-[#FFD60A]">→</span>
               </Link>
             </li>
           )

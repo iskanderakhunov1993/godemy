@@ -584,10 +584,10 @@ function ChoiceBlock({ content }: { content: string }) {
                 ? 'bg-gray-800/60 text-gray-200 border-gray-700 hover:border-purple-600 hover:bg-gray-700/60'
                 : selected === i
                 ? opt.correct
-                  ? 'bg-emerald-900/60 text-emerald-100 border-emerald-600'
+                  ? 'bg-emerald-900/60 text-[#FFE44D] border-emerald-600'
                   : 'bg-red-900/60 text-red-100 border-red-600'
                 : opt.correct && selected !== null
-                ? 'bg-emerald-900/30 text-emerald-300 border-emerald-800/40'
+                ? 'bg-emerald-900/30 text-[#FFD60A] border-emerald-800/40'
                 : 'bg-gray-800/40 text-gray-500 border-gray-800'
             }`}
           >
@@ -597,7 +597,7 @@ function ChoiceBlock({ content }: { content: string }) {
         ))}
       </div>
       {selected !== null && (
-        <p className={`mt-3 text-sm font-medium ${options[selected]?.correct ? 'text-emerald-400' : 'text-red-400'}`}>
+        <p className={`mt-3 text-sm font-medium ${options[selected]?.correct ? 'text-[#FFD60A]' : 'text-red-400'}`}>
           {options[selected]?.correct ? '✓ Правильно!' : '✗ Неверно — попробуй ещё'}
         </p>
       )}
@@ -665,7 +665,7 @@ function SortBlock({ content }: { content: string }) {
         Проверить порядок
       </button>
       {checked && (
-        <p className={`mt-2 text-sm font-medium ${isCorrect ? 'text-emerald-400' : 'text-red-400'}`}>
+        <p className={`mt-2 text-sm font-medium ${isCorrect ? 'text-[#FFD60A]' : 'text-red-400'}`}>
           {isCorrect ? '✓ Правильный порядок!' : '✗ Порядок неверный, попробуй ещё'}
         </p>
       )}
@@ -706,7 +706,7 @@ function CodeTaskBlock({ content, lang = 'go' }: { content: string; lang?: strin
 
   return (
     <div className="my-4 rounded-xl border border-emerald-800/40 bg-emerald-950/20 p-4">
-      <div className="text-[11px] uppercase tracking-wider text-emerald-400 font-semibold mb-3">
+      <div className="text-[11px] uppercase tracking-wider text-[#FFD60A] font-semibold mb-3">
         {'<>'} Задание: написать код ({lang})
       </div>
       <p className="text-white font-medium mb-3 text-sm">{question}</p>
@@ -823,7 +823,7 @@ function ChoiceBuilderModal({ onInsert, onClose }: {
 
         <div className="space-y-2">
           <label className="text-xs text-gray-400">
-            Варианты ответа — <span className="text-emerald-400">зелёный = правильный</span> (студент не видит пока не ответит)
+            Варианты ответа — <span className="text-[#FFD60A]">зелёный = правильный</span> (студент не видит пока не ответит)
           </label>
           {options.map((opt, i) => (
             <div key={i} className="flex items-center gap-2">
@@ -1374,7 +1374,7 @@ export default function LessonEditor({
       {/* ── Header ── */}
       <div className="flex items-center justify-between gap-4 px-6 py-3 bg-[#13151c] border-b border-gray-800/60 flex-shrink-0">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
+          <div className="w-2 h-2 rounded-full bg-[#FFD60A] flex-shrink-0" />
           <span className="text-sm font-semibold text-white truncate">{lessonTitle}</span>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0 text-xs text-gray-500">
@@ -1431,8 +1431,8 @@ export default function LessonEditor({
           <button onClick={() => insert('*', '*', 'текст')} title="Курсив (⌘I)" className="text-xs italic bg-gray-800/70 hover:bg-gray-700 text-gray-300 rounded px-2 py-1">I</button>
           <button onClick={() => insert('~~', '~~', 'текст')} title="Зачёркнутый" className="text-xs line-through bg-gray-800/70 hover:bg-gray-700 text-gray-400 rounded px-2 py-1">S</button>
             <button onClick={() => insert('<span style="font-weight:300">', '</span>', 'тонкий текст')} title="Тонкий текст" className="text-xs bg-gray-800/70 hover:bg-gray-700 text-gray-300 rounded px-2 py-1 font-light">T</button>
-          <button onClick={() => insert('`', '`', 'код')} title="Инлайн-код" className="font-mono text-[11px] bg-gray-800/70 hover:bg-gray-700 text-cyan-300 rounded px-2 py-1">`x`</button>
-          <button onClick={() => insert('\n```go\n', '\n```\n', '// код')} title="Блок кода" className="font-mono text-[11px] bg-gray-800/70 hover:bg-gray-700 text-cyan-300 rounded px-2 py-1">```</button>
+          <button onClick={() => insert('`', '`', 'код')} title="Инлайн-код" className="font-mono text-[11px] bg-gray-800/70 hover:bg-gray-700 text-[#FFD60A] rounded px-2 py-1">`x`</button>
+          <button onClick={() => insert('\n```go\n', '\n```\n', '// код')} title="Блок кода" className="font-mono text-[11px] bg-gray-800/70 hover:bg-gray-700 text-[#FFD60A] rounded px-2 py-1">```</button>
         </div>
 
         <div className="h-5 w-px bg-gray-700/60 mx-1" />
@@ -1451,7 +1451,7 @@ export default function LessonEditor({
         <div className="flex gap-0.5">
           <button onClick={() => setShowImageModal(true)} title="Вставить изображение" className="text-xs bg-gray-800/70 hover:bg-gray-700 text-gray-300 rounded px-2 py-1">🖼 Картинка</button>
           <button onClick={() => { setLinkText(value.slice(savedSel[0], savedSel[1])); setShowLinkModal(true) }} title="Вставить ссылку (⌘K)" className="text-xs bg-gray-800/70 hover:bg-gray-700 text-blue-300 rounded px-2 py-1">🔗 Ссылка</button>
-          <button onClick={() => insert('', '', '{{user_name}}')} title="Подставить имя пользователя" className="text-xs bg-gray-800/70 hover:bg-gray-700 text-emerald-300 rounded px-2 py-1">👤 Имя</button>
+          <button onClick={() => insert('', '', '{{user_name}}')} title="Подставить имя пользователя" className="text-xs bg-gray-800/70 hover:bg-gray-700 text-[#FFD60A] rounded px-2 py-1">👤 Имя</button>
           <button
             onClick={() => {
               const ta = taRef.current
@@ -1460,7 +1460,7 @@ export default function LessonEditor({
               setShowCodeSnippetModal(true)
             }}
             title="Вставить код в отдельном окне"
-            className="text-xs bg-gray-800/70 hover:bg-gray-700 text-cyan-300 rounded px-2 py-1"
+            className="text-xs bg-gray-800/70 hover:bg-gray-700 text-[#FFD60A] rounded px-2 py-1"
           >🧩 Код-окно</button>
         </div>
 
@@ -1472,9 +1472,9 @@ export default function LessonEditor({
           <button onClick={() => setShowChoiceBuilder(true)} className="text-xs bg-purple-900/40 hover:bg-purple-800/60 text-purple-300 border border-purple-800/30 rounded px-2 py-1">☑ Выбор</button>
           <button onClick={() => insertTask('sort')}     className="text-xs bg-blue-900/40 hover:bg-blue-800/60 text-blue-300 border border-blue-800/30 rounded px-2 py-1">↕ Порядок</button>
           <button onClick={() => insertTask('freetext')} className="text-xs bg-amber-900/40 hover:bg-amber-800/60 text-amber-300 border border-amber-800/30 rounded px-2 py-1">✏ Текст</button>
-          <button onClick={() => insertTask('code')}     className="text-xs bg-emerald-900/40 hover:bg-emerald-800/60 text-emerald-300 border border-emerald-800/30 rounded px-2 py-1">{'<>'} Go код</button>
+          <button onClick={() => insertTask('code')}     className="text-xs bg-emerald-900/40 hover:bg-emerald-800/60 text-[#FFD60A] border border-emerald-800/30 rounded px-2 py-1">{'<>'} Go код</button>
           <button onClick={() => insertTask('interactive')} className="text-xs bg-blue-900/40 hover:bg-blue-800/60 text-blue-300 border border-blue-800/30 rounded px-2 py-1">⚡ Интерактив</button>
-          <button onClick={() => setShowFormBuilder(true)} className="text-xs bg-cyan-900/40 hover:bg-cyan-800/60 text-cyan-300 border border-cyan-800/30 rounded px-2 py-1">📝 Форма</button>
+          <button onClick={() => setShowFormBuilder(true)} className="text-xs bg-cyan-900/40 hover:bg-cyan-800/60 text-[#FFD60A] border border-cyan-800/30 rounded px-2 py-1">📝 Форма</button>
           <button onClick={() => insertTask('continue')} className="text-xs bg-zinc-900/70 hover:bg-zinc-800 text-zinc-200 border border-zinc-700/70 rounded px-2 py-1">⤵ Продолжить</button>
           <button onClick={() => setShowChatBuilder(true)} className="text-xs bg-indigo-900/40 hover:bg-indigo-800/60 text-indigo-300 border border-indigo-800/30 rounded px-2 py-1">💬 Чат</button>
           <button onClick={() => setShowChatDialogBuilder(true)} className="text-xs bg-fuchsia-900/40 hover:bg-fuchsia-800/60 text-fuchsia-300 border border-fuchsia-800/30 rounded px-2 py-1">🧵 Диалог</button>
@@ -1485,7 +1485,7 @@ export default function LessonEditor({
         {/* Templates */}
         <button
           onClick={() => setShowTemplatesModal(true)}
-          className="text-xs bg-violet-900/40 hover:bg-violet-800/60 text-violet-300 border border-violet-800/30 rounded px-2 py-1 font-medium"
+          className="text-xs bg-violet-900/40 hover:bg-violet-800/60 text-[#FFD60A] border border-violet-800/30 rounded px-2 py-1 font-medium"
         >
           📚 Шаблоны
         </button>
@@ -1507,7 +1507,7 @@ export default function LessonEditor({
           </div>
           {isDragging && (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-cyan-500/10 border-2 border-dashed border-cyan-500 pointer-events-none" style={{ top: '32px' }}>
-              <p className="text-cyan-300 text-sm font-semibold bg-[#0d0f14]/90 px-6 py-3 rounded-xl">Отпусти для вставки изображения 🖼</p>
+              <p className="text-[#FFD60A] text-sm font-semibold bg-[#0d0f14]/90 px-6 py-3 rounded-xl">Отпусти для вставки изображения 🖼</p>
             </div>
           )}
           <textarea
@@ -1832,7 +1832,7 @@ export default function LessonEditor({
                     className="text-left bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-violet-700/50 rounded-xl p-4 transition-colors group"
                   >
                     <div className="flex items-start justify-between gap-2 mb-2">
-                      <span className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors">{tpl.name}</span>
+                      <span className="text-sm font-medium text-white group-hover:text-[#FFD60A] transition-colors">{tpl.name}</span>
                       <span className="text-[10px] text-gray-600 bg-gray-800 px-2 py-0.5 rounded-full flex-shrink-0">{tpl.category}</span>
                     </div>
                     <p className="text-xs text-gray-500 leading-relaxed">{tpl.description}</p>

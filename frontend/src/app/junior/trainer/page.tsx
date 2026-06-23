@@ -69,7 +69,7 @@ export default function JuniorTrainerPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
       <div className="mb-8">
-        <div className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 mb-3">
+        <div className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-cyan-500/10 text-[#FFD60A] border border-cyan-500/20 mb-3">
           3 модуль
         </div>
         <h1 className="text-3xl font-bold text-white mb-2">Junior Trainer</h1>
@@ -77,7 +77,7 @@ export default function JuniorTrainerPage() {
         <div className="mt-4 bg-gray-900 border border-gray-800 rounded-xl p-4">
           <div className="flex items-center justify-between text-sm mb-2">
             <span className="text-gray-400">Общий прогресс</span>
-            <span className="text-cyan-400 font-semibold">{totalCompleted}/{totalCount}</span>
+            <span className="text-[#FFD60A] font-semibold">{totalCompleted}/{totalCount}</span>
           </div>
           <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
             <div
@@ -152,7 +152,7 @@ export default function JuniorTrainerPage() {
                     <p className="text-xs text-gray-500">Проект + 5 примеров + 2 задачи закрепления</p>
                   </div>
                   <div className="text-sm text-gray-400">
-                    Прогресс: <span className="text-cyan-400 font-semibold">{block.completed}/{block.total || TASKS_PER_SPRINT}</span>
+                    Прогресс: <span className="text-[#FFD60A] font-semibold">{block.completed}/{block.total || TASKS_PER_SPRINT}</span>
                   </div>
                 </div>
 
@@ -167,7 +167,7 @@ export default function JuniorTrainerPage() {
 
                     const content = (
                       <div className="flex items-start gap-4">
-                        <div className={`w-6 h-6 mt-0.5 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${completed ? 'bg-emerald-500 border-emerald-500' : 'border-gray-600'}`}>
+                        <div className={`w-6 h-6 mt-0.5 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${completed ? 'bg-[#FFD60A] border-emerald-500' : 'border-gray-600'}`}>
                           {completed && (
                             <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -185,12 +185,12 @@ export default function JuniorTrainerPage() {
                               {exercise.category}
                             </span>
                             {isCurrentStep && (
-                              <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                              <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/10 text-[#FFD60A] border border-cyan-500/20">
                                 Открыта сейчас
                               </span>
                             )}
                             {completed && (
-                              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                              <span className="text-xs px-2 py-0.5 rounded-full bg-[#FFD60A]/10 text-[#FFD60A] border border-emerald-500/20">
                                 Пройдено
                               </span>
                             )}
@@ -230,7 +230,7 @@ export default function JuniorTrainerPage() {
                 return (
                   <div
                     key={s}
-                    className={`rounded-lg px-3 py-2 border ${done ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-gray-800 text-gray-400 border-gray-700'}`}
+                    className={`rounded-lg px-3 py-2 border ${done ? 'bg-[#FFD60A]/10 text-[#FFD60A] border-emerald-500/20' : 'bg-gray-800 text-gray-400 border-gray-700'}`}
                   >
                     Sprint {s}: {done ? 'готов' : 'не завершён'}
                   </div>
@@ -239,7 +239,7 @@ export default function JuniorTrainerPage() {
             </div>
 
             {capstoneValidated ? (
-              <div className="text-sm bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg px-3 py-2">
+              <div className="text-sm bg-[#FFD60A]/10 text-[#FFD60A] border border-emerald-500/20 rounded-lg px-3 py-2">
                 Capstone validation пройдена. Junior-модуль завершен.
               </div>
             ) : (

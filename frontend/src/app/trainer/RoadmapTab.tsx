@@ -86,9 +86,9 @@ const roadmap: RoadmapNode[] = [
 ]
 
 const levelConfig: Record<NodeLevel, { border: string; badge: string; badgeText: string }> = {
-  start:        { border: 'border-cyan-500',   badge: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40',   badgeText: 'Старт' },
+  start:        { border: 'border-cyan-500',   badge: 'bg-cyan-500/20 text-[#FFD60A] border-cyan-500/40',   badgeText: 'Старт' },
   beginner:     { border: 'border-blue-500',   badge: 'bg-blue-500/20 text-blue-400 border-blue-500/40',   badgeText: 'Новичок' },
-  intermediate: { border: 'border-violet-500', badge: 'bg-violet-500/20 text-violet-400 border-violet-500/40', badgeText: 'Средний' },
+  intermediate: { border: 'border-violet-500', badge: 'bg-violet-500/20 text-[#FFD60A] border-violet-500/40', badgeText: 'Средний' },
   advanced:     { border: 'border-rose-500',   badge: 'bg-rose-500/20 text-rose-400 border-rose-500/40',   badgeText: 'Продвинутый' },
 }
 

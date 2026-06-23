@@ -37,8 +37,8 @@ export default function CodeEditor({
       <div className="flex items-center justify-between px-4 py-3 border-b border-[#1f2937] bg-[#0b1220]">
         <div className="px-3 py-1.5 rounded-lg border border-[#1f2937] text-xs text-gray-200">Go 1.21</div>
         <div className="flex items-center gap-2">
-          <button onClick={onReset} className="px-3 py-1.5 rounded-lg text-xs border border-[#1f2937] text-gray-300 hover:border-cyan-400 hover:text-white transition-colors">Сбросить код</button>
-          <button onClick={onToggleFullscreen} className="px-3 py-1.5 rounded-lg text-xs border border-[#1f2937] text-gray-300 hover:border-cyan-400 hover:text-white transition-colors">{fullscreen ? 'Exit' : 'Fullscreen'}</button>
+          <button onClick={onReset} className="px-3 py-1.5 rounded-lg text-xs border border-[#1f2937] text-gray-300 hover:border-[#FFD60A] hover:text-white transition-colors">Сбросить код</button>
+          <button onClick={onToggleFullscreen} className="px-3 py-1.5 rounded-lg text-xs border border-[#1f2937] text-gray-300 hover:border-[#FFD60A] hover:text-white transition-colors">{fullscreen ? 'Exit' : 'Fullscreen'}</button>
         </div>
       </div>
 
@@ -62,8 +62,8 @@ export default function CodeEditor({
       </div>
 
       <div className="px-4 py-3 flex items-center gap-2 bg-[#0b1220]">
-        <button onClick={onRun} disabled={running} className="px-4 py-2 rounded-xl border border-cyan-400/40 text-sm text-cyan-300 hover:bg-cyan-500/10 transition-colors disabled:opacity-60">{running ? 'Run...' : 'Run'}</button>
-        <button onClick={onSubmit} disabled={submitting} className="px-4 py-2 rounded-xl bg-[#22d3ee] text-slate-900 text-sm font-semibold hover:bg-cyan-300 transition-colors disabled:opacity-60">{submitting ? 'Submit...' : 'Submit'}</button>
+        <button onClick={onRun} disabled={running} className="px-4 py-2 rounded-xl border border-[#FFD60A]/40 text-sm text-[#FFD60A] hover:bg-cyan-500/10 transition-colors disabled:opacity-60">{running ? 'Run...' : 'Run'}</button>
+        <button onClick={onSubmit} disabled={submitting} className="px-4 py-2 rounded-xl bg-[#FFD60A] text-slate-900 text-sm font-semibold hover:bg-[#FFD60A] transition-colors disabled:opacity-60">{submitting ? 'Submit...' : 'Submit'}</button>
       </div>
     </div>
   )

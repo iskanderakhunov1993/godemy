@@ -41,7 +41,7 @@ export default function AdminLevelsPage() {
         {Object.entries(structure).map(([level, modules]) => (
           <div key={level} className="border border-emerald-700 rounded-lg p-4 bg-gray-900">
             <div className="flex items-center gap-3 mb-2">
-              <span className="font-bold text-emerald-400 text-lg">Уровень: {level}</span>
+              <span className="font-bold text-[#FFD60A] text-lg">Уровень: {level}</span>
               {/* Кнопка для будущего добавления модуля */}
               {/* <button>+ Модуль</button> */}
             </div>
@@ -49,7 +49,7 @@ export default function AdminLevelsPage() {
               {Object.entries(modules).map(([module, categories]) => (
                 <div key={module} className="border-l-2 border-cyan-700 pl-4">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="font-bold text-cyan-400">Модуль: {module}</span>
+                    <span className="font-bold text-[#FFD60A]">Модуль: {module}</span>
                     {/* Кнопка для будущего добавления темы */}
                     {/* <button>+ Тема</button> */}
                   </div>
@@ -57,7 +57,7 @@ export default function AdminLevelsPage() {
                     {Object.entries(categories).map(([category, lessons]) => (
                       <div key={category} className="border-l-2 border-cyan-500 pl-4">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="font-semibold text-cyan-300">Тема: {category}</span>
+                          <span className="font-semibold text-[#FFD60A]">Тема: {category}</span>
                           {/* Кнопка для будущего добавления урока */}
                           <Link href={`/admin/lessons/new?level=${encodeURIComponent(level)}&module=${encodeURIComponent(module)}&category=${encodeURIComponent(category)}`} className="text-xs bg-cyan-700 hover:bg-cyan-600 text-white rounded px-2 py-1 ml-2">+ Урок</Link>
                         </div>

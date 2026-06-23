@@ -128,7 +128,7 @@ export default function AdminLessonsPage() {
                   <td className="px-4 py-3 text-right space-x-3">
                     <Link
                       href={`/admin/lessons/${lesson.id}`}
-                      className="text-cyan-400 hover:text-cyan-300 transition-colors"
+                      className="text-[#FFD60A] hover:text-[#FFD60A] transition-colors"
                     >
                       Изменить
                     </Link>

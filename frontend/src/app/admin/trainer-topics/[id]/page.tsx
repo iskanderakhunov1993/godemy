@@ -200,7 +200,7 @@ export default function TrainerTopicEditorPage() {
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
               activeTab === tab
-                ? 'border-violet-500 text-violet-400'
+                ? 'border-violet-500 text-[#FFD60A]'
                 : 'border-transparent text-gray-400 hover:text-white'
             }`}
           >
@@ -394,7 +394,7 @@ export default function TrainerTopicEditorPage() {
                       <span className="text-xs text-gray-500">{ex.category}</span>
                       <button
                         onClick={() => linkExercise(ex.id)}
-                        className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors"
+                        className="text-xs text-[#FFD60A] hover:text-[#FFD60A] transition-colors"
                       >
                         + Привязать
                       </button>

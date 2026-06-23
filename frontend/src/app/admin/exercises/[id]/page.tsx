@@ -186,7 +186,7 @@ export default function ExerciseEditorPage() {
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px ${
               activeTab === tab
-                ? 'border-cyan-500 text-cyan-400'
+                ? 'border-cyan-500 text-[#FFD60A]'
                 : 'border-transparent text-gray-400 hover:text-white'
             }`}
           >
@@ -322,7 +322,7 @@ export default function ExerciseEditorPage() {
       {activeTab === 'Подсказки' && (
         <div className="space-y-3">
           <div className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-gray-400 text-sm">
-            Формат JSON-массива строк: <code className="text-cyan-400">{`["Подсказка 1", "Подсказка 2"]`}</code>
+            Формат JSON-массива строк: <code className="text-[#FFD60A]">{`["Подсказка 1", "Подсказка 2"]`}</code>
           </div>
           <Field label="Подсказки (JSON)">
             <textarea

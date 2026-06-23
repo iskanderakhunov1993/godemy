@@ -223,12 +223,12 @@ export default function TrainerPage() {
         <header className="overflow-hidden rounded-[32px] border border-white/10 bg-[radial-gradient(circle_at_10%_0%,rgba(34,211,238,0.13),transparent_30%),radial-gradient(circle_at_100%_0%,rgba(139,92,246,0.14),transparent_30%),#0a1020]">
           <div className="grid lg:grid-cols-[0.72fr_1.28fr]">
             <div className="border-b border-white/8 p-6 sm:p-8 lg:border-b-0 lg:border-r">
-              <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
+              <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#FFD60A]">
+                <span className="h-2 w-2 rounded-full bg-[#FFD60A] shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
                 Практика · Go с нуля
               </div>
               <div className="mt-5 flex items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 font-mono text-lg font-black text-cyan-200">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-[#FFD60A]/20 bg-[#FFD60A]/10 font-mono text-lg font-black text-[#FFD60A]">
                   Go
                 </div>
                 <div>
@@ -265,7 +265,7 @@ export default function TrainerPage() {
             <div className="p-6 sm:p-8">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <span className="rounded-lg bg-violet-400/12 px-2.5 py-1 font-mono text-xs text-violet-300">
+                  <span className="rounded-lg bg-violet-400/12 px-2.5 py-1 font-mono text-xs text-[#FFD60A]">
                     {categoryMeta[currentConcept?.category]?.ticket ?? 'Раздел'}
                   </span>
                   <span className="text-xs text-gray-500">{getCategoryLabel(currentConcept?.category ?? '')}</span>
@@ -277,7 +277,7 @@ export default function TrainerPage() {
 
               <div className="mt-6 grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
                 <div>
-                  <p className="text-xs font-medium text-cyan-300">
+                  <p className="text-xs font-medium text-[#FFD60A]">
                     {categoryMeta[currentConcept?.category]?.mission ?? 'Продолжить практику'}
                   </p>
                   <h2 className="mt-2 max-w-2xl text-2xl font-semibold leading-tight sm:text-3xl">
@@ -290,7 +290,7 @@ export default function TrainerPage() {
                 {currentConcept && (
                   <Link
                     href={`/trainer/topic/${currentConcept.slug}`}
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-cyan-300 px-5 text-sm font-bold text-slate-950 shadow-[0_12px_35px_rgba(34,211,238,0.18)] hover:-translate-y-0.5 hover:bg-cyan-200"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#FFD60A] px-5 text-sm font-bold text-slate-950 shadow-[0_12px_35px_rgba(34,211,238,0.18)] hover:-translate-y-0.5 hover:bg-cyan-200"
                   >
                     Начать практику
                     <ChevronRight className="h-4 w-4" />
@@ -301,7 +301,7 @@ export default function TrainerPage() {
               <div className="mt-7 grid gap-3 border-t border-white/8 pt-5 sm:grid-cols-3">
                 {currentConcept?.microSkills.map((skill, index) => (
                   <div key={skill} className="flex items-start gap-2 text-xs leading-5 text-gray-400">
-                    <span className="mt-1 font-mono text-[10px] text-cyan-300">0{index + 1}</span>
+                    <span className="mt-1 font-mono text-[10px] text-[#FFD60A]">0{index + 1}</span>
                     <span>{skill}</span>
                   </div>
                 ))}
@@ -384,13 +384,13 @@ export default function TrainerPage() {
                   <Link
                     key={exercise.id}
                     href={`/trainer/${exercise.id}`}
-                    className="group rounded-3xl border border-white/8 bg-white/[0.025] p-5 hover:-translate-y-0.5 hover:border-cyan-300/30 hover:bg-cyan-300/[0.04]"
+                    className="group rounded-3xl border border-white/8 bg-white/[0.025] p-5 hover:-translate-y-0.5 hover:border-[#FFD60A]/30 hover:bg-[#FFD60A]/[0.04]"
                   >
                     <div className="flex items-center justify-between gap-3">
                       <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${
                         completed
-                          ? 'bg-emerald-400/10 text-emerald-300'
-                          : 'bg-violet-400/10 text-violet-300'
+                          ? 'bg-[#FFD60A]/10 text-[#FFD60A]'
+                          : 'bg-violet-400/10 text-[#FFD60A]'
                       }`}>
                         {completed ? 'Готово' : exercise.difficulty}
                       </span>
@@ -398,7 +398,7 @@ export default function TrainerPage() {
                     </div>
                     <h3 className="mt-5 text-lg font-semibold">{exercise.title}</h3>
                     <p className="mt-2 line-clamp-2 text-sm leading-6 text-gray-500">{exercise.description}</p>
-                    <p className="mt-5 flex items-center gap-1 text-xs font-semibold text-cyan-300">
+                    <p className="mt-5 flex items-center gap-1 text-xs font-semibold text-[#FFD60A]">
                       Начать упражнение <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                     </p>
                   </Link>
@@ -463,25 +463,25 @@ function ConceptSection({
   return (
     <article className={`overflow-hidden rounded-3xl border ${
       active
-        ? 'border-cyan-300/30 bg-cyan-300/[0.035] shadow-[0_18px_60px_rgba(34,211,238,0.06)]'
+        ? 'border-[#FFD60A]/30 bg-[#FFD60A]/[0.035] shadow-[0_18px_60px_rgba(34,211,238,0.06)]'
         : complete
-          ? 'border-emerald-400/20 bg-emerald-400/[0.025]'
+          ? 'border-emerald-400/20 bg-[#FFD60A]/[0.025]'
           : 'border-white/8 bg-white/[0.02]'
     }`}>
       <div className="grid gap-4 border-b border-white/8 p-5 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:p-6">
         <div className={`flex h-11 w-11 items-center justify-center rounded-2xl border font-mono text-xs font-bold ${
           active
-            ? 'border-cyan-300/30 bg-cyan-300 text-slate-950'
+            ? 'border-[#FFD60A]/30 bg-[#FFD60A] text-slate-950'
             : complete
-              ? 'border-emerald-400/25 bg-emerald-400/10 text-emerald-300'
+              ? 'border-emerald-400/25 bg-[#FFD60A]/10 text-[#FFD60A]'
               : 'border-white/10 bg-white/5 text-gray-500'
         }`}>
           {complete ? <Check className="h-5 w-5" /> : String(index + 1).padStart(2, '0')}
         </div>
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-violet-300">{meta?.ticket}</span>
-            {active && <span className="rounded-full bg-cyan-300/10 px-2 py-0.5 text-[10px] font-semibold text-cyan-200">Сейчас</span>}
+            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#FFD60A]">{meta?.ticket}</span>
+            {active && <span className="rounded-full bg-[#FFD60A]/10 px-2 py-0.5 text-[10px] font-semibold text-[#FFD60A]">Сейчас</span>}
           </div>
           <h3 className="mt-1 text-lg font-semibold">{getCategoryLabel(group.category)}</h3>
           <p className="mt-1 text-sm text-gray-500">{meta?.mission}</p>
@@ -490,7 +490,7 @@ function ConceptSection({
           <p className="text-sm font-medium text-gray-300">{group.completedCount}/{group.concepts.length} тем</p>
           <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/8 sm:w-28">
             <div
-              className={`h-full rounded-full ${complete ? 'bg-emerald-400' : 'bg-cyan-300'}`}
+              className={`h-full rounded-full ${complete ? 'bg-[#FFD60A]' : 'bg-[#FFD60A]'}`}
               style={{ width: `${(group.completedCount / group.concepts.length) * 100}%` }}
             />
           </div>
@@ -517,15 +517,15 @@ function ConceptTaskCard({
     <>
       <div className="flex items-center justify-between gap-3">
         <span className={`font-mono text-[11px] font-bold ${
-          concept.completed ? 'text-emerald-300' : concept.unlocked ? 'text-cyan-300' : 'text-gray-600'
+          concept.completed ? 'text-[#FFD60A]' : concept.unlocked ? 'text-[#FFD60A]' : 'text-gray-600'
         }`}>
           GO-{concept.code}
         </span>
         <span className={`flex h-7 w-7 items-center justify-center rounded-full border ${
           concept.completed
-            ? 'border-emerald-400/25 bg-emerald-400/10 text-emerald-300'
+            ? 'border-emerald-400/25 bg-[#FFD60A]/10 text-[#FFD60A]'
             : concept.current
-              ? 'border-cyan-300/30 bg-cyan-300/10 text-cyan-200'
+              ? 'border-[#FFD60A]/30 bg-[#FFD60A]/10 text-[#FFD60A]'
               : 'border-white/8 bg-white/[0.03] text-gray-600'
         }`}>
           {concept.completed ? (
@@ -547,7 +547,7 @@ function ConceptTaskCard({
         <span className="text-[10px] uppercase tracking-[0.14em] text-gray-600">
           {concept.completed ? 'Пройдено' : concept.current ? 'Сейчас' : 'Позже'}
         </span>
-        {concept.unlocked && <Play className="h-3.5 w-3.5 fill-current text-cyan-300" />}
+        {concept.unlocked && <Play className="h-3.5 w-3.5 fill-current text-[#FFD60A]" />}
       </div>
     </>
   )
@@ -556,7 +556,7 @@ function ConceptTaskCard({
     return (
       <Link
         href={`/trainer/topic/${concept.slug}`}
-        className="group rounded-2xl border border-white/10 bg-[#0b1222] p-4 hover:-translate-y-0.5 hover:border-cyan-300/35 hover:bg-[#0d1729]"
+        className="group rounded-2xl border border-white/10 bg-[#0b1222] p-4 hover:-translate-y-0.5 hover:border-[#FFD60A]/35 hover:bg-[#0d1729]"
       >
         {content}
       </Link>

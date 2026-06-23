@@ -63,7 +63,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
       <nav className="bg-gray-900 border-b border-gray-800 px-6 py-3 flex items-center gap-6">
-        <span className="font-bold text-cyan-400">Админ-панель</span>
+        <span className="font-bold text-[#FFD60A]">Админ-панель</span>
         {navLinks.map((link) => (
           <Link
             key={link.href}
@@ -72,7 +72,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               (link.href === '/admin/trainer'
                 ? pathname === '/admin/trainer' || pathname.startsWith('/admin/trainer/')
                 : pathname === link.href)
-                ? 'text-cyan-400 font-semibold'
+                ? 'text-[#FFD60A] font-semibold'
                 : 'text-gray-400 hover:text-white'
             }`}
           >

@@ -44,7 +44,7 @@ export default function BootcampPage() {
               <span className="eyebrow">Следующий этап</span>
               <h1 className="mt-6 max-w-4xl text-5xl font-black leading-[0.98] tracking-[-0.05em] text-white sm:text-7xl">
                 Продвинутый курс для тех,
-                <span className="block text-violet-300">кто уже прошёл базу</span>
+                <span className="block text-[#FFD60A]">кто уже прошёл базу</span>
               </h1>
               <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
                 Здесь не стартуют с нуля. Сначала человек проходит бесплатный путь,
@@ -93,7 +93,7 @@ export default function BootcampPage() {
           {levels.map((level, index) => (
             <article key={level.title} className="surface-card rounded-[30px] p-6">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-300">Уровень 0{index + 1}</span>
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#FFD60A]">Уровень 0{index + 1}</span>
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-400">
                   {level.title}
                 </span>
@@ -107,8 +107,8 @@ export default function BootcampPage() {
                   </span>
                 ))}
               </div>
-              <div className="mt-6 rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.055] p-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-200">В резюме после блока</p>
+              <div className="mt-6 rounded-2xl border border-[#FFD60A]/15 bg-[#FFD60A]/[0.055] p-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#FFD60A]">В резюме после блока</p>
                 <p className="mt-2 text-sm leading-6 text-slate-200">{level.resume}</p>
               </div>
             </article>

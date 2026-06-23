@@ -83,9 +83,9 @@ function intensityClass(count: number, maxCount: number): string {
   if (count === 0 || maxCount === 0) return 'bg-gray-700/70'
 
   const ratio = count / maxCount
-  if (ratio >= 0.75) return 'bg-cyan-300 border-cyan-200/60'
-  if (ratio >= 0.5) return 'bg-cyan-400/80 border-cyan-300/50'
-  if (ratio >= 0.25) return 'bg-cyan-500/60 border-cyan-400/40'
+  if (ratio >= 0.75) return 'bg-[#FFD60A] border-cyan-200/60'
+  if (ratio >= 0.5) return 'bg-[#FFD60A]/80 border-[#FFD60A]/50'
+  if (ratio >= 0.25) return 'bg-cyan-500/60 border-[#FFD60A]/40'
   return 'bg-cyan-600/40 border-cyan-500/30'
 }
 
@@ -289,7 +289,7 @@ function ProfileContent() {
       <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
         <aside className="space-y-6">
           <section className="surface-card rounded-[32px] px-6 py-8 text-center">
-            <div className="mx-auto mb-6 flex h-56 w-56 items-center justify-center rounded-full border-4 border-cyan-400/90 bg-[radial-gradient(circle_at_35%_30%,rgba(130,220,255,0.45),rgba(15,23,42,0.35)_30%,rgba(7,10,20,0.95)_70%)] shadow-[0_0_40px_rgba(34,211,238,0.08)]">
+            <div className="mx-auto mb-6 flex h-56 w-56 items-center justify-center rounded-full border-4 border-[#FFD60A]/90 bg-[radial-gradient(circle_at_35%_30%,rgba(130,220,255,0.45),rgba(15,23,42,0.35)_30%,rgba(7,10,20,0.95)_70%)] shadow-[0_0_40px_rgba(34,211,238,0.08)]">
               <span className="text-7xl font-bold text-white/95">{user.username.slice(0, 1).toUpperCase()}</span>
             </div>
             <h1 className="text-3xl font-bold text-gray-100">{user.username}</h1>
@@ -307,13 +307,13 @@ function ProfileContent() {
               <div className="flex gap-3 flex-wrap">
                 <Link
                   href={continueCourseLesson ? lessonHref(continueCourseLesson) : '/guide'}
-                  className="inline-flex items-center gap-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-semibold px-4 py-2.5 transition-colors"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#FFD60A] hover:bg-[#FFD60A] text-black font-semibold px-4 py-2.5 transition-colors"
                 >
                   📖 Курс
                 </Link>
                 <Link
                   href={continueTrainerHref}
-                  className="inline-flex items-center gap-2 rounded-xl border border-cyan-400/40 text-cyan-200 hover:text-cyan-100 hover:border-cyan-300/60 px-4 py-2.5 transition-colors"
+                  className="inline-flex items-center gap-2 rounded-xl border border-[#FFD60A]/40 text-[#FFD60A] hover:text-[#FFE44D] hover:border-[#FFD60A]/60 px-4 py-2.5 transition-colors"
                 >
                   ⚡ Тренажер
                 </Link>
@@ -321,10 +321,10 @@ function ProfileContent() {
             </div>
             <div className="mt-3 grid gap-2 text-xs sm:text-sm text-gray-300">
               <div>
-                Курс: <span className="text-cyan-200">{continueCourseLesson?.title || 'Перейти к программе курса'}</span>
+                Курс: <span className="text-[#FFD60A]">{continueCourseLesson?.title || 'Перейти к программе курса'}</span>
               </div>
               <div>
-                Тренажер: <span className="text-cyan-200">{continueTrainerTitle}</span>
+                Тренажер: <span className="text-[#FFD60A]">{continueTrainerTitle}</span>
               </div>
             </div>
           </section>
@@ -333,7 +333,7 @@ function ProfileContent() {
             <h2 className="text-3xl font-bold text-gray-100 mb-6">Основная информация</h2>
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-3 text-base">
-                <span className="font-semibold text-cyan-400">Дата старта</span>
+                <span className="font-semibold text-[#FFD60A]">Дата старта</span>
                 <span className="font-semibold text-gray-100">{formatJoinDate(user.createdAt)}</span>
               </div>
 
@@ -345,12 +345,12 @@ function ProfileContent() {
                     <span className="font-semibold text-gray-200 text-sm">Тренажёр</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-bold text-cyan-400">
+                    <span className="text-sm font-bold text-[#FFD60A]">
                       {Math.round((completedExercises / totalExercises) * 100)}%
                     </span>
                     <Link
                       href="/trainer"
-                      className="text-xs font-semibold text-black bg-cyan-400 hover:bg-cyan-300 px-3 py-1 rounded-lg transition-colors"
+                      className="text-xs font-semibold text-black bg-[#FFD60A] hover:bg-[#FFD60A] px-3 py-1 rounded-lg transition-colors"
                     >
                       Начать
                     </Link>
@@ -358,7 +358,7 @@ function ProfileContent() {
                 </div>
                 <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-cyan-400 rounded-full transition-all"
+                    className="h-full bg-[#FFD60A] rounded-full transition-all"
                     style={{ width: `${Math.min((completedExercises / totalExercises) * 100, 100)}%` }}
                   />
                 </div>
@@ -373,12 +373,12 @@ function ProfileContent() {
                     <span className="font-semibold text-gray-200 text-sm">Курс Go</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-bold text-cyan-400">
+                    <span className="text-sm font-bold text-[#FFD60A]">
                       {Math.round((completedLessons / totalLessons) * 100)}%
                     </span>
                     <Link
                       href={continueCourseLesson ? lessonHref(continueCourseLesson) : '/guide'}
-                      className="text-xs font-semibold text-black bg-cyan-400 hover:bg-cyan-300 px-3 py-1 rounded-lg transition-colors"
+                      className="text-xs font-semibold text-black bg-[#FFD60A] hover:bg-[#FFD60A] px-3 py-1 rounded-lg transition-colors"
                     >
                       {completedLessons > 0 ? 'Продолжить' : 'Начать'}
                     </Link>
@@ -386,14 +386,14 @@ function ProfileContent() {
                 </div>
                 <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-cyan-400 rounded-full transition-all"
+                    className="h-full bg-[#FFD60A] rounded-full transition-all"
                     style={{ width: `${Math.min((completedLessons / totalLessons) * 100, 100)}%` }}
                   />
                 </div>
                 <p className="text-xs text-gray-500 mt-1.5">{completedLessons} из {totalLessons} уроков пройдено</p>
                 {continueCourseLesson && (
                   <p className="text-xs text-gray-400 mt-1">
-                    Следующий урок: <span className="text-cyan-300">{continueCourseLesson.title}</span>
+                    Следующий урок: <span className="text-[#FFD60A]">{continueCourseLesson.title}</span>
                   </p>
                 )}
               </div>
@@ -480,9 +480,9 @@ function ProfileContent() {
                 <span>Меньше</span>
                 <div className="h-4 w-4 rounded border border-transparent bg-gray-700/70" />
                 <div className="h-4 w-4 rounded border border-cyan-500/30 bg-cyan-600/40" />
-                <div className="h-4 w-4 rounded border border-cyan-400/40 bg-cyan-500/60" />
-                <div className="h-4 w-4 rounded border border-cyan-300/50 bg-cyan-400/80" />
-                <div className="h-4 w-4 rounded border border-cyan-200/60 bg-cyan-300" />
+                <div className="h-4 w-4 rounded border border-[#FFD60A]/40 bg-cyan-500/60" />
+                <div className="h-4 w-4 rounded border border-[#FFD60A]/50 bg-[#FFD60A]/80" />
+                <div className="h-4 w-4 rounded border border-cyan-200/60 bg-[#FFD60A]" />
                 <span>Больше</span>
               </div>
             </div>
@@ -499,7 +499,7 @@ function ProfileContent() {
               </div>
               <Link
                 href="/certificates"
-                className="flex items-center gap-2 text-sm font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
+                className="flex items-center gap-2 text-sm font-semibold text-[#FFD60A] hover:text-[#FFD60A] transition-colors"
               >
                 Смотреть все
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -516,7 +516,7 @@ function ProfileContent() {
                   title={cert.title}
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm border transition-all ${
                     cert.earned
-                      ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-300'
+                      ? 'bg-[#FFD60A]/10 border-emerald-500/25 text-[#FFD60A]'
                       : 'bg-gray-800/50 border-gray-700/50 text-gray-500'
                   }`}
                 >
@@ -545,7 +545,7 @@ function ProfileContent() {
               </div>
               <Link
                 href="/feedback"
-                className="flex items-center gap-2 text-sm font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
+                className="flex items-center gap-2 text-sm font-semibold text-[#FFD60A] hover:text-[#FFD60A] transition-colors"
               >
                 Перейти
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

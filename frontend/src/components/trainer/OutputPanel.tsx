@@ -13,7 +13,7 @@ export default function OutputPanel({ result, monoClassName = '' }: OutputPanelP
         result?.error
           ? 'border-red-500/40 bg-red-950/20 text-red-200'
           : result?.passed
-            ? 'border-emerald-500/40 bg-emerald-950/20 text-emerald-200'
+            ? 'border-emerald-500/40 bg-emerald-950/20 text-[#FFD60A]'
             : 'border-[#1f2937] bg-[#020617] text-gray-300'
       }`}>
         {result ? (result.error || result.output || (result.passed ? 'Тесты пройдены.' : 'Нет вывода')) : 'Нажми Run для запуска кода...'}

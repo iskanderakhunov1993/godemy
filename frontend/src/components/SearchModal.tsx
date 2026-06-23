@@ -156,7 +156,7 @@ export function SearchModal({ open, onClose }: Props) {
                   >
                     <span className="w-7 h-7 rounded-lg bg-gray-700/60 flex items-center justify-center text-sm flex-shrink-0">🔗</span>
                     <div>
-                      <p className={`text-sm font-medium ${isSelected ? 'text-cyan-400' : 'text-gray-200'}`}>{result.title}</p>
+                      <p className={`text-sm font-medium ${isSelected ? 'text-[#FFD60A]' : 'text-gray-200'}`}>{result.title}</p>
                       <p className="text-xs text-gray-500">{result.desc}</p>
                     </div>
                   </button>
@@ -171,7 +171,7 @@ export function SearchModal({ open, onClose }: Props) {
                   >
                     <span className="w-7 h-7 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-sm flex-shrink-0">📖</span>
                     <div>
-                      <p className={`text-sm font-medium ${isSelected ? 'text-cyan-400' : 'text-gray-200'}`}>{result.item.title}</p>
+                      <p className={`text-sm font-medium ${isSelected ? 'text-[#FFD60A]' : 'text-gray-200'}`}>{result.item.title}</p>
                       <p className="text-xs text-gray-500">Урок · {result.item.category}</p>
                     </div>
                   </button>
@@ -186,7 +186,7 @@ export function SearchModal({ open, onClose }: Props) {
                   >
                     <span className="w-7 h-7 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-sm flex-shrink-0">⚡</span>
                     <div>
-                      <p className={`text-sm font-medium ${isSelected ? 'text-cyan-400' : 'text-gray-200'}`}>{result.item.title}</p>
+                      <p className={`text-sm font-medium ${isSelected ? 'text-[#FFD60A]' : 'text-gray-200'}`}>{result.item.title}</p>
                       <p className="text-xs text-gray-500">Задача · {result.item.category}</p>
                     </div>
                   </button>

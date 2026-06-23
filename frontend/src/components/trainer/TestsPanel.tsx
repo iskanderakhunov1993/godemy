@@ -23,7 +23,7 @@ export default function TestsPanel({ tests }: TestsPanelProps) {
               <span>{test.title}: {test.input}</span>
               <span className={`text-xs font-semibold ${
                 test.status === 'passed'
-                  ? 'text-emerald-400'
+                  ? 'text-[#FFD60A]'
                   : test.status === 'failed'
                     ? 'text-red-400'
                     : 'text-gray-500'

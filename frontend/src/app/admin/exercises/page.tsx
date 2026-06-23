@@ -156,13 +156,13 @@ export default function AdminExercisesPage() {
                   <td className="px-4 py-3 text-right space-x-3">
                     <Link
                       href={`/admin/trainer-practice/${ex.id}`}
-                      className="text-violet-400 hover:text-violet-300 transition-colors"
+                      className="text-[#FFD60A] hover:text-[#FFD60A] transition-colors"
                     >
                       Практика
                     </Link>
                     <Link
                       href={`/admin/exercises/${ex.id}`}
-                      className="text-cyan-400 hover:text-cyan-300 transition-colors"
+                      className="text-[#FFD60A] hover:text-[#FFD60A] transition-colors"
                     >
                       Изменить
                     </Link>

@@ -151,12 +151,12 @@ export default function Home() {
         <div className="overflow-hidden rounded-[30px] border border-white/10 bg-[radial-gradient(circle_at_78%_18%,rgba(34,211,238,0.12),transparent_30%),linear-gradient(135deg,rgba(15,23,42,0.98),rgba(8,12,24,0.98))] px-6 py-7 shadow-[0_28px_90px_rgba(2,6,23,0.28)] sm:px-8 sm:py-9">
           <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
             <div className="max-w-2xl">
-              <span className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-200">
+              <span className="inline-flex rounded-full border border-[#FFD60A]/20 bg-[#FFD60A]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#FFD60A]">
                 Первый урок без регистрации
               </span>
               <h1 className="mt-5 max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.04em] text-white sm:text-6xl">
                 Go с нуля:
-                <span className="block text-cyan-200">первый код за 30 минут</span>
+                <span className="block text-[#FFD60A]">первый код за 30 минут</span>
               </h1>
               <p className="mt-5 max-w-xl text-base leading-8 text-slate-300">
                 Открой урок, измени строку в коде и запусти результат. Аккаунт понадобится только тогда,
@@ -185,12 +185,12 @@ export default function Home() {
             <div className="rounded-[26px] border border-white/10 bg-[#090f1d]/90 p-4 shadow-[0_24px_80px_rgba(2,6,23,0.34)] sm:p-5">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">Превью урока</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#FFD60A]">Превью урока</p>
                   <h2 className="mt-2 max-w-md text-xl font-bold leading-snug text-white sm:text-2xl">
                     Так выглядит первый шаг внутри урока
                   </h2>
                 </div>
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-sm font-bold text-cyan-200">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[#FFD60A]/20 bg-[#FFD60A]/10 text-sm font-bold text-[#FFD60A]">
                   Go
                 </div>
               </div>
@@ -199,7 +199,7 @@ export default function Home() {
                 <div className="flex items-center gap-2 border-b border-white/8 px-4 py-2.5">
                   <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
                   <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#FFD60A]" />
                   <span className="ml-2 text-xs text-slate-500">first.go</span>
                 </div>
                 <pre className="overflow-x-auto px-4 py-4 text-[13px] leading-6 text-slate-200 sm:px-5 sm:text-sm">
@@ -212,16 +212,16 @@ export default function Home() {
                     ))}
                   </code>
                 </pre>
-                <div className="border-t border-white/8 bg-emerald-300/[0.045] px-4 py-3 sm:px-5">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">Результат</p>
-                  <p className="mt-2 font-mono text-sm text-emerald-300">Привет, Go</p>
+                <div className="border-t border-white/8 bg-[#FFD60A]/[0.045] px-4 py-3 sm:px-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#FFD60A]">Результат</p>
+                  <p className="mt-2 font-mono text-sm text-[#FFD60A]">Привет, Go</p>
                 </div>
               </div>
 
               <div className="mt-4 grid gap-2">
                 {lessonPreviewSteps.map(([title, text], index) => (
                   <div key={title} className="flex gap-3 rounded-2xl border border-white/8 bg-white/[0.035] px-3 py-3">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-cyan-300/10 text-[11px] font-bold text-cyan-200">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-[#FFD60A]/10 text-[11px] font-bold text-[#FFD60A]">
                       {index + 1}
                     </span>
                     <p className="text-sm leading-6 text-slate-300">
@@ -248,7 +248,7 @@ export default function Home() {
             <div className="grid gap-3 sm:grid-cols-2">
               {firstThirtyMinutes.map((item, index) => (
                 <div key={item} className="rounded-2xl border border-white/8 bg-white/[0.035] p-4">
-                  <p className="text-[11px] font-semibold text-cyan-300">0{index + 1}</p>
+                  <p className="text-[11px] font-semibold text-[#FFD60A]">0{index + 1}</p>
                   <p className="mt-2 text-sm leading-6 text-slate-300">{item}</p>
                 </div>
               ))}
@@ -268,8 +268,8 @@ export default function Home() {
               Выбери ситуацию, а мы сразу дадим один следующий шаг:
               урок, маршрут, практику или карьерный результат.
             </p>
-            <div className="mt-7 rounded-3xl border border-cyan-300/20 bg-cyan-300/[0.06] p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">Твой следующий шаг</p>
+            <div className="mt-7 rounded-3xl border border-[#FFD60A]/20 bg-[#FFD60A]/[0.06] p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#FFD60A]">Твой следующий шаг</p>
               <p className="mt-3 text-lg font-semibold text-white">{selectedDiagnostic[0]}</p>
               <p className="mt-2 text-sm leading-6 text-slate-300">{selectedDiagnostic[1]}</p>
               <Link href={selectedDiagnostic[2]} className="btn-primary mt-5 inline-flex text-sm">
@@ -284,7 +284,7 @@ export default function Home() {
                 type="button"
                 onClick={() => setSelectedPath(index)}
                 className={`surface-card rounded-[24px] p-5 text-left transition ${
-                  selectedPath === index ? 'border-cyan-300/40 bg-cyan-300/[0.06]' : 'hover:border-cyan-300/30'
+                  selectedPath === index ? 'border-[#FFD60A]/40 bg-[#FFD60A]/[0.06]' : 'hover:border-[#FFD60A]/30'
                 }`}
               >
                 <h3 className="text-lg font-semibold text-white">{title}</h3>
@@ -379,7 +379,7 @@ export default function Home() {
                     </div>
                     <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-400">
                       <span className="inline-flex items-center gap-1.5">
-                        <span className="h-3 w-3 rounded-full bg-cyan-400" />
+                        <span className="h-3 w-3 rounded-full bg-[#FFD60A]" />
                         Go
                       </span>
                       <span>README</span>
@@ -407,9 +407,9 @@ export default function Home() {
                       key={index}
                       className={`h-3 rounded-[3px] ${
                         [8, 14, 21, 33, 45, 58, 71, 77].includes(index)
-                          ? 'bg-emerald-500'
+                          ? 'bg-[#FFD60A]'
                           : [6, 25, 46, 62, 81].includes(index)
-                            ? 'bg-emerald-700'
+                            ? 'bg-[#FFB800]'
                             : 'bg-[#161b22]'
                       }`}
                     />
@@ -417,7 +417,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <p className="mt-5 rounded-2xl border border-violet-300/20 bg-violet-300/[0.07] p-4 text-sm leading-7 text-violet-100">
+              <p className="mt-5 rounded-2xl border border-[#FFD60A]/20 bg-[#FFD60A]/[0.07] p-4 text-sm leading-7 text-[#FFF8DC]">
                 Такой GitHub-блок можно приложить к резюме: 3 учебных проекта на Go,
                 понятные README и видимая активность вместо пустого профиля.
               </p>
@@ -443,7 +443,7 @@ export default function Home() {
             <div className="mt-7 grid gap-3">
               {resumeHighlights.map((item, index) => (
                 <div key={item} className="flex gap-3 rounded-2xl border border-white/8 bg-white/[0.035] p-4">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-300/10 text-xs font-black text-emerald-200">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#FFD60A]/10 text-xs font-black text-[#FFD60A]">
                     {index + 1}
                   </span>
                   <p className="text-sm leading-6 text-slate-300">{item}</p>
@@ -493,7 +493,7 @@ export default function Home() {
                         className="object-cover"
                       />
                     </div>
-                    <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-800">
+                    <span className="rounded-full border border-[#FFD60A] bg-[#FFF8DC] px-3 py-1 text-xs font-black text-black">
                       Готов к стажировке
                     </span>
                   </div>
@@ -579,11 +579,11 @@ export default function Home() {
                 </h2>
               </div>
 
-              <div className="rounded-[28px] border border-emerald-300/25 bg-emerald-300/[0.08] p-5">
-                <p className="text-sm font-semibold text-emerald-100">Проверь за месяц, твоё ли это</p>
+              <div className="rounded-[28px] border border-[#FFD60A]/25 bg-[#FFD60A]/[0.08] p-5">
+                <p className="text-sm font-semibold text-[#FFE44D]">Проверь за месяц, твоё ли это</p>
                 <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                   <p className="text-6xl font-black tracking-[-0.06em] text-white">1000 ₽</p>
-                  <p className="text-sm font-bold text-emerald-100 sm:pb-2">
+                  <p className="text-sm font-bold text-[#FFE44D] sm:pb-2">
                     в месяц, без кредита и оплаты за год
                   </p>
                 </div>
@@ -596,14 +596,14 @@ export default function Home() {
                   <p className="text-xs font-black uppercase tracking-[0.16em] text-rose-200">Боль</p>
                   <h3 className="mt-3 min-h-14 text-xl font-black leading-tight text-white">{pain}</h3>
                   <div className="mt-4 h-px bg-white/10" />
-                  <p className="mt-4 text-xs font-black uppercase tracking-[0.16em] text-emerald-200">Godemy</p>
+                  <p className="mt-4 text-xs font-black uppercase tracking-[0.16em] text-[#FFD60A]">Godemy</p>
                   <p className="mt-2 text-sm leading-6 text-slate-300">{answer}</p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-5 rounded-[24px] border border-cyan-300/20 bg-cyan-300/[0.07] px-5 py-4">
-              <p className="text-base font-black leading-7 text-cyan-50">
+            <div className="mt-5 rounded-[24px] border border-[#FFD60A]/20 bg-[#FFD60A]/[0.07] px-5 py-4">
+              <p className="text-base font-black leading-7 text-[#FFF8DC]">
                 Смысл простой: сначала реальные задания и первые проекты, потом решение - продолжать или нет.
               </p>
             </div>
@@ -617,8 +617,8 @@ export default function Home() {
             <div>
               <div className="flex flex-wrap items-center gap-3">
                 <span className="eyebrow">Отзывы</span>
-                <span className="inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-3 py-1 text-xs font-bold text-emerald-100">
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_16px_rgba(52,211,153,0.9)]" />
+                <span className="inline-flex items-center gap-2 rounded-full border border-[#FFD60A]/20 bg-[#FFD60A]/[0.08] px-3 py-1 text-xs font-bold text-[#FFE44D]">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#FFD60A] shadow-[0_0_16px_rgba(255,214,10,0.9)]" />
                   {onlineLearners} онлайн сейчас
                 </span>
               </div>
@@ -633,7 +633,7 @@ export default function Home() {
               {testimonials.map(([person, text]) => (
                 <article key={person} className="rounded-[24px] border border-white/10 bg-white/[0.045] p-5">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-300/10 text-sm font-black text-cyan-100">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FFD60A]/10 text-sm font-black text-[#FFE44D]">
                       {person.slice(0, 1)}
                     </div>
                     <div>
@@ -665,8 +665,8 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="mt-6 rounded-[24px] border border-cyan-300/20 bg-cyan-300/[0.07] p-5">
-              <p className="text-sm leading-7 text-cyan-50">
+            <div className="mt-6 rounded-[24px] border border-[#FFD60A]/20 bg-[#FFD60A]/[0.07] p-5">
+              <p className="text-sm leading-7 text-[#FFF8DC]">
                 Рынок смотрит не только на диплом: GitHub, README, стек и понятное объяснение
                 своих проектов помогают пройти первый технический разговор спокойнее.
               </p>
@@ -692,7 +692,7 @@ export default function Home() {
             <div className="grid gap-4">
               {audienceFit.map(([title, text], index) => (
                 <div key={title} className="grid gap-4 rounded-[24px] border border-white/10 bg-white/[0.045] p-5 sm:grid-cols-[56px_1fr] sm:items-start">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-300/10 text-sm font-black text-cyan-100">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFD60A]/10 text-sm font-black text-[#FFE44D]">
                     {index + 1}
                   </span>
                   <div>

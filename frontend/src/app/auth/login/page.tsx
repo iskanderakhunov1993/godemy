@@ -71,7 +71,7 @@ export default function LoginPage() {
               placeholder="••••••••"
             />
             <div className="mt-1.5 text-right">
-              <Link href="/auth/forgot-password" className="text-xs text-violet-300 transition hover:text-white">
+              <Link href="/auth/forgot-password" className="text-xs text-[#FFD60A] transition hover:text-white">
                 Забыли пароль?
               </Link>
             </div>
@@ -94,7 +94,7 @@ export default function LoginPage() {
 
         <p className="mt-6 text-sm text-slate-400">
           Нет аккаунта?{' '}
-          <Link href="/auth/register" className="font-medium text-violet-300 transition hover:text-white">
+          <Link href="/auth/register" className="font-medium text-[#FFD60A] transition hover:text-white">
             Зарегистрироваться
           </Link>
         </p>

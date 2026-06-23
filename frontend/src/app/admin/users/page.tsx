@@ -141,20 +141,20 @@ export default function AdminUsersPage() {
         </div>
         <div className="rounded-lg border border-gray-800 bg-gray-900 p-4">
           <p className="text-xs uppercase text-gray-500">Подписка</p>
-          <p className="mt-2 text-2xl font-bold text-violet-300">{stats.subscriptions}</p>
+          <p className="mt-2 text-2xl font-bold text-[#FFD60A]">{stats.subscriptions}</p>
         </div>
         <div className="rounded-lg border border-gray-800 bg-gray-900 p-4">
           <p className="text-xs uppercase text-gray-500">Почта актуальна</p>
-          <p className="mt-2 text-2xl font-bold text-cyan-300">{stats.verified}</p>
+          <p className="mt-2 text-2xl font-bold text-[#FFD60A]">{stats.verified}</p>
         </div>
         <div className="rounded-lg border border-gray-800 bg-gray-900 p-4">
           <p className="text-xs uppercase text-gray-500">С сертификатом</p>
-          <p className="mt-2 text-2xl font-bold text-emerald-300">{stats.withCertificates}</p>
+          <p className="mt-2 text-2xl font-bold text-[#FFD60A]">{stats.withCertificates}</p>
         </div>
       </div>
 
       {error && <div className="rounded-lg border border-red-900 bg-red-950/40 p-3 text-sm text-red-300">Ошибка: {error}</div>}
-      {message && <div className="rounded-lg border border-emerald-900 bg-emerald-950/40 p-3 text-sm text-emerald-300">{message}</div>}
+      {message && <div className="rounded-lg border border-emerald-900 bg-emerald-950/40 p-3 text-sm text-[#FFD60A]">{message}</div>}
 
       <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
         <aside className="rounded-lg border border-gray-800 bg-gray-900">
@@ -181,13 +181,13 @@ export default function AdminUsersPage() {
                   <span className="shrink-0 rounded-full bg-gray-950 px-2 py-1 text-xs text-gray-400">id {user.id}</span>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2 text-xs">
-                  <span className={user.plan === 'subscription' ? 'text-violet-300' : 'text-gray-400'}>
+                  <span className={user.plan === 'subscription' ? 'text-[#FFD60A]' : 'text-gray-400'}>
                     {user.plan === 'subscription' ? 'Подписка' : 'Базовый'}
                   </span>
-                  <span className={user.emailVerified ? 'text-cyan-300' : 'text-gray-500'}>
+                  <span className={user.emailVerified ? 'text-[#FFD60A]' : 'text-gray-500'}>
                     {user.emailVerified ? 'email актуален' : 'email не отмечен'}
                   </span>
-                  <span className={user.hasCertificate ? 'text-emerald-300' : 'text-gray-500'}>
+                  <span className={user.hasCertificate ? 'text-[#FFD60A]' : 'text-gray-500'}>
                     {user.certificatesEarned} сертификатов
                   </span>
                 </div>

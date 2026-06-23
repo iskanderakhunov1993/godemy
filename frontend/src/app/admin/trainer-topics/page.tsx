@@ -71,7 +71,7 @@ export default function AdminTrainerTopicsPage() {
               key={topic.id}
               className="bg-gray-900 border border-gray-700 rounded-xl px-5 py-4 flex items-center gap-4 hover:border-gray-600 transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-violet-700/40 border border-violet-600/50 text-violet-300 text-sm flex items-center justify-center font-bold shrink-0">
+              <div className="w-8 h-8 rounded-full bg-violet-700/40 border border-violet-600/50 text-[#FFD60A] text-sm flex items-center justify-center font-bold shrink-0">
                 {topic.order || topic.id}
               </div>
               <div className="flex-1 min-w-0">
@@ -97,7 +97,7 @@ export default function AdminTrainerTopicsPage() {
                 </Link>
                 <Link
                   href={`/admin/trainer-topics/${topic.id}`}
-                  className="text-cyan-400 hover:text-cyan-300 text-sm transition-colors"
+                  className="text-[#FFD60A] hover:text-[#FFD60A] text-sm transition-colors"
                 >
                   Изменить
                 </Link>

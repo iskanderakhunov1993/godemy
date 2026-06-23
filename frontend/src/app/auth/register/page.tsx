@@ -36,9 +36,9 @@ export default function RegisterPage() {
         </p>
 
         {success ? (
-          <div className="mt-8 rounded-3xl border border-emerald-300/20 bg-emerald-300/10 p-5">
+          <div className="mt-8 rounded-3xl border border-[#FFD60A]/20 bg-[#FFD60A]/10 p-5">
             <p className="text-lg font-semibold text-white">Аккаунт создан</p>
-            <p className="mt-2 text-sm leading-6 text-emerald-100">{success}</p>
+            <p className="mt-2 text-sm leading-6 text-[#FFE44D]">{success}</p>
             <p className="mt-3 text-sm leading-6 text-slate-400">
               Используй этот email и пароль на странице входа.
             </p>
@@ -104,7 +104,7 @@ export default function RegisterPage() {
         {!success && (
           <p className="mt-6 text-sm text-slate-400">
             Уже есть аккаунт?{' '}
-            <Link href="/auth/login" className="font-medium text-violet-300 transition hover:text-white">
+            <Link href="/auth/login" className="font-medium text-[#FFD60A] transition hover:text-white">
               Войти
             </Link>
           </p>

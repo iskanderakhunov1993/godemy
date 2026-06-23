@@ -41,7 +41,7 @@ function getCertificateState(cert: CertificateStatus) {
   if (!cert.previewAllowed) {
     return {
       label: 'Нужно ФИО',
-      tone: 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/20',
+      tone: 'bg-cyan-500/15 text-[#FFD60A] border border-cyan-500/20',
       panelTone: 'border-cyan-500/30 bg-[radial-gradient(circle_at_top_right,rgba(6,182,212,0.14),rgba(17,24,39,0.96)_42%)]',
       summary: 'Сертификат уже заработан, но нужно заполнить ФИО для выпуска.',
     }
@@ -58,7 +58,7 @@ function getCertificateState(cert: CertificateStatus) {
 
   return {
     label: 'Готов',
-    tone: 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20',
+    tone: 'bg-[#FFD60A]/15 text-[#FFD60A] border border-emerald-500/20',
     panelTone: 'border-violet-500/30 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.18),rgba(17,24,39,0.96)_42%)] shadow-[0_16px_50px_rgba(76,29,149,0.18)]',
     summary: 'Сертификат полностью доступен: просмотр, PDF и отправка на почту.',
   }
@@ -161,25 +161,25 @@ function CertificatesContent() {
         </div>
 
         <div className="mt-5 grid gap-3 md:grid-cols-3">
-          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4">
-            <p className="text-xs uppercase tracking-[0.18em] text-emerald-300">Полностью доступны</p>
+          <div className="rounded-2xl border border-emerald-500/20 bg-[#FFD60A]/10 p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-[#FFD60A]">Полностью доступны</p>
             <p className="mt-2 text-3xl font-black text-white">{readyToDownloadCount}</p>
-            <p className="mt-2 text-sm text-emerald-100/80">Можно скачать PDF и выслать на почту.</p>
+            <p className="mt-2 text-sm text-[#FFE44D]/80">Можно скачать PDF и выслать на почту.</p>
           </div>
           <div className="rounded-2xl border border-violet-500/20 bg-violet-500/10 p-4">
-            <p className="text-xs uppercase tracking-[0.18em] text-violet-300">Уже заработаны</p>
+            <p className="text-xs uppercase tracking-[0.18em] text-[#FFD60A]">Уже заработаны</p>
             <p className="mt-2 text-3xl font-black text-white">{earnedCount}</p>
-            <p className="mt-2 text-sm text-violet-100/80">Сертификаты, которые уже можно выпустить или открыть.</p>
+            <p className="mt-2 text-sm text-[#FFF8DC]/80">Сертификаты, которые уже можно выпустить или открыть.</p>
           </div>
           <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-4">
-            <p className="text-xs uppercase tracking-[0.18em] text-cyan-300">Требуют ФИО</p>
+            <p className="text-xs uppercase tracking-[0.18em] text-[#FFD60A]">Требуют ФИО</p>
             <p className="mt-2 text-3xl font-black text-white">{needsFullNameCount}</p>
-            <p className="mt-2 text-sm text-cyan-100/80">Заполни имя и фамилию, чтобы выпустить сертификат.</p>
+            <p className="mt-2 text-sm text-[#FFE44D]/80">Заполни имя и фамилию, чтобы выпустить сертификат.</p>
           </div>
         </div>
 
         <div className="mt-5 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-4">
-          <p className="text-sm text-cyan-200 font-semibold mb-2">ФИО для сертификата</p>
+          <p className="text-sm text-[#FFD60A] font-semibold mb-2">ФИО для сертификата</p>
           <div className="flex flex-col sm:flex-row gap-2">
             <input
               id="certificate-full-name"
@@ -191,7 +191,7 @@ function CertificatesContent() {
             <button
               onClick={saveFullName}
               disabled={savingName || fullNameDraft.trim().length < 5}
-              className="rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold px-4 py-2.5 text-sm"
+              className="rounded-xl bg-cyan-500 hover:bg-[#FFD60A] disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold px-4 py-2.5 text-sm"
             >
               {savingName ? 'Сохраняем...' : 'Сохранить ФИО'}
             </button>
@@ -202,7 +202,7 @@ function CertificatesContent() {
         </div>
 
         {flashMessage && (
-          <div className="mt-4 rounded-2xl border border-violet-500/20 bg-violet-500/10 px-4 py-3 text-sm text-violet-100">
+          <div className="mt-4 rounded-2xl border border-violet-500/20 bg-violet-500/10 px-4 py-3 text-sm text-[#FFF8DC]">
             {flashMessage}
           </div>
         )}
@@ -220,7 +220,7 @@ function CertificatesContent() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="mb-3 text-3xl">{certificateEmoji(cert.id)}</div>
-                <p className="text-xs uppercase tracking-[0.2em] text-violet-300">{cert.subtitle}</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#FFD60A]">{cert.subtitle}</p>
                 <h2 className="mt-2 text-2xl font-black text-white">{cert.title}</h2>
               </div>
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${state.tone}`}>
@@ -238,7 +238,7 @@ function CertificatesContent() {
               </div>
               <div className="mt-2 h-2 rounded-full bg-gray-800 overflow-hidden">
                 <div
-                  className={`h-full rounded-full transition-all ${cert.earned ? 'bg-emerald-400' : 'bg-violet-400'}`}
+                  className={`h-full rounded-full transition-all ${cert.earned ? 'bg-[#FFD60A]' : 'bg-violet-400'}`}
                   style={{ width: `${cert.total > 0 ? (cert.progress / cert.total) * 100 : 0}%` }}
                 />
               </div>
@@ -276,14 +276,14 @@ function CertificatesContent() {
               ) : cert.earned && cert.fullNameRequired ? (
                 <button
                   onClick={() => document.getElementById('certificate-full-name')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-bold px-4 py-3 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-cyan-500 hover:bg-[#FFD60A] text-black font-bold px-4 py-3 transition-colors"
                 >
                   Заполнить ФИО
                 </button>
               ) : (
                 <Link
                   href={cert.ctaHref}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-semibold px-4 py-3 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/10 hover:bg-cyan-500/20 text-[#FFD60A] font-semibold px-4 py-3 transition-colors"
                 >
                   {cert.ctaLabel}
                 </Link>

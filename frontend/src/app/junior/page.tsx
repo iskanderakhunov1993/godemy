@@ -13,7 +13,7 @@ export default function JuniorModulePage() {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
       <div className="mb-8">
-        <div className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 mb-4">
+        <div className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-cyan-500/10 text-[#FFD60A] border border-cyan-500/20 mb-4">
           Bootcamp Junior
         </div>
         <h1 className="text-4xl font-bold text-white mb-3">Junior Module</h1>
@@ -27,31 +27,31 @@ export default function JuniorModulePage() {
           href="/junior/guide"
           className="card hover:bg-gray-800 transition-colors border-cyan-500/20"
         >
-          <div className="text-cyan-400 text-sm mb-2">Junior • Курс</div>
+          <div className="text-[#FFD60A] text-sm mb-2">Junior • Курс</div>
           <h2 className="text-2xl font-semibold text-white mb-2">Курс Junior</h2>
           <p className="text-gray-400 mb-4">
             Пошаговые уроки для уверенного старта в Go на уровне junior-разработчика.
           </p>
-          <span className="text-cyan-400">Открыть курс →</span>
+          <span className="text-[#FFD60A]">Открыть курс →</span>
         </Link>
 
         <Link
           href="/junior/trainer"
           className="card hover:bg-gray-800 transition-colors border-cyan-500/20"
         >
-          <div className="text-cyan-400 text-sm mb-2">Junior • Тренажёр</div>
+          <div className="text-[#FFD60A] text-sm mb-2">Junior • Тренажёр</div>
           <h2 className="text-2xl font-semibold text-white mb-2">Тренажёр Junior</h2>
           <p className="text-gray-400 mb-4">
             Практические задачи уровня junior с автопроверкой и подсказками.
           </p>
-          <span className="text-cyan-400">Открыть тренажёр →</span>
+          <span className="text-[#FFD60A]">Открыть тренажёр →</span>
         </Link>
       </div>
 
       <div className="mt-8 card">
         <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
           <h3 className="text-xl font-semibold text-white">Программа Bootcamp Junior</h3>
-          <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#FFD60A]/10 text-[#FFD60A] border border-emerald-500/20">
             Уровень 1 из 3
           </span>
         </div>
@@ -65,13 +65,13 @@ export default function JuniorModulePage() {
             <li key={s.label} className={`flex items-center gap-3 ${s.free ? 'text-gray-300' : 'text-gray-600'}`}>
               <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 ${
                 s.free
-                  ? 'bg-cyan-500/20 border border-cyan-500/30 text-cyan-400'
+                  ? 'bg-cyan-500/20 border border-cyan-500/30 text-[#FFD60A]'
                   : 'bg-gray-800 border border-gray-700 text-gray-600'
               }`}>
                 {s.free ? i + 1 : '🔒'}
               </span>
               <span className="flex-1">{s.label}</span>
-              <span className="text-xs text-violet-300 font-semibold">Godemy Pro</span>
+              <span className="text-xs text-[#FFD60A] font-semibold">Godemy Pro</span>
             </li>
           ))}
         </ul>

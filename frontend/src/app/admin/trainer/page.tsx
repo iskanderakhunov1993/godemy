@@ -42,11 +42,11 @@ export default function AdminTrainerPage() {
             className="group rounded-xl border border-gray-700 bg-gray-900 hover:bg-gray-800 hover:border-cyan-500/60 p-6 transition-all"
           >
             <div className="text-4xl mb-3">{module.icon}</div>
-            <h2 className="text-lg font-semibold text-white group-hover:text-cyan-300 transition-colors mb-2">
+            <h2 className="text-lg font-semibold text-white group-hover:text-[#FFD60A] transition-colors mb-2">
               {module.title}
             </h2>
             <p className="text-sm text-gray-400 mb-4">{module.description}</p>
-            <span className="text-cyan-400 text-sm font-medium group-hover:translate-x-1 inline-block transition-transform">
+            <span className="text-[#FFD60A] text-sm font-medium group-hover:translate-x-1 inline-block transition-transform">
               Открыть →
             </span>
           </Link>

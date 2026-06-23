@@ -42,7 +42,7 @@ function OAuthCallbackContent({ providerLabel, exchange, successRedirect = '/gui
       <div className="min-h-[calc(100vh-56px)] flex items-center justify-center px-4">
         <div className="text-center">
           <p className="text-red-400 mb-4">{error}</p>
-          <a href={loginHref} className="text-cyan-400 hover:text-cyan-300 text-sm">
+          <a href={loginHref} className="text-[#FFD60A] hover:text-[#FFD60A] text-sm">
             Вернуться ко входу
           </a>
         </div>

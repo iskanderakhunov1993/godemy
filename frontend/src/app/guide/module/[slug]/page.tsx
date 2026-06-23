@@ -46,7 +46,7 @@ export default function ModulePage() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-16 text-center">
         <p className="text-gray-400">Модуль не найден или уроки ещё не добавлены.</p>
-        <Link href="/guide" className="mt-4 inline-block text-cyan-400 hover:underline">← Назад к курсу</Link>
+        <Link href="/guide" className="mt-4 inline-block text-[#FFD60A] hover:underline">← Назад к курсу</Link>
       </div>
     )
   }
@@ -76,23 +76,23 @@ export default function ModulePage() {
         {moduleMeta && (
           <div className="mt-5 grid gap-3 rounded-3xl border border-white/10 bg-white/[0.04] p-5 md:grid-cols-2">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.24em] text-cyan-300/80">{moduleMeta.sprint}</p>
+              <p className="text-[11px] uppercase tracking-[0.24em] text-[#FFD60A]/80">{moduleMeta.sprint}</p>
               <p className="mt-2 text-sm leading-6 text-gray-300">{moduleMeta.subtitle}</p>
             </div>
             <div className="grid gap-2 text-sm text-gray-300">
-              <p><span className="text-gray-500">Раздел:</span> <span className="font-mono text-cyan-300">{moduleMeta.sprint}</span></p>
+              <p><span className="text-gray-500">Раздел:</span> <span className="font-mono text-[#FFD60A]">{moduleMeta.sprint}</span></p>
               <p><span className="text-gray-500">Как проходить:</span> уроки и практика по порядку</p>
               <p><span className="text-gray-500">Результат:</span> завершить уроки раздела</p>
             </div>
           </div>
         )}
         <div className="mt-5 rounded-2xl border border-gray-800 bg-gray-900 p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.24em] text-violet-300">Как учиться в этом разделе</p>
+          <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#FFD60A]">Как учиться в этом разделе</p>
           <p className="mt-2 text-sm leading-6 text-gray-300">
             Сначала пройди уроки по порядку, потом закрепи узкие навыки в практике.
             Так ты получишь понятный контекст и короткие повторы без перегруза.
           </p>
-          <Link href="/trainer" className="mt-3 inline-flex text-sm font-semibold text-violet-300 hover:text-violet-200">
+          <Link href="/trainer" className="mt-3 inline-flex text-sm font-semibold text-[#FFD60A] hover:text-violet-200">
             Открыть практику →
           </Link>
         </div>
@@ -112,10 +112,10 @@ export default function ModulePage() {
               <li key={topic.name}>
                 <Link
                   href={`/guide/topic/${encodeURIComponent(topic.name)}?module=${encodeURIComponent(moduleName)}`}
-                  className="group block rounded-3xl border border-gray-800 bg-gray-900 px-6 py-5 transition-all hover:border-cyan-300/25 hover:bg-gray-800"
+                  className="group block rounded-3xl border border-gray-800 bg-gray-900 px-6 py-5 transition-all hover:border-[#FFD60A]/25 hover:bg-gray-800"
                 >
                   <div className="flex items-start gap-4">
-                    <div className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl text-sm font-bold ${allDone ? 'bg-emerald-500/20 text-emerald-400' : 'bg-gray-800 text-gray-400 group-hover:bg-gray-700'}`}>
+                    <div className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl text-sm font-bold ${allDone ? 'bg-[#FFD60A]/20 text-[#FFD60A]' : 'bg-gray-800 text-gray-400 group-hover:bg-gray-700'}`}>
                       {allDone ? '✓' : idx + 1}
                     </div>
                     <div className="min-w-0 flex-1">
@@ -132,7 +132,7 @@ export default function ModulePage() {
                   <div className="mt-5 grid gap-2 border-t border-white/5 pt-4 sm:grid-cols-2">
                     {topic.lessons.slice(0, 2).map((lesson, lessonIndex) => (
                       <div key={lesson.slug} className="flex items-center gap-2 text-xs text-gray-500">
-                        <span className="font-mono text-cyan-300/70">{idx + 1}.{lessonIndex + 1}</span>
+                        <span className="font-mono text-[#FFD60A]/70">{idx + 1}.{lessonIndex + 1}</span>
                         <span className="truncate">{lesson.title}</span>
                       </div>
                     ))}

@@ -322,12 +322,12 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                     {practiceRail.length} упражнения
                   </span>
                   {completed && (
-                    <span className="rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                    <span className="rounded-full border border-[#FFD60A] bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
                       Тема пройдена
                     </span>
                   )}
                   {builtInRelatedSprint && (
-                    <span className="rounded-full border border-cyan-300 bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700">
+                    <span className="rounded-full border border-[#FFD60A] bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700">
                       {builtInRelatedSprint}
                     </span>
                   )}
@@ -438,7 +438,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
         <div className="border-b border-gray-800 px-6 py-5 sm:px-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.26em] text-cyan-300">Практика</p>
+              <p className="text-xs font-bold uppercase tracking-[0.26em] text-[#FFD60A]">Практика</p>
               <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">{activeExercise?.title || 'Практика по концепту'}</h2>
               <p className="mt-3 max-w-3xl text-sm leading-7 text-gray-400">
                 Сначала попробуй сам, потом запусти код и только после этого отправь решение на проверку.
@@ -447,7 +447,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
             {nextTopic && (
               <Link
                 href={`/trainer/topic/${nextTopic.slug}`}
-                className="rounded-2xl border border-violet-500/30 bg-violet-500/10 px-4 py-2.5 text-sm font-semibold text-violet-200 transition hover:border-violet-400/50 hover:bg-violet-500/15"
+                className="rounded-2xl border border-violet-500/30 bg-violet-500/10 px-4 py-2.5 text-sm font-semibold text-violet-200 transition hover:border-[#FFD60A]/50 hover:bg-violet-500/15"
               >
                 Следующая тема →
               </Link>
@@ -516,7 +516,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                   <button
                     onClick={() => void runCode()}
                     disabled={running}
-                    className="rounded-xl border border-violet-500/40 px-4 py-2 text-sm font-bold text-violet-300 transition-colors hover:bg-violet-500/10 disabled:opacity-50"
+                    className="rounded-xl border border-violet-500/40 px-4 py-2 text-sm font-bold text-[#FFD60A] transition-colors hover:bg-violet-500/10 disabled:opacity-50"
                   >
                     {running ? 'Запуск…' : '▶ Запустить'}
                   </button>
@@ -524,7 +524,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                     <button
                       onClick={() => void submitCode()}
                       disabled={submitting}
-                      className="rounded-xl bg-cyan-400 px-4 py-2 text-sm font-bold text-gray-950 transition-colors hover:bg-cyan-300 disabled:opacity-50"
+                      className="rounded-xl bg-[#FFD60A] px-4 py-2 text-sm font-bold text-gray-950 transition-colors hover:bg-[#FFD60A] disabled:opacity-50"
                     >
                       {submitting ? 'Проверяем…' : 'Проверить решение'}
                     </button>
@@ -535,7 +535,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                   result?.error
                     ? 'bg-red-950/20 text-red-200'
                     : result?.passed
-                      ? 'bg-emerald-950/20 text-emerald-200'
+                      ? 'bg-emerald-950/20 text-[#FFD60A]'
                       : 'bg-slate-950 text-gray-500'
                 }`}>
                   <p className="mb-2 font-sans text-xs font-bold uppercase tracking-widest text-gray-600">Результат</p>
@@ -544,7 +544,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
               </div>
             ) : (
               <div className="rounded-[28px] border border-gray-800 bg-slate-950 p-6">
-                <p className="text-xs font-bold uppercase tracking-widest text-violet-300">Работа локально</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-[#FFD60A]">Работа локально</p>
                 <h3 className="mt-3 text-2xl font-black text-white">Повтори упражнение у себя на компьютере</h3>
                 <ol className="mt-6 space-y-5">
                   <LocalStep number="1" title="Создай папку проекта">
@@ -584,7 +584,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
 
             {builtInTopic?.expectedOutput && (
               <InfoPanel title="Ожидаемый результат">
-                <code className="block rounded-xl border border-gray-800 bg-slate-950 px-3 py-3 font-mono text-sm text-cyan-200">
+                <code className="block rounded-xl border border-gray-800 bg-slate-950 px-3 py-3 font-mono text-sm text-[#FFD60A]">
                   {builtInTopic.expectedOutput}
                 </code>
               </InfoPanel>
@@ -595,7 +595,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                 <ul className="space-y-2 text-sm leading-6 text-gray-300">
                   {hints.slice(0, 3).map((hint) => (
                     <li key={hint} className="flex gap-3">
-                      <span className="mt-1 text-cyan-300">•</span>
+                      <span className="mt-1 text-[#FFD60A]">•</span>
                       <span>{hint}</span>
                     </li>
                   ))}
@@ -687,12 +687,12 @@ function LocalStep({
 }) {
   return (
     <li className="flex gap-3">
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-violet-500/10 text-xs font-bold text-violet-300">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-violet-500/10 text-xs font-bold text-[#FFD60A]">
         {number}
       </span>
       <div className="min-w-0">
         <p className="text-sm font-semibold text-white">{title}</p>
-        <div className="mt-2 overflow-x-auto rounded-xl bg-slate-900 px-3 py-2 font-mono text-xs text-cyan-200">
+        <div className="mt-2 overflow-x-auto rounded-xl bg-slate-900 px-3 py-2 font-mono text-xs text-[#FFD60A]">
           {children}
         </div>
       </div>

@@ -38,18 +38,18 @@ function SprintNode({
         aria-current={state === 'active' ? 'step' : undefined}
         className={`group grid gap-4 rounded-2xl border p-4 transition duration-200 sm:grid-cols-[auto_1fr_auto] sm:items-center ${
           state === 'active'
-            ? 'border-cyan-300/40 bg-cyan-300/[0.08]'
+            ? 'border-[#FFD60A]/40 bg-[#FFD60A]/[0.08]'
             : state === 'done'
-              ? 'border-emerald-400/20 bg-emerald-400/[0.05] hover:border-emerald-300/35'
+              ? 'border-emerald-400/20 bg-[#FFD60A]/[0.05] hover:border-[#FFD60A]/35'
               : 'border-white/8 bg-white/[0.025] hover:border-white/16 hover:bg-white/[0.045]'
         }`}
       >
         <span
           className={`flex h-10 w-10 items-center justify-center rounded-2xl border font-mono text-xs font-bold ${
             state === 'active'
-              ? 'border-cyan-300/40 bg-cyan-300 text-slate-950'
+              ? 'border-[#FFD60A]/40 bg-[#FFD60A] text-slate-950'
               : state === 'done'
-                ? 'border-emerald-400/30 bg-emerald-400/15 text-emerald-300'
+                ? 'border-emerald-400/30 bg-[#FFD60A]/15 text-[#FFD60A]'
                 : 'border-white/10 bg-white/5 text-gray-500'
           }`}
         >
@@ -64,9 +64,9 @@ function SprintNode({
             <span
               className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${
                 state === 'active'
-                  ? 'bg-cyan-300/15 text-cyan-200'
+                  ? 'bg-[#FFD60A]/15 text-[#FFD60A]'
                   : state === 'done'
-                    ? 'bg-emerald-400/10 text-emerald-300'
+                    ? 'bg-[#FFD60A]/10 text-[#FFD60A]'
                     : 'bg-white/5 text-gray-500'
               }`}
             >
@@ -83,7 +83,7 @@ function SprintNode({
           </div>
           <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/8">
             <div
-              className={`h-full rounded-full ${state === 'done' ? 'bg-emerald-400' : 'bg-cyan-300'}`}
+              className={`h-full rounded-full ${state === 'done' ? 'bg-[#FFD60A]' : 'bg-[#FFD60A]'}`}
               style={{ width: `${lessonCount ? (completedCount / lessonCount) * 100 : 0}%` }}
             />
           </div>
@@ -148,15 +148,15 @@ export default function GuidePage() {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
         <header className="rounded-[28px] border border-white/10 bg-white/[0.025] p-6 sm:p-8">
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
+            <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#FFD60A]">
+              <span className="h-2 w-2 rounded-full bg-[#FFD60A] shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
               Бесплатный курс · Go с нуля
             </div>
           </div>
 
           <div className="mt-7 grid gap-7 lg:grid-cols-[1fr_0.34fr] lg:items-end">
             <div>
-              <p className="text-sm font-medium text-cyan-300">Следующий урок</p>
+              <p className="text-sm font-medium text-[#FFD60A]">Следующий урок</p>
               <h1 className="mt-3 max-w-3xl text-3xl font-semibold leading-tight text-white sm:text-5xl">
                 {currentLesson.title}
               </h1>
@@ -167,7 +167,7 @@ export default function GuidePage() {
               <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Link
                   href={`/guide/${currentLesson.slug}?module=${encodeURIComponent(currentLesson.module)}&topic=${encodeURIComponent(currentLesson.category)}`}
-                  className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-cyan-300 px-6 text-sm font-bold text-slate-950 shadow-[0_12px_35px_rgba(34,211,238,0.18)] hover:-translate-y-0.5 hover:bg-cyan-200"
+                  className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-[#FFD60A] px-6 text-sm font-bold text-slate-950 shadow-[0_12px_35px_rgba(34,211,238,0.18)] hover:-translate-y-0.5 hover:bg-cyan-200"
                 >
                   Начать урок →
                 </Link>
@@ -226,8 +226,8 @@ export default function GuidePage() {
             </ol>
           </div>
 
-          <aside className="rounded-[28px] border border-cyan-300/12 bg-[linear-gradient(145deg,rgba(16,185,129,0.08),rgba(34,211,238,0.06))] p-5 sm:p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300">Результат</p>
+          <aside className="rounded-[28px] border border-[#FFD60A]/12 bg-[linear-gradient(145deg,rgba(16,185,129,0.08),rgba(34,211,238,0.06))] p-5 sm:p-6">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#FFD60A]">Результат</p>
             <h2 className="mt-3 text-xl font-semibold text-white">После курса</h2>
             <div className="mt-5 space-y-3">
               {courseModules.slice(1, 4).map((module) => {
@@ -241,7 +241,7 @@ export default function GuidePage() {
                     className="flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-black/15 px-4 py-3 text-sm transition hover:border-white/16"
                   >
                     <span className="text-gray-300">{module.project}</span>
-                    <span className={done ? 'text-emerald-300' : 'text-gray-600'}>{done ? '✓' : '○'}</span>
+                    <span className={done ? 'text-[#FFD60A]' : 'text-gray-600'}>{done ? '✓' : '○'}</span>
                   </Link>
                 )
               })}

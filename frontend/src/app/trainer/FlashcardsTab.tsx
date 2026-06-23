@@ -194,7 +194,7 @@ export default function FlashcardsTab() {
       <div className="max-w-xl mx-auto py-12 text-center">
         <div className="text-5xl mb-6">🎉</div>
         <h2 className="text-2xl font-bold text-white mb-3">Раунд завершён!</h2>
-        <p className="text-gray-400 mb-8">Выучено карточек: <span className="text-emerald-400 font-bold">{learnedCount}</span> из {ALL_CARDS.length}</p>
+        <p className="text-gray-400 mb-8">Выучено карточек: <span className="text-[#FFD60A] font-bold">{learnedCount}</span> из {ALL_CARDS.length}</p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           {learnedCount < ALL_CARDS.length && (
             <button
@@ -228,7 +228,7 @@ export default function FlashcardsTab() {
       <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
         <span>Вопрос {cardNum} из {ALL_CARDS.length}</span>
         <div className="flex items-center gap-4">
-          {learnedCount > 0 && <span className="text-emerald-400">✓ {learnedCount} выучено</span>}
+          {learnedCount > 0 && <span className="text-[#FFD60A]">✓ {learnedCount} выучено</span>}
           {againCount > 0 && <span className="text-amber-400">↺ {againCount} повторить</span>}
           <span>Осталось: {remaining}</span>
         </div>
@@ -277,7 +277,7 @@ export default function FlashcardsTab() {
                 </button>
                 <button
                   onClick={handleLearned}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 hover:border-emerald-500 transition-colors font-medium"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#FFD60A]/10 border border-emerald-500/30 text-[#FFD60A] hover:bg-[#FFD60A]/20 hover:border-emerald-500 transition-colors font-medium"
                 >
                   <span className="text-lg">✓</span>
                   Отметить выученным

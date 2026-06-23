@@ -245,9 +245,9 @@ function Sprint17InterviewContent() {
   return (
     <section className="space-y-6">
       <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-5">
-        <div className="text-xs font-semibold uppercase tracking-wide text-cyan-300 mb-2">Sprint 1.7</div>
+        <div className="text-xs font-semibold uppercase tracking-wide text-[#FFD60A] mb-2">Sprint 1.7</div>
         <h2 className="text-2xl font-bold text-white mb-3">Вопросы с собеседований</h2>
-        <p className="text-sm text-cyan-100/90 leading-relaxed">
+        <p className="text-sm text-[#FFE44D]/90 leading-relaxed">
           Здесь не нужно зубрить длинные ответы. Работай по схеме интервального повторения: короткие подходы,
           частое возвращение к сложным вопросам, пересказ своими словами.
         </p>
@@ -275,7 +275,7 @@ function Sprint17InterviewContent() {
           {['handler', 'route -> handler', 'GET vs POST', 'status code', 'JSON контракт'].map((item) => (
             <span
               key={item}
-              className="inline-flex items-center rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-300"
+              className="inline-flex items-center rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-[#FFD60A]"
             >
               {item}
             </span>
@@ -288,7 +288,7 @@ function Sprint17InterviewContent() {
           <div>
             <h3 className="text-lg font-semibold text-white">Топ-15 вопросов</h3>
             <p className="text-sm text-gray-400 mt-1">
-              Прогресс раскрытия: <span className="text-cyan-400 font-semibold">{openedCount}/{totalQuestions}</span>
+              Прогресс раскрытия: <span className="text-[#FFD60A] font-semibold">{openedCount}/{totalQuestions}</span>
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -302,7 +302,7 @@ function Sprint17InterviewContent() {
             ) : (
               <button
                 onClick={openAllQuestions}
-                className="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/20 transition-colors"
+                className="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-semibold text-[#FFD60A] hover:bg-cyan-500/20 transition-colors"
               >
                 Раскрыть все
               </button>
@@ -331,14 +331,14 @@ function Sprint17InterviewContent() {
               className="w-full px-5 py-4 text-left text-base font-semibold text-white flex items-center justify-between gap-4"
             >
               <span>{item.question}</span>
-              <span className={`text-cyan-400 transition-transform duration-200 ${isOpen ? 'rotate-45' : ''}`}>+</span>
+              <span className={`text-[#FFD60A] transition-transform duration-200 ${isOpen ? 'rotate-45' : ''}`}>+</span>
             </button>
             {isOpen && (
               <div className="px-5 pb-5 pt-1 border-t border-gray-800/80">
                 <ul className="space-y-2">
                   {item.answers.map((answer) => (
                     <li key={answer} className="text-sm text-gray-300 leading-relaxed flex items-start gap-2">
-                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-cyan-400 flex-shrink-0" />
+                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#FFD60A] flex-shrink-0" />
                       <span>{answer}</span>
                     </li>
                   ))}
@@ -355,13 +355,13 @@ function Sprint17InterviewContent() {
           <div>
             <h3 className="text-lg font-semibold text-white">Мини-квиз: 5 случайных вопросов</h3>
             <p className="text-sm text-gray-400 mt-1">
-              Самооценка: <span className="text-cyan-400 font-semibold">{answeredCount}/5</span>,
-              уверенно ответил: <span className="text-emerald-400 font-semibold"> {confidentCount}</span>
+              Самооценка: <span className="text-[#FFD60A] font-semibold">{answeredCount}/5</span>,
+              уверенно ответил: <span className="text-[#FFD60A] font-semibold"> {confidentCount}</span>
             </p>
           </div>
           <button
             onClick={regenerateQuiz}
-            className="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/20 transition-colors"
+            className="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-semibold text-[#FFD60A] hover:bg-cyan-500/20 transition-colors"
           >
             Новый набор
           </button>
@@ -387,7 +387,7 @@ function Sprint17InterviewContent() {
                   </button>
                   <button
                     onClick={() => markQuiz(item.question, 'ok')}
-                    className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${mark === 'ok' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'border border-gray-700 bg-gray-900 text-gray-300 hover:text-white'}`}
+                    className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${mark === 'ok' ? 'bg-[#FFD60A]/20 text-[#FFD60A] border border-emerald-500/30' : 'border border-gray-700 bg-gray-900 text-gray-300 hover:text-white'}`}
                   >
                     Ответил уверенно
                   </button>
@@ -403,7 +403,7 @@ function Sprint17InterviewContent() {
                   <ul className="space-y-2">
                     {item.answers.map((answer) => (
                       <li key={answer} className="text-sm text-gray-300 leading-relaxed flex items-start gap-2">
-                        <span className="mt-1 h-1.5 w-1.5 rounded-full bg-cyan-400 flex-shrink-0" />
+                        <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#FFD60A] flex-shrink-0" />
                         <span>{answer}</span>
                       </li>
                     ))}
@@ -469,9 +469,9 @@ export default function JuniorLessonPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-        <Link href="/junior" className="hover:text-cyan-400 transition-colors">Junior</Link>
+        <Link href="/junior" className="hover:text-[#FFD60A] transition-colors">Junior</Link>
         <span>/</span>
-        <Link href="/junior/guide" className="hover:text-cyan-400 transition-colors">Курс</Link>
+        <Link href="/junior/guide" className="hover:text-[#FFD60A] transition-colors">Курс</Link>
         <span>/</span>
         <span className="text-gray-300">{lesson.title}</span>
       </div>
@@ -492,9 +492,9 @@ export default function JuniorLessonPage() {
                         <Link
                           key={l.slug}
                           href={`/junior/guide/${l.slug}`}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${l.slug === slug ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'text-gray-400 hover:text-white hover:bg-gray-800'}`}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${l.slug === slug ? 'bg-cyan-500/10 text-[#FFD60A] border border-cyan-500/20' : 'text-gray-400 hover:text-white hover:bg-gray-800'}`}
                         >
-                          <div className={`w-4 h-4 rounded-full border flex-shrink-0 flex items-center justify-center ${done ? 'bg-emerald-500 border-emerald-500' : 'border-gray-600'}`}>
+                          <div className={`w-4 h-4 rounded-full border flex-shrink-0 flex items-center justify-center ${done ? 'bg-[#FFD60A] border-emerald-500' : 'border-gray-600'}`}>
                             {done && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                           </div>
                           <span className="truncate">{l.title}</span>
@@ -521,14 +521,14 @@ export default function JuniorLessonPage() {
           <div className="mt-10 pt-6 border-t border-gray-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             {token ? (
               completed ? (
-                <div className="flex items-center gap-2 text-emerald-400">Урок пройден</div>
+                <div className="flex items-center gap-2 text-[#FFD60A]">Урок пройден</div>
               ) : (
                 <button onClick={markComplete} className="btn-primary">
                   Отметить как пройденный ✓
                 </button>
               )
             ) : (
-              <Link href="/auth/login" className="text-sm text-gray-400 hover:text-cyan-400 transition-colors">
+              <Link href="/auth/login" className="text-sm text-gray-400 hover:text-[#FFD60A] transition-colors">
                 Войди чтобы сохранить прогресс →
               </Link>
             )}
