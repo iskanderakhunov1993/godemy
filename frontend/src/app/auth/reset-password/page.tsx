@@ -64,7 +64,7 @@ function ResetPasswordContent() {
               onChange={(e) => setNewPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-gray-100 focus:outline-none focus:border-cyan-500"
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-gray-100 focus:outline-none focus:border-[#FFD60A]"
               placeholder="минимум 6 символов"
             />
           </div>
@@ -77,7 +77,7 @@ function ResetPasswordContent() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-gray-100 focus:outline-none focus:border-cyan-500"
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-gray-100 focus:outline-none focus:border-[#FFD60A]"
               placeholder="повтори пароль"
             />
           </div>
@@ -89,7 +89,7 @@ function ResetPasswordContent() {
           )}
 
           {success && (
-            <div className="text-sm text-[#FFD60A] bg-[#FFD60A]/10 border border-emerald-500/20 rounded-lg px-3 py-2">
+            <div className="text-sm text-[#FFD60A] bg-[#FFD60A]/10 border border-[#FFD60A]/20 rounded-lg px-3 py-2">
               {success}
             </div>
           )}

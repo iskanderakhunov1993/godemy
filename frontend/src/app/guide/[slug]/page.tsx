@@ -173,9 +173,9 @@ function LessonContent() {
                   <Link
                     key={l.slug}
                     href={`/guide/${l.slug}${querySuffix}`}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${l.slug === slug ? 'bg-cyan-500/10 text-[#FFD60A] border border-cyan-500/20' : 'text-gray-400 hover:text-white hover:bg-gray-800'}`}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${l.slug === slug ? 'bg-[#FFD60A]/10 text-[#FFD60A] border border-[#FFD60A]/20' : 'text-gray-400 hover:text-white hover:bg-gray-800'}`}
                   >
-                    <div className={`w-4 h-4 rounded-full border flex-shrink-0 flex items-center justify-center ${done ? 'bg-[#FFD60A] border-emerald-500' : 'border-gray-600'}`}>
+                    <div className={`w-4 h-4 rounded-full border flex-shrink-0 flex items-center justify-center ${done ? 'bg-[#FFD60A] border-[#FFD60A]' : 'border-gray-600'}`}>
                       {done && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                     </div>
                     <span className="truncate">{l.title}</span>
@@ -200,7 +200,7 @@ function LessonContent() {
           </div>
 
           {relatedTrainerConcepts.length > 0 && (
-            <section className="mt-10 rounded-3xl border border-cyan-500/20 bg-cyan-500/5 p-6">
+            <section className="mt-10 rounded-3xl border border-[#FFD60A]/20 bg-[#FFD60A]/5 p-6">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#FFD60A]">Подкрепить навык</p>

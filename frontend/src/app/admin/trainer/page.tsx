@@ -39,7 +39,7 @@ export default function AdminTrainerPage() {
           <Link
             key={module.id}
             href={module.href}
-            className="group rounded-xl border border-gray-700 bg-gray-900 hover:bg-gray-800 hover:border-cyan-500/60 p-6 transition-all"
+            className="group rounded-xl border border-gray-700 bg-gray-900 hover:bg-gray-800 hover:border-[#FFD60A]/60 p-6 transition-all"
           >
             <div className="text-4xl mb-3">{module.icon}</div>
             <h2 className="text-lg font-semibold text-white group-hover:text-[#FFD60A] transition-colors mb-2">

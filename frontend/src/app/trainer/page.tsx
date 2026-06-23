@@ -255,7 +255,7 @@ export default function TrainerPage() {
                 </div>
                 <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/8">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-400 to-violet-400 transition-all duration-700"
+                    className="h-full rounded-full bg-gradient-to-r from-[#FFD60A] via-[#FFE44D] to-[#FFD60A] transition-all duration-700"
                     style={{ width: `${completionPercent}%` }}
                   />
                 </div>
@@ -265,7 +265,7 @@ export default function TrainerPage() {
             <div className="p-6 sm:p-8">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <span className="rounded-lg bg-violet-400/12 px-2.5 py-1 font-mono text-xs text-[#FFD60A]">
+                  <span className="rounded-lg bg-[#FFE44D]/12 px-2.5 py-1 font-mono text-xs text-[#FFD60A]">
                     {categoryMeta[currentConcept?.category]?.ticket ?? 'Раздел'}
                   </span>
                   <span className="text-xs text-gray-500">{getCategoryLabel(currentConcept?.category ?? '')}</span>
@@ -290,7 +290,7 @@ export default function TrainerPage() {
                 {currentConcept && (
                   <Link
                     href={`/trainer/topic/${currentConcept.slug}`}
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#FFD60A] px-5 text-sm font-bold text-slate-950 shadow-[0_12px_35px_rgba(34,211,238,0.18)] hover:-translate-y-0.5 hover:bg-cyan-200"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#FFD60A] px-5 text-sm font-bold text-black shadow-[0_12px_35px_rgba(34,211,238,0.18)] hover:-translate-y-0.5 hover:bg-[#FFE44D]"
                   >
                     Начать практику
                     <ChevronRight className="h-4 w-4" />
@@ -390,7 +390,7 @@ export default function TrainerPage() {
                       <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${
                         completed
                           ? 'bg-[#FFD60A]/10 text-[#FFD60A]'
-                          : 'bg-violet-400/10 text-[#FFD60A]'
+                          : 'bg-[#FFE44D]/10 text-[#FFD60A]'
                       }`}>
                         {completed ? 'Готово' : exercise.difficulty}
                       </span>
@@ -465,15 +465,15 @@ function ConceptSection({
       active
         ? 'border-[#FFD60A]/30 bg-[#FFD60A]/[0.035] shadow-[0_18px_60px_rgba(34,211,238,0.06)]'
         : complete
-          ? 'border-emerald-400/20 bg-[#FFD60A]/[0.025]'
+          ? 'border-[#FFD60A]/20 bg-[#FFD60A]/[0.025]'
           : 'border-white/8 bg-white/[0.02]'
     }`}>
       <div className="grid gap-4 border-b border-white/8 p-5 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:p-6">
         <div className={`flex h-11 w-11 items-center justify-center rounded-2xl border font-mono text-xs font-bold ${
           active
-            ? 'border-[#FFD60A]/30 bg-[#FFD60A] text-slate-950'
+            ? 'border-[#FFD60A]/30 bg-[#FFD60A] text-black'
             : complete
-              ? 'border-emerald-400/25 bg-[#FFD60A]/10 text-[#FFD60A]'
+              ? 'border-[#FFD60A]/25 bg-[#FFD60A]/10 text-[#FFD60A]'
               : 'border-white/10 bg-white/5 text-gray-500'
         }`}>
           {complete ? <Check className="h-5 w-5" /> : String(index + 1).padStart(2, '0')}
@@ -523,7 +523,7 @@ function ConceptTaskCard({
         </span>
         <span className={`flex h-7 w-7 items-center justify-center rounded-full border ${
           concept.completed
-            ? 'border-emerald-400/25 bg-[#FFD60A]/10 text-[#FFD60A]'
+            ? 'border-[#FFD60A]/25 bg-[#FFD60A]/10 text-[#FFD60A]'
             : concept.current
               ? 'border-[#FFD60A]/30 bg-[#FFD60A]/10 text-[#FFD60A]'
               : 'border-white/8 bg-white/[0.03] text-gray-600'

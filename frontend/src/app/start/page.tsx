@@ -44,11 +44,11 @@ export default function StartPage() {
       </div>
 
       <div className="mt-12 space-y-5">
-        <section className="rounded-3xl border border-cyan-500/30 bg-cyan-500/5 p-6 sm:p-8">
+        <section className="rounded-3xl border border-[#FFD60A]/30 bg-[#FFD60A]/5 p-6 sm:p-8">
           <div className="grid gap-7 md:grid-cols-[1fr_auto] md:items-center">
             <div>
               <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500 font-black text-gray-950">1</span>
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FFD60A] font-black text-gray-950">1</span>
                 <div>
                   <p className="text-xs font-bold uppercase tracking-widest text-[#FFD60A]">Бесплатно</p>
                   <h2 className="text-2xl font-black text-white">Курс и 3 учебных проекта</h2>
@@ -75,11 +75,11 @@ export default function StartPage() {
           </div>
         </section>
 
-        <section className="rounded-3xl border border-violet-500/30 bg-violet-500/5 p-6 sm:p-8">
+        <section className="rounded-3xl border border-[#FFD60A]/30 bg-[#FFD60A]/5 p-6 sm:p-8">
           <div className="grid gap-7 md:grid-cols-[1fr_auto] md:items-center">
             <div>
               <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500 font-black text-white">2</span>
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FFD60A] font-black text-white">2</span>
                 <div>
                   <p className="text-xs font-bold uppercase tracking-widest text-[#FFD60A]">Практикуйся параллельно</p>
                   <h2 className="text-2xl font-black text-white">Практика Go</h2>
@@ -95,12 +95,12 @@ export default function StartPage() {
                     <span>{completedExercises} / {exercisesTotal}</span>
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-gray-800">
-                    <div className="h-full rounded-full bg-violet-400" style={{ width: `${exerciseProgress}%` }} />
+                    <div className="h-full rounded-full bg-[#FFE44D]" style={{ width: `${exerciseProgress}%` }} />
                   </div>
                 </div>
               )}
             </div>
-            <Link href="/trainer" className="whitespace-nowrap rounded-xl bg-violet-500 px-6 py-3 font-bold text-white transition-colors hover:bg-violet-400">
+            <Link href="/trainer" className="whitespace-nowrap rounded-xl bg-[#FFD60A] px-6 py-3 font-bold text-white transition-colors hover:bg-[#FFE44D]">
               Открыть практику →
             </Link>
           </div>

@@ -15,10 +15,10 @@ export default function SimpleInputModal({ open, title, onClose, onSubmit, initi
   if (!open) return null
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-      <div className="bg-gray-900 border border-cyan-900 rounded-xl p-6 w-full max-w-sm space-y-4">
+      <div className="bg-gray-900 border border-[#332D00] rounded-xl p-6 w-full max-w-sm space-y-4">
         <h2 className="text-lg font-bold text-[#FFD60A]">{title}</h2>
         <input
-          className="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-600 text-white focus:outline-none focus:border-cyan-500"
+          className="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-600 text-white focus:outline-none focus:border-[#FFD60A]"
           value={value}
           onChange={e => setValue(e.target.value)}
           placeholder={placeholder}
@@ -26,7 +26,7 @@ export default function SimpleInputModal({ open, title, onClose, onSubmit, initi
         />
         <div className="flex gap-2 justify-end">
           <button onClick={onClose} className="px-3 py-1 rounded bg-gray-700 text-white">Отмена</button>
-          <button onClick={() => onSubmit(value)} className="px-3 py-1 rounded bg-cyan-700 text-white">{submitLabel}</button>
+          <button onClick={() => onSubmit(value)} className="px-3 py-1 rounded bg-[#B8960A] text-white">{submitLabel}</button>
         </div>
       </div>
     </div>

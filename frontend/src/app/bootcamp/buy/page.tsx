@@ -29,7 +29,7 @@ export default function BuyPage() {
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_390px]">
         <section>
-          <span className="inline-flex rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-2 text-sm font-bold text-[#FFD60A]">
+          <span className="inline-flex rounded-full border border-[#FFD60A]/30 bg-[#FFD60A]/10 px-4 py-2 text-sm font-bold text-[#FFD60A]">
             Следующий этап
           </span>
           <h1 className="mt-6 text-4xl font-black text-white sm:text-5xl">
@@ -58,7 +58,7 @@ export default function BuyPage() {
             ))}
           </div>
 
-          <div className="mt-8 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5">
+          <div className="mt-8 rounded-2xl border border-[#FFD60A]/20 bg-[#FFD60A]/5 p-5">
             <p className="font-semibold text-[#FFD60A]">Сначала хочешь проверить платформу?</p>
             <p className="mt-2 text-sm text-gray-400">
               Пройди бесплатный путь и собери три проекта. Подписка понадобится только для следующего уровня.
@@ -81,7 +81,7 @@ export default function BuyPage() {
           </div>
         </section>
 
-        <aside className="h-fit rounded-3xl border border-violet-500/30 bg-gray-900 p-6 shadow-2xl">
+        <aside className="h-fit rounded-3xl border border-[#FFD60A]/30 bg-gray-900 p-6 shadow-2xl">
           <p className="text-sm font-bold text-[#FFD60A]">Доступ Godemy Pro</p>
           <div className="mt-5 flex items-end gap-2">
             <span className="text-5xl font-black text-white">2 490 ₽</span>
@@ -99,7 +99,7 @@ export default function BuyPage() {
             href="https://t.me/golangacademy"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 flex w-full items-center justify-center rounded-xl bg-violet-500 px-5 py-3.5 font-bold text-white transition-colors hover:bg-violet-400"
+            className="mt-6 flex w-full items-center justify-center rounded-xl bg-[#FFD60A] px-5 py-3.5 font-bold text-white transition-colors hover:bg-[#FFE44D]"
           >
             Оставить заявку
           </a>

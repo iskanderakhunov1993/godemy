@@ -40,16 +40,16 @@ function SprintNode({
           state === 'active'
             ? 'border-[#FFD60A]/40 bg-[#FFD60A]/[0.08]'
             : state === 'done'
-              ? 'border-emerald-400/20 bg-[#FFD60A]/[0.05] hover:border-[#FFD60A]/35'
+              ? 'border-[#FFD60A]/20 bg-[#FFD60A]/[0.05] hover:border-[#FFD60A]/35'
               : 'border-white/8 bg-white/[0.025] hover:border-white/16 hover:bg-white/[0.045]'
         }`}
       >
         <span
           className={`flex h-10 w-10 items-center justify-center rounded-2xl border font-mono text-xs font-bold ${
             state === 'active'
-              ? 'border-[#FFD60A]/40 bg-[#FFD60A] text-slate-950'
+              ? 'border-[#FFD60A]/40 bg-[#FFD60A] text-black'
               : state === 'done'
-                ? 'border-emerald-400/30 bg-[#FFD60A]/15 text-[#FFD60A]'
+                ? 'border-[#FFD60A]/30 bg-[#FFD60A]/15 text-[#FFD60A]'
                 : 'border-white/10 bg-white/5 text-gray-500'
           }`}
         >
@@ -167,7 +167,7 @@ export default function GuidePage() {
               <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Link
                   href={`/guide/${currentLesson.slug}?module=${encodeURIComponent(currentLesson.module)}&topic=${encodeURIComponent(currentLesson.category)}`}
-                  className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-[#FFD60A] px-6 text-sm font-bold text-slate-950 shadow-[0_12px_35px_rgba(34,211,238,0.18)] hover:-translate-y-0.5 hover:bg-cyan-200"
+                  className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-[#FFD60A] px-6 text-sm font-bold text-black shadow-[0_12px_35px_rgba(34,211,238,0.18)] hover:-translate-y-0.5 hover:bg-[#FFE44D]"
                 >
                   Начать урок →
                 </Link>
@@ -182,7 +182,7 @@ export default function GuidePage() {
               <p className="mt-2 text-3xl font-semibold text-white">{progressPercent}%</p>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/8">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-cyan-300 to-sky-400 transition-all duration-700"
+                  className="h-full rounded-full bg-gradient-to-r from-[#FFD60A] via-[#FFE44D] to-[#FFD60A] transition-all duration-700"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>

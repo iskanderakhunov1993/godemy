@@ -21,7 +21,7 @@ export default function ExampleBlock({ code, preview, onRun, hasRun, monoClassNa
         <button
           onClick={onRun}
           className={`mt-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
-            hasRun ? 'bg-[#FFD60A]/20 text-[#FFD60A] border border-emerald-400/40' : 'bg-cyan-500 text-slate-900 hover:bg-[#FFD60A]'
+            hasRun ? 'bg-[#FFD60A]/20 text-[#FFD60A] border border-[#FFD60A]/40' : 'bg-[#FFD60A] text-slate-900 hover:bg-[#FFD60A]'
           }`}
         >
           {hasRun ? 'Run выполнен ✓' : 'Run'}

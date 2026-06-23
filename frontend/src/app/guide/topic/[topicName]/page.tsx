@@ -73,7 +73,7 @@ function TopicContent() {
                 href={href}
                 className="group flex items-center gap-4 rounded-xl border border-transparent px-5 py-4 transition-colors hover:border-gray-800 hover:bg-gray-900"
               >
-                <div className={`flex h-8 w-8 items-center justify-center rounded-xl border text-sm font-bold ${done ? 'border-emerald-500/40 bg-[#FFD60A]/20 text-[#FFD60A]' : 'border-gray-700 bg-gray-900 text-gray-500'}`}>
+                <div className={`flex h-8 w-8 items-center justify-center rounded-xl border text-sm font-bold ${done ? 'border-[#FFD60A]/40 bg-[#FFD60A]/20 text-[#FFD60A]' : 'border-gray-700 bg-gray-900 text-gray-500'}`}>
                   {done ? '✓' : index + 1}
                 </div>
                 <div className="min-w-0 flex-1">

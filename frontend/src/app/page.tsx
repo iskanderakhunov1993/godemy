@@ -360,7 +360,7 @@ export default function Home() {
                   <h3 className="text-xl font-semibold text-slate-100">Popular repositories</h3>
                   <p className="mt-1 text-sm text-slate-500">3 проекта после бесплатного курса</p>
                 </div>
-                <span className="hidden text-sm text-blue-400 sm:inline">Customize your pins</span>
+                <span className="hidden text-sm text-[#FFD60A] sm:inline">Customize your pins</span>
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
@@ -368,7 +368,7 @@ export default function Home() {
                   <article key={project.title} className="min-h-40 rounded-xl border border-slate-700 bg-[#0d1117] p-5">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <h4 className="text-lg font-semibold text-blue-400">
+                        <h4 className="text-lg font-semibold text-[#FFD60A]">
                           {['number-guessing-go', 'weather-service-go', 'expense-tracker-go'][index]}
                         </h4>
                         <p className="mt-2 text-sm leading-6 text-slate-400">{project.description}</p>
@@ -399,7 +399,7 @@ export default function Home() {
               <div className="mt-6 rounded-xl border border-slate-700 bg-[#010409] p-5">
                 <div className="mb-3 flex items-center justify-between">
                   <h4 className="text-base font-semibold text-slate-100">Contribution activity</h4>
-                  <span className="rounded-lg bg-blue-600 px-3 py-1 text-xs font-bold text-white">2026</span>
+                  <span className="rounded-lg bg-[#FFD60A] px-3 py-1 text-xs font-bold text-white">2026</span>
                 </div>
                 <div className="grid grid-cols-12 gap-1">
                   {Array.from({ length: 84 }).map((_, index) => (
@@ -462,7 +462,7 @@ export default function Home() {
           </div>
 
           <div className="rounded-[30px] border border-white/10 bg-slate-950 p-3 shadow-[0_28px_90px_rgba(2,6,23,0.34)] sm:p-5">
-            <div className="overflow-hidden rounded-[24px] border border-white/10 bg-[#f7f7f5] text-slate-950">
+            <div className="overflow-hidden rounded-[24px] border border-white/10 bg-[#f7f7f5] text-black">
               <div className="flex items-center justify-between border-b border-slate-200 bg-[#e9e9e7] px-5 py-3">
                 <span className="text-xs font-semibold text-slate-500">resume-mark-zuckerberg.pdf</span>
                 <span className="flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-sm font-black text-white">hh</span>
@@ -472,11 +472,11 @@ export default function Home() {
                 <div className="grid gap-5 border-b border-slate-200 pb-6 sm:grid-cols-[1fr_auto]">
                   <div>
                     <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Пример резюме после курса</p>
-                    <h3 className="mt-2 text-3xl font-black tracking-[-0.04em] text-slate-950 sm:text-4xl">
+                    <h3 className="mt-2 text-3xl font-black tracking-[-0.04em] text-black sm:text-4xl">
                       Марк Цукерберг
                     </h3>
                     <p className="mt-1 text-sm text-slate-500">Москва · 23 года · telegram: @mark_zuckerberg_go</p>
-                    <p className="mt-4 text-xl font-black text-slate-950">Go Backend Developer Intern</p>
+                    <p className="mt-4 text-xl font-black text-black">Go Backend Developer Intern</p>
                     <p className="mt-2 text-sm leading-6 text-slate-600">
                       Начинающий backend-разработчик. После практического курса собрал 3 проекта на Go,
                       оформил GitHub, умею запускать сервисы, читать JSON и объяснять код на созвоне.
@@ -531,7 +531,7 @@ export default function Home() {
                           2 месяца
                         </div>
                         <div>
-                          <h4 className="text-lg font-black text-slate-950">Facebook, стажировка</h4>
+                          <h4 className="text-lg font-black text-black">Facebook, стажировка</h4>
                           <p className="mt-1 text-sm text-slate-500">Учебный пример · backend-практика на Go</p>
                           <ul className="mt-3 space-y-2 text-xs leading-5 text-slate-700">
                             {resumeExperience.map((item) => (
@@ -547,7 +547,7 @@ export default function Home() {
                       <div className="mt-3 space-y-3">
                         {resumeProjects.map(([title, text]) => (
                           <div key={title} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                            <h4 className="text-sm font-black text-slate-950">{title}</h4>
+                            <h4 className="text-sm font-black text-black">{title}</h4>
                             <p className="mt-1 text-xs leading-5 text-slate-600">{text}</p>
                           </div>
                         ))}

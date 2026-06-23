@@ -58,7 +58,7 @@ export default function AdminLessonsPage() {
         <h1 className="text-2xl font-bold">Уроки ({filtered.length})</h1>
         <Link
           href="/admin/lessons/new"
-          className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 rounded-lg text-sm font-medium transition-colors"
+          className="px-4 py-2 bg-[#B8960A] hover:bg-[#FFD60A] rounded-lg text-sm font-medium transition-colors"
         >
           + Новый урок
         </Link>
@@ -71,7 +71,7 @@ export default function AdminLessonsPage() {
           placeholder="Поиск по названию..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="px-3 py-2 rounded bg-gray-800 border border-gray-700 text-white text-sm focus:outline-none focus:border-cyan-500"
+          className="px-3 py-2 rounded bg-gray-800 border border-gray-700 text-white text-sm focus:outline-none focus:border-[#FFD60A]"
           style={{ minWidth: 200 }}
         />
         <select

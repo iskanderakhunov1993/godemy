@@ -92,7 +92,7 @@ export default function ModulePage() {
             Сначала пройди уроки по порядку, потом закрепи узкие навыки в практике.
             Так ты получишь понятный контекст и короткие повторы без перегруза.
           </p>
-          <Link href="/trainer" className="mt-3 inline-flex text-sm font-semibold text-[#FFD60A] hover:text-violet-200">
+          <Link href="/trainer" className="mt-3 inline-flex text-sm font-semibold text-[#FFD60A] hover:text-[#FFE44D]">
             Открыть практику →
           </Link>
         </div>
@@ -139,7 +139,7 @@ export default function ModulePage() {
                   </div>
 
                   <div className="mt-4 h-1 overflow-hidden rounded-full bg-white/8">
-                    <div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-violet-400" style={{ width: `${topicProgress}%` }} />
+                    <div className="h-full rounded-full bg-gradient-to-r from-[#FFD60A] to-[#FFD60A]" style={{ width: `${topicProgress}%` }} />
                   </div>
                 </Link>
               </li>

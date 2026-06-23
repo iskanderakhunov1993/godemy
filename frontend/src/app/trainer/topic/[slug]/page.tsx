@@ -300,7 +300,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       <div className="rounded-[34px] border border-[#d6ddfb] bg-[#eef2ff] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.08)] sm:p-8">
         <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500">
-          <Link href="/trainer" className="transition-colors hover:text-slate-950">Практика</Link>
+          <Link href="/trainer" className="transition-colors hover:text-black">Практика</Link>
           <span>→</span>
           <span className="text-slate-700">{displayTitle}</span>
         </div>
@@ -322,12 +322,12 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                     {practiceRail.length} упражнения
                   </span>
                   {completed && (
-                    <span className="rounded-full border border-[#FFD60A] bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                    <span className="rounded-full border border-[#FFD60A] bg-[#FFF8DC] px-3 py-1 text-xs font-semibold text-[#997A00]">
                       Тема пройдена
                     </span>
                   )}
                   {builtInRelatedSprint && (
-                    <span className="rounded-full border border-[#FFD60A] bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700">
+                    <span className="rounded-full border border-[#FFD60A] bg-[#FFF8DC] px-3 py-1 text-xs font-semibold text-[#997A00]">
                       {builtInRelatedSprint}
                     </span>
                   )}
@@ -447,7 +447,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
             {nextTopic && (
               <Link
                 href={`/trainer/topic/${nextTopic.slug}`}
-                className="rounded-2xl border border-violet-500/30 bg-violet-500/10 px-4 py-2.5 text-sm font-semibold text-violet-200 transition hover:border-[#FFD60A]/50 hover:bg-violet-500/15"
+                className="rounded-2xl border border-[#FFD60A]/30 bg-[#FFD60A]/10 px-4 py-2.5 text-sm font-semibold text-[#FFE44D] transition hover:border-[#FFD60A]/50 hover:bg-[#FFD60A]/15"
               >
                 Следующая тема →
               </Link>
@@ -461,7 +461,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
               <button
                 onClick={() => setWorkspaceMode('browser')}
                 className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
-                  workspaceMode === 'browser' ? 'bg-violet-500 text-white' : 'text-gray-500 hover:text-white'
+                  workspaceMode === 'browser' ? 'bg-[#FFD60A] text-white' : 'text-gray-500 hover:text-white'
                 }`}
               >
                 В браузере
@@ -469,7 +469,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
               <button
                 onClick={() => setWorkspaceMode('local')}
                 className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
-                  workspaceMode === 'local' ? 'bg-violet-500 text-white' : 'text-gray-500 hover:text-white'
+                  workspaceMode === 'local' ? 'bg-[#FFD60A] text-white' : 'text-gray-500 hover:text-white'
                 }`}
               >
                 На компьютере
@@ -516,7 +516,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                   <button
                     onClick={() => void runCode()}
                     disabled={running}
-                    className="rounded-xl border border-violet-500/40 px-4 py-2 text-sm font-bold text-[#FFD60A] transition-colors hover:bg-violet-500/10 disabled:opacity-50"
+                    className="rounded-xl border border-[#FFD60A]/40 px-4 py-2 text-sm font-bold text-[#FFD60A] transition-colors hover:bg-[#FFD60A]/10 disabled:opacity-50"
                   >
                     {running ? 'Запуск…' : '▶ Запустить'}
                   </button>
@@ -535,7 +535,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                   result?.error
                     ? 'bg-red-950/20 text-red-200'
                     : result?.passed
-                      ? 'bg-emerald-950/20 text-[#FFD60A]'
+                      ? 'bg-[#1a1500]/20 text-[#FFD60A]'
                       : 'bg-slate-950 text-gray-500'
                 }`}>
                   <p className="mb-2 font-sans text-xs font-bold uppercase tracking-widest text-gray-600">Результат</p>
@@ -562,7 +562,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
                 </ol>
                 <button
                   onClick={() => void copyLocalCommand()}
-                  className="mt-7 w-full rounded-xl border border-gray-700 bg-slate-900 px-4 py-3 text-sm font-bold text-gray-300 transition-colors hover:border-violet-500/50 hover:text-white"
+                  className="mt-7 w-full rounded-xl border border-gray-700 bg-slate-900 px-4 py-3 text-sm font-bold text-gray-300 transition-colors hover:border-[#FFD60A]/50 hover:text-white"
                 >
                   {copied ? 'Команда скопирована ✓' : 'Скопировать стартовую команду'}
                 </button>
@@ -635,7 +635,7 @@ function PracticeCard({ item }: { item: PracticeRailItem }) {
   }[item.status]
 
   const difficultyTone = item.difficulty === 'easy'
-    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+    ? 'bg-[#FFF8DC] text-[#997A00] border-[#FFD60A]'
     : 'bg-amber-50 text-amber-700 border-amber-200'
 
   return (
@@ -687,7 +687,7 @@ function LocalStep({
 }) {
   return (
     <li className="flex gap-3">
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-violet-500/10 text-xs font-bold text-[#FFD60A]">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#FFD60A]/10 text-xs font-bold text-[#FFD60A]">
         {number}
       </span>
       <div className="min-w-0">

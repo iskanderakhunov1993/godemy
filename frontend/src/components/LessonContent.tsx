@@ -202,7 +202,7 @@ function ChoiceBlock({ blockKey, content, onDone, isDone }: BlockProps) {
   }
 
   return (
-    <div className={`my-4 rounded-xl border p-4 transition-colors ${isDone ? 'border-emerald-700/60 bg-emerald-950/20' : 'border-purple-800/40 bg-purple-950/20'}`}>
+    <div className={`my-4 rounded-xl border p-4 transition-colors ${isDone ? 'border-[#997A00]/60 bg-[#1a1500]/20' : 'border-purple-800/40 bg-purple-950/20'}`}>
       <div className="text-[11px] uppercase tracking-wider text-purple-400 font-semibold mb-3">
         ☑ Задание: выбор ответа
         {isDone && <span className="ml-2 text-[#FFD60A]">✓ Выполнено</span>}
@@ -218,10 +218,10 @@ function ChoiceBlock({ blockKey, content, onDone, isDone }: BlockProps) {
                 ? 'bg-gray-800/60 text-gray-200 border-gray-700 hover:border-purple-600 hover:bg-gray-700/60'
                 : selected === i
                 ? opt.correct
-                  ? 'bg-emerald-900/60 text-[#FFE44D] border-emerald-600'
+                  ? 'bg-[#332D00]/60 text-[#FFE44D] border-[#FFD60A]'
                   : 'bg-red-900/60 text-red-100 border-red-600'
                 : opt.correct && selected !== null
-                ? 'bg-emerald-900/30 text-[#FFD60A] border-emerald-800/40'
+                ? 'bg-[#332D00]/30 text-[#FFD60A] border-[#665200]/40'
                 : 'bg-gray-800/40 text-gray-500 border-gray-800'
             }`}
           >
@@ -279,8 +279,8 @@ function SortBlock({ blockKey, content, onDone, isDone }: BlockProps) {
   }
 
   return (
-    <div className={`my-4 rounded-xl border p-4 transition-colors ${isDone ? 'border-emerald-700/60 bg-emerald-950/20' : 'border-blue-800/40 bg-blue-950/20'}`}>
-      <div className="text-[11px] uppercase tracking-wider text-blue-400 font-semibold mb-3">
+    <div className={`my-4 rounded-xl border p-4 transition-colors ${isDone ? 'border-[#997A00]/60 bg-[#1a1500]/20' : 'border-[#332D00]/40 bg-[#1a1500]/20'}`}>
+      <div className="text-[11px] uppercase tracking-wider text-[#FFD60A] font-semibold mb-3">
         ↕ Задание: сортировка
         {isDone && <span className="ml-2 text-[#FFD60A]">✓ Выполнено</span>}
       </div>
@@ -300,7 +300,7 @@ function SortBlock({ blockKey, content, onDone, isDone }: BlockProps) {
         ))}
       </div>
       {!isDone && (
-        <button onClick={check} className="mt-3 text-xs bg-blue-800 hover:bg-blue-700 text-white rounded-lg px-4 py-1.5">
+        <button onClick={check} className="mt-3 text-xs bg-[#332D00] hover:bg-[#997A00] text-white rounded-lg px-4 py-1.5">
           Проверить порядок
         </button>
       )}
@@ -370,7 +370,7 @@ function CodeTaskBlock({ blockKey, content, lang = 'go', onDone, isDone }: Block
   }
 
   return (
-    <div className={`my-4 rounded-xl border p-4 transition-colors ${isDone ? 'border-emerald-700/60 bg-emerald-950/20' : 'border-emerald-800/40 bg-emerald-950/10'}`}>
+    <div className={`my-4 rounded-xl border p-4 transition-colors ${isDone ? 'border-[#997A00]/60 bg-[#1a1500]/20' : 'border-[#665200]/40 bg-[#1a1500]/10'}`}>
       <div className="text-[11px] uppercase tracking-wider text-[#FFD60A] font-semibold mb-3">
         {'<>'} Задание: написать код ({lang})
         {isDone && <span className="ml-2 text-[#FFD60A]">✓ Выполнено</span>}
@@ -383,7 +383,7 @@ function CodeTaskBlock({ blockKey, content, lang = 'go', onDone, isDone }: Block
           <button
             onClick={run}
             disabled={running || isDone}
-            className="text-xs bg-emerald-700 hover:bg-emerald-600 disabled:opacity-50 text-white rounded px-3 py-1 font-medium transition-colors flex items-center gap-1.5"
+            className="text-xs bg-[#B8960A] hover:bg-[#FFD60A] disabled:opacity-50 text-white rounded px-3 py-1 font-medium transition-colors flex items-center gap-1.5"
           >
             {running ? (
               <><span className="animate-spin inline-block w-3 h-3 border-2 border-white/30 border-t-white rounded-full" />Запуск...</>
@@ -396,13 +396,13 @@ function CodeTaskBlock({ blockKey, content, lang = 'go', onDone, isDone }: Block
           rows={10}
           spellCheck={false}
           disabled={isDone}
-          className="w-full bg-gray-950 px-4 py-3 text-sm text-green-300 font-mono resize-y outline-none disabled:opacity-70"
+          className="w-full bg-gray-950 px-4 py-3 text-sm text-[#FFD60A] font-mono resize-y outline-none disabled:opacity-70"
         />
       </div>
 
       {output !== null && (
-        <div className={`rounded-lg border p-3 font-mono text-xs whitespace-pre-wrap ${hasError ? 'border-red-800/50 bg-red-950/20 text-red-300' : 'border-emerald-800/40 bg-gray-950 text-[#FFD60A]'}`}>
-          <div className={`text-[10px] uppercase tracking-wider mb-1.5 font-semibold ${hasError ? 'text-red-500' : 'text-emerald-500'}`}>
+        <div className={`rounded-lg border p-3 font-mono text-xs whitespace-pre-wrap ${hasError ? 'border-red-800/50 bg-red-950/20 text-red-300' : 'border-[#665200]/40 bg-gray-950 text-[#FFD60A]'}`}>
+          <div className={`text-[10px] uppercase tracking-wider mb-1.5 font-semibold ${hasError ? 'text-red-500' : 'text-[#FFD60A]'}`}>
             {hasError ? '✗ Ошибка' : '✓ Вывод'}
           </div>
           {output || '(нет вывода)'}
@@ -443,8 +443,8 @@ function InteractiveCodeBlock({ content, lang = 'go' }: { content: string; lang?
   }
 
   return (
-    <div className="my-4 rounded-xl border border-blue-800/40 bg-blue-950/10 p-4">
-      <div className="text-[11px] uppercase tracking-wider text-blue-400 font-semibold mb-3">
+    <div className="my-4 rounded-xl border border-[#332D00]/40 bg-[#1a1500]/10 p-4">
+      <div className="text-[11px] uppercase tracking-wider text-[#FFD60A] font-semibold mb-3">
         {'⚡'} Интерактивный редактор ({lang})
       </div>
       {title && <p className="text-white font-medium mb-3 text-sm">{title}</p>}
@@ -455,7 +455,7 @@ function InteractiveCodeBlock({ content, lang = 'go' }: { content: string; lang?
           <button
             onClick={run}
             disabled={running}
-            className="text-xs bg-blue-700 hover:bg-blue-600 disabled:opacity-50 text-white rounded px-3 py-1 font-medium transition-colors flex items-center gap-1.5"
+            className="text-xs bg-[#997A00] hover:bg-[#FFD60A] disabled:opacity-50 text-white rounded px-3 py-1 font-medium transition-colors flex items-center gap-1.5"
           >
             {running ? (
               <><span className="animate-spin inline-block w-3 h-3 border-2 border-white/30 border-t-white rounded-full" />Запуск...</>
@@ -467,13 +467,13 @@ function InteractiveCodeBlock({ content, lang = 'go' }: { content: string; lang?
           onChange={e => setCode(e.target.value)}
           rows={12}
           spellCheck={false}
-          className="w-full bg-gray-950 px-4 py-3 text-sm text-green-300 font-mono resize-y outline-none"
+          className="w-full bg-gray-950 px-4 py-3 text-sm text-[#FFD60A] font-mono resize-y outline-none"
         />
       </div>
 
       {output !== null && (
-        <div className={`rounded-lg border p-3 font-mono text-xs whitespace-pre-wrap ${hasError ? 'border-red-800/50 bg-red-950/20 text-red-300' : 'border-blue-800/40 bg-gray-950 text-blue-200'}`}>
-          <div className={`text-[10px] uppercase tracking-wider mb-1.5 font-semibold ${hasError ? 'text-red-500' : 'text-blue-500'}`}>
+        <div className={`rounded-lg border p-3 font-mono text-xs whitespace-pre-wrap ${hasError ? 'border-red-800/50 bg-red-950/20 text-red-300' : 'border-[#332D00]/40 bg-gray-950 text-[#FFE44D]'}`}>
+          <div className={`text-[10px] uppercase tracking-wider mb-1.5 font-semibold ${hasError ? 'text-red-500' : 'text-[#FFD60A]'}`}>
             {hasError ? '✗ Ошибка' : '✓ Вывод'}
           </div>
           {output || '(нет вывода)'}
@@ -519,7 +519,7 @@ function FormBlock({ content }: { content: string }) {
     <div className="my-6 rounded-[28px] border border-gray-700/70 bg-gray-100 text-gray-950 p-6 sm:p-8">
       <h3 className="text-2xl sm:text-3xl font-semibold mb-4">{title}</h3>
       {body && (
-        <div className="mb-5 prose max-w-none prose-p:my-2 prose-li:my-1 prose-strong:text-gray-950 prose-a:text-blue-700 prose-a:underline hover:prose-a:text-blue-800">
+        <div className="mb-5 prose max-w-none prose-p:my-2 prose-li:my-1 prose-strong:text-gray-950 prose-a:text-[#FFD60A] prose-a:underline hover:prose-a:text-[#997A00]">
           <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{body}</ReactMarkdown>
         </div>
       )}
@@ -544,7 +544,7 @@ function FormBlock({ content }: { content: string }) {
       </div>
 
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
-      {submitted && !error && <p className="mt-3 text-sm text-emerald-700">{successText}</p>}
+      {submitted && !error && <p className="mt-3 text-sm text-[#997A00]">{successText}</p>}
     </div>
   )
 }
@@ -680,7 +680,7 @@ function ContinueBlock({ content, expanded, onExpand }: { content: string; expan
           <button
             type="button"
             onClick={onExpand}
-            className="mx-auto block rounded-lg bg-gradient-to-r from-indigo-700 to-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-[0_4px_12px_rgba(79,70,229,0.3)] transition hover:from-indigo-600 hover:to-indigo-500"
+            className="mx-auto block rounded-lg bg-gradient-to-r from-indigo-700 to-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-[0_4px_12px_rgba(79,70,229,0.3)] transition hover:from-indigo-600 hover:to-[#FFD60A]"
           >
             {buttonLabel}
           </button>
@@ -704,7 +704,7 @@ function ChatBlock({ content }: { content: string }) {
     <div className="my-5 rounded-2xl border border-indigo-700/40 bg-[#11151d] p-4 sm:p-5">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
-          <div className="text-[11px] uppercase tracking-wider text-indigo-300/90">💬 {title}</div>
+          <div className="text-[11px] uppercase tracking-wider text-[#FFD60A]/90">💬 {title}</div>
           <div className="mt-1 flex items-center gap-2 text-sm text-gray-300">
             {avatarSrc ? (
               <img src={avatarSrc} alt={sender} className="h-6 w-6 rounded-full border border-gray-700/60 object-cover" />
@@ -781,8 +781,8 @@ function ChatDialogBlock({ content }: { content: string }) {
                 )
               )}
 
-              <div className={`max-w-[82%] rounded-2xl border px-3 py-2 ${isRight ? 'border-indigo-500/40 bg-indigo-900/35 text-indigo-50' : 'border-gray-700/70 bg-gray-900/75 text-gray-100'}`}>
-                <div className={`mb-1 text-xs ${isRight ? 'text-indigo-200/90' : 'text-gray-400'}`}>{row.name}</div>
+              <div className={`max-w-[82%] rounded-2xl border px-3 py-2 ${isRight ? 'border-[#FFD60A]/40 bg-[#1a1500]/35 text-indigo-50' : 'border-gray-700/70 bg-gray-900/75 text-gray-100'}`}>
+                <div className={`mb-1 text-xs ${isRight ? 'text-[#FFE44D]/90' : 'text-gray-400'}`}>{row.name}</div>
                 <p className="whitespace-pre-wrap text-sm leading-relaxed">{row.text}</p>
               </div>
 
@@ -790,7 +790,7 @@ function ChatDialogBlock({ content }: { content: string }) {
                 avatarSrc ? (
                   <img src={avatarSrc} alt={row.name} className="mt-0.5 h-7 w-7 shrink-0 rounded-full border border-gray-700/60 object-cover" />
                 ) : (
-                  <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-900/50 text-xs font-semibold text-indigo-200">
+                  <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#1a1500]/50 text-xs font-semibold text-[#FFE44D]">
                     {initial}
                   </div>
                 )

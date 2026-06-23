@@ -13,7 +13,7 @@ export default function HintsPanel({ hints, opened, onToggle }: HintsPanelProps)
           <button
             key={level}
             onClick={() => onToggle(level)}
-            className="w-full text-left rounded-xl border border-[#1f2937] bg-[#0b1220] p-3 hover:border-cyan-500/40 transition-colors"
+            className="w-full text-left rounded-xl border border-[#1f2937] bg-[#0b1220] p-3 hover:border-[#FFD60A]/40 transition-colors"
           >
             <div className="flex items-center justify-between">
               <span className="text-gray-200">{level}. Уровень {level}</span>

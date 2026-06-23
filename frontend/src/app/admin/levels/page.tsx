@@ -39,7 +39,7 @@ export default function AdminLevelsPage() {
           <div className="text-gray-400">Нет уроков</div>
         )}
         {Object.entries(structure).map(([level, modules]) => (
-          <div key={level} className="border border-emerald-700 rounded-lg p-4 bg-gray-900">
+          <div key={level} className="border border-[#997A00] rounded-lg p-4 bg-gray-900">
             <div className="flex items-center gap-3 mb-2">
               <span className="font-bold text-[#FFD60A] text-lg">Уровень: {level}</span>
               {/* Кнопка для будущего добавления модуля */}
@@ -47,7 +47,7 @@ export default function AdminLevelsPage() {
             </div>
             <div className="ml-4 space-y-2">
               {Object.entries(modules).map(([module, categories]) => (
-                <div key={module} className="border-l-2 border-cyan-700 pl-4">
+                <div key={module} className="border-l-2 border-[#997A00] pl-4">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-bold text-[#FFD60A]">Модуль: {module}</span>
                     {/* Кнопка для будущего добавления темы */}
@@ -55,11 +55,11 @@ export default function AdminLevelsPage() {
                   </div>
                   <div className="ml-4 space-y-1">
                     {Object.entries(categories).map(([category, lessons]) => (
-                      <div key={category} className="border-l-2 border-cyan-500 pl-4">
+                      <div key={category} className="border-l-2 border-[#FFD60A] pl-4">
                         <div className="flex items-center gap-2 mb-1">
                           <span className="font-semibold text-[#FFD60A]">Тема: {category}</span>
                           {/* Кнопка для будущего добавления урока */}
-                          <Link href={`/admin/lessons/new?level=${encodeURIComponent(level)}&module=${encodeURIComponent(module)}&category=${encodeURIComponent(category)}`} className="text-xs bg-cyan-700 hover:bg-cyan-600 text-white rounded px-2 py-1 ml-2">+ Урок</Link>
+                          <Link href={`/admin/lessons/new?level=${encodeURIComponent(level)}&module=${encodeURIComponent(module)}&category=${encodeURIComponent(category)}`} className="text-xs bg-[#B8960A] hover:bg-[#FFD60A] text-white rounded px-2 py-1 ml-2">+ Урок</Link>
                         </div>
                         <ul className="ml-4">
                           {lessons.map(lesson => (

@@ -82,7 +82,7 @@ function CertificateContent() {
         <div className="rounded-3xl border border-gray-800 bg-gray-900 p-8 text-center max-w-lg">
           <h1 className="text-2xl font-black text-white">Нужен вход</h1>
           <p className="mt-3 text-gray-400">Войди в аккаунт, чтобы открыть свои сертификаты.</p>
-          <Link href="/auth/login" className="mt-6 inline-flex rounded-xl bg-violet-500 px-5 py-3 font-bold text-white hover:bg-violet-400 transition-colors">
+          <Link href="/auth/login" className="mt-6 inline-flex rounded-xl bg-[#FFD60A] px-5 py-3 font-bold text-white hover:bg-[#FFE44D] transition-colors">
             Войти
           </Link>
         </div>
@@ -117,7 +117,7 @@ function CertificateContent() {
             <Link href="/certificates" className="rounded-xl border border-gray-700 px-5 py-3 font-semibold text-gray-200 hover:border-gray-500 transition-colors">
               Назад
             </Link>
-            <Link href={certificate.ctaHref} className="rounded-xl bg-violet-500 px-5 py-3 font-bold text-white hover:bg-violet-400 transition-colors">
+            <Link href={certificate.ctaHref} className="rounded-xl bg-[#FFD60A] px-5 py-3 font-bold text-white hover:bg-[#FFE44D] transition-colors">
               {certificate.ctaLabel}
             </Link>
           </div>
@@ -149,7 +149,7 @@ function CertificateContent() {
             <button
               onClick={sendToEmail}
               disabled={sending}
-              className="rounded-xl border border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/20 disabled:opacity-50 text-violet-200 font-semibold px-5 py-2.5 text-sm transition-colors"
+              className="rounded-xl border border-[#FFD60A]/30 bg-[#FFD60A]/10 hover:bg-[#FFD60A]/20 disabled:opacity-50 text-[#FFE44D] font-semibold px-5 py-2.5 text-sm transition-colors"
             >
               {sending ? 'Отправляем...' : 'Выслать на почту'}
             </button>
@@ -174,7 +174,7 @@ function CertificateContent() {
 
       {flashMessage && (
         <div className="no-print max-w-6xl mx-auto px-4">
-          <div className="rounded-2xl border border-violet-500/20 bg-violet-500/10 px-4 py-3 text-sm text-[#FFF8DC]">
+          <div className="rounded-2xl border border-[#FFD60A]/20 bg-[#FFD60A]/10 px-4 py-3 text-sm text-[#FFF8DC]">
             {flashMessage}
           </div>
         </div>
@@ -194,7 +194,7 @@ function CertificateContent() {
 
           <div className="relative grid min-h-[640px] grid-cols-[220px_minmax(0,1fr)]">
             <aside className="relative border-r border-white/10 bg-[linear-gradient(180deg,#16112f_0%,#120d27_100%)] px-8 py-10">
-              <div className="rounded-2xl border border-violet-500/20 bg-white/5 px-5 py-4 text-violet-200">
+              <div className="rounded-2xl border border-[#FFD60A]/20 bg-white/5 px-5 py-4 text-[#FFE44D]">
                 <div className="text-3xl font-black tracking-tight">[ godemy ]</div>
                 <p className="mt-4 text-xs leading-6 text-[#FFF8DC]/70">
                   Практическое обучение
@@ -236,7 +236,7 @@ function CertificateContent() {
                   <p className="mt-5 text-xl text-white/70">успешно завершил(а) курс</p>
                   <p className="mt-2 text-5xl font-black">{certificate.courseName}</p>
                 </div>
-                <div className="rounded-full border border-emerald-500/20 bg-[#FFD60A]/10 px-4 py-2 text-sm font-semibold text-[#FFD60A]">
+                <div className="rounded-full border border-[#FFD60A]/20 bg-[#FFD60A]/10 px-4 py-2 text-sm font-semibold text-[#FFD60A]">
                   Курс завершён
                 </div>
               </div>
@@ -260,7 +260,7 @@ function CertificateContent() {
                 </div>
               </div>
 
-              <div className="absolute bottom-0 right-0 h-64 w-64 rounded-full border border-violet-500/10 opacity-40" />
+              <div className="absolute bottom-0 right-0 h-64 w-64 rounded-full border border-[#FFD60A]/10 opacity-40" />
             </main>
           </div>
         </div>

@@ -584,10 +584,10 @@ function ChoiceBlock({ content }: { content: string }) {
                 ? 'bg-gray-800/60 text-gray-200 border-gray-700 hover:border-purple-600 hover:bg-gray-700/60'
                 : selected === i
                 ? opt.correct
-                  ? 'bg-emerald-900/60 text-[#FFE44D] border-emerald-600'
+                  ? 'bg-[#332D00]/60 text-[#FFE44D] border-[#FFD60A]'
                   : 'bg-red-900/60 text-red-100 border-red-600'
                 : opt.correct && selected !== null
-                ? 'bg-emerald-900/30 text-[#FFD60A] border-emerald-800/40'
+                ? 'bg-[#332D00]/30 text-[#FFD60A] border-[#665200]/40'
                 : 'bg-gray-800/40 text-gray-500 border-gray-800'
             }`}
           >
@@ -630,8 +630,8 @@ function SortBlock({ content }: { content: string }) {
   }
 
   return (
-    <div className="my-4 rounded-xl border border-blue-800/40 bg-blue-950/20 p-4">
-      <div className="text-[11px] uppercase tracking-wider text-blue-400 font-semibold mb-3">
+    <div className="my-4 rounded-xl border border-[#332D00]/40 bg-[#1a1500]/20 p-4">
+      <div className="text-[11px] uppercase tracking-wider text-[#FFD60A] font-semibold mb-3">
         ↕ Задание: сортировка
       </div>
       <p className="text-white font-medium mb-3 text-sm">{question}</p>
@@ -660,7 +660,7 @@ function SortBlock({ content }: { content: string }) {
       </div>
       <button
         onClick={() => setChecked(true)}
-        className="mt-3 text-xs bg-blue-800 hover:bg-blue-700 text-white rounded-lg px-4 py-1.5"
+        className="mt-3 text-xs bg-[#332D00] hover:bg-[#997A00] text-white rounded-lg px-4 py-1.5"
       >
         Проверить порядок
       </button>
@@ -705,7 +705,7 @@ function CodeTaskBlock({ content, lang = 'go' }: { content: string; lang?: strin
   const [code, setCode] = useState(codeMatch?.[1] ?? '')
 
   return (
-    <div className="my-4 rounded-xl border border-emerald-800/40 bg-emerald-950/20 p-4">
+    <div className="my-4 rounded-xl border border-[#665200]/40 bg-[#1a1500]/20 p-4">
       <div className="text-[11px] uppercase tracking-wider text-[#FFD60A] font-semibold mb-3">
         {'<>'} Задание: написать код ({lang})
       </div>
@@ -715,7 +715,7 @@ function CodeTaskBlock({ content, lang = 'go' }: { content: string; lang?: strin
         onChange={e => setCode(e.target.value)}
         rows={10}
         spellCheck={false}
-        className="w-full bg-gray-950 border border-gray-700 rounded-lg px-4 py-3 text-sm text-green-300 font-mono resize-y outline-none focus:border-emerald-600/60"
+        className="w-full bg-gray-950 border border-gray-700 rounded-lg px-4 py-3 text-sm text-[#FFD60A] font-mono resize-y outline-none focus:border-[#FFD60A]/60"
       />
     </div>
   )
@@ -832,8 +832,8 @@ function ChoiceBuilderModal({ onInsert, onClose }: {
                 title="Отметить как правильный"
                 className={`w-6 h-6 rounded flex-shrink-0 flex items-center justify-center border text-xs font-bold transition-colors ${
                   opt.correct
-                    ? 'bg-emerald-600 border-emerald-500 text-white'
-                    : 'bg-gray-800 border-gray-600 text-transparent hover:border-emerald-700'
+                    ? 'bg-[#B8960A] border-[#FFD60A] text-white'
+                    : 'bg-gray-800 border-gray-600 text-transparent hover:border-[#997A00]'
                 }`}
               >✓</button>
               <input value={opt.text} onChange={e => updateOpt(i, e.target.value)}
@@ -897,41 +897,41 @@ function FormBuilderModal({ onInsert, onClose }: {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="space-y-1">
             <label className="text-xs text-gray-400">Заголовок</label>
-            <input autoFocus value={values.title} onChange={e => setField('title', e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-cyan-500" />
+            <input autoFocus value={values.title} onChange={e => setField('title', e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-[#FFD60A]" />
           </div>
           <div className="space-y-1">
             <label className="text-xs text-gray-400">Подпись поля</label>
-            <input value={values.fieldLabel} onChange={e => setField('fieldLabel', e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-cyan-500" />
+            <input value={values.fieldLabel} onChange={e => setField('fieldLabel', e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-[#FFD60A]" />
           </div>
           <div className="space-y-1">
             <label className="text-xs text-gray-400">Placeholder</label>
-            <input value={values.placeholder} onChange={e => setField('placeholder', e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-cyan-500" />
+            <input value={values.placeholder} onChange={e => setField('placeholder', e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-[#FFD60A]" />
           </div>
           <div className="space-y-1">
             <label className="text-xs text-gray-400">Текст кнопки</label>
-            <input value={values.buttonLabel} onChange={e => setField('buttonLabel', e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-cyan-500" />
+            <input value={values.buttonLabel} onChange={e => setField('buttonLabel', e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-[#FFD60A]" />
           </div>
         </div>
 
         <div className="space-y-1">
           <label className="text-xs text-gray-400">Текст после отправки</label>
-          <input value={values.successText} onChange={e => setField('successText', e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-cyan-500" />
+          <input value={values.successText} onChange={e => setField('successText', e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-[#FFD60A]" />
         </div>
 
         <div className="space-y-1">
           <label className="text-xs text-gray-400">Ссылка после отправки (необязательно)</label>
-          <input value={values.link} onChange={e => setField('link', e.target.value)} placeholder="https://example.com или https://t.me/user?text={value}" className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-cyan-500" />
+          <input value={values.link} onChange={e => setField('link', e.target.value)} placeholder="https://example.com или https://t.me/user?text={value}" className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-[#FFD60A]" />
           <p className="text-[11px] text-gray-500">Если указать {'{value}'}, введённый текст подставится в ссылку.</p>
         </div>
 
         <div className="space-y-1">
           <label className="text-xs text-gray-400">Основной текст блока</label>
-          <textarea value={values.body} onChange={e => setField('body', e.target.value)} rows={6} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-cyan-500 resize-y" />
+          <textarea value={values.body} onChange={e => setField('body', e.target.value)} rows={6} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-[#FFD60A] resize-y" />
         </div>
 
         <div className="flex gap-2 justify-end pt-1">
           <button onClick={onClose} className="text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-lg px-4 py-2">Отмена</button>
-          <button onClick={doInsert} className="text-sm bg-cyan-700 hover:bg-cyan-600 text-white rounded-lg px-4 py-2 font-medium">Вставить блок</button>
+          <button onClick={doInsert} className="text-sm bg-[#B8960A] hover:bg-[#FFD60A] text-white rounded-lg px-4 py-2 font-medium">Вставить блок</button>
         </div>
       </div>
     </div>
@@ -973,17 +973,17 @@ function ChatBuilderModal({ onInsert, onClose }: {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div className="space-y-1 md:col-span-2">
             <label className="text-xs text-gray-400">Заголовок</label>
-            <input value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-indigo-500" />
+            <input value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-[#FFD60A]" />
           </div>
           <div className="space-y-1">
             <label className="text-xs text-gray-400">Время</label>
-            <input value={time} onChange={e => setTime(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-indigo-500" />
+            <input value={time} onChange={e => setTime(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-[#FFD60A]" />
           </div>
         </div>
 
         <div className="space-y-1">
           <label className="text-xs text-gray-400">Канал</label>
-          <input value={channel} onChange={e => setChannel(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-indigo-500" />
+          <input value={channel} onChange={e => setChannel(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-[#FFD60A]" />
         </div>
 
         <div className="space-y-2">
@@ -994,7 +994,7 @@ function ChatBuilderModal({ onInsert, onClose }: {
                 key={char.key}
                 type="button"
                 onClick={() => setCharacterKey(char.key)}
-                className={`flex items-center gap-2 rounded-lg border px-2 py-2 text-xs transition-colors ${characterKey === char.key ? 'bg-indigo-900/50 border-indigo-500 text-indigo-100' : 'bg-gray-900 border-gray-700 text-gray-300 hover:border-gray-500'}`}
+                className={`flex items-center gap-2 rounded-lg border px-2 py-2 text-xs transition-colors ${characterKey === char.key ? 'bg-[#1a1500]/50 border-[#FFD60A] text-indigo-100' : 'bg-gray-900 border-gray-700 text-gray-300 hover:border-gray-500'}`}
               >
                 <span className="flex h-6 w-6 items-center justify-center rounded-full border border-gray-700/60 bg-gray-950 text-[13px] leading-none">
                   {char.icon}
@@ -1007,12 +1007,12 @@ function ChatBuilderModal({ onInsert, onClose }: {
 
         <div className="space-y-1">
           <label className="text-xs text-gray-400">Текст сообщения</label>
-          <textarea value={text} onChange={e => setText(e.target.value)} rows={5} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-indigo-500 resize-y" />
+          <textarea value={text} onChange={e => setText(e.target.value)} rows={5} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-[#FFD60A] resize-y" />
         </div>
 
         <div className="flex gap-2 justify-end pt-1">
           <button onClick={onClose} className="text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-lg px-4 py-2">Отмена</button>
-          <button onClick={doInsert} className="text-sm bg-indigo-700 hover:bg-indigo-600 text-white rounded-lg px-4 py-2 font-medium">Вставить чат</button>
+          <button onClick={doInsert} className="text-sm bg-indigo-700 hover:bg-[#B8960A] text-white rounded-lg px-4 py-2 font-medium">Вставить чат</button>
         </div>
       </div>
     </div>
@@ -1385,7 +1385,7 @@ export default function LessonEditor({
           <button
             onClick={onSave}
             disabled={saving}
-            className="text-sm bg-emerald-700 hover:bg-emerald-600 disabled:opacity-50 text-white rounded-lg px-4 py-1.5 font-medium"
+            className="text-sm bg-[#B8960A] hover:bg-[#FFD60A] disabled:opacity-50 text-white rounded-lg px-4 py-1.5 font-medium"
           >
             {saving ? '...' : '⌘S Сохранить'}
           </button>
@@ -1450,7 +1450,7 @@ export default function LessonEditor({
         {/* Media */}
         <div className="flex gap-0.5">
           <button onClick={() => setShowImageModal(true)} title="Вставить изображение" className="text-xs bg-gray-800/70 hover:bg-gray-700 text-gray-300 rounded px-2 py-1">🖼 Картинка</button>
-          <button onClick={() => { setLinkText(value.slice(savedSel[0], savedSel[1])); setShowLinkModal(true) }} title="Вставить ссылку (⌘K)" className="text-xs bg-gray-800/70 hover:bg-gray-700 text-blue-300 rounded px-2 py-1">🔗 Ссылка</button>
+          <button onClick={() => { setLinkText(value.slice(savedSel[0], savedSel[1])); setShowLinkModal(true) }} title="Вставить ссылку (⌘K)" className="text-xs bg-gray-800/70 hover:bg-gray-700 text-[#FFD60A] rounded px-2 py-1">🔗 Ссылка</button>
           <button onClick={() => insert('', '', '{{user_name}}')} title="Подставить имя пользователя" className="text-xs bg-gray-800/70 hover:bg-gray-700 text-[#FFD60A] rounded px-2 py-1">👤 Имя</button>
           <button
             onClick={() => {
@@ -1470,13 +1470,13 @@ export default function LessonEditor({
         <span className="text-[10px] text-gray-600 font-medium uppercase tracking-wider">Задание:</span>
         <div className="flex gap-0.5">
           <button onClick={() => setShowChoiceBuilder(true)} className="text-xs bg-purple-900/40 hover:bg-purple-800/60 text-purple-300 border border-purple-800/30 rounded px-2 py-1">☑ Выбор</button>
-          <button onClick={() => insertTask('sort')}     className="text-xs bg-blue-900/40 hover:bg-blue-800/60 text-blue-300 border border-blue-800/30 rounded px-2 py-1">↕ Порядок</button>
+          <button onClick={() => insertTask('sort')}     className="text-xs bg-blue-900/40 hover:bg-[#332D00]/60 text-[#FFD60A] border border-[#332D00]/30 rounded px-2 py-1">↕ Порядок</button>
           <button onClick={() => insertTask('freetext')} className="text-xs bg-amber-900/40 hover:bg-amber-800/60 text-amber-300 border border-amber-800/30 rounded px-2 py-1">✏ Текст</button>
-          <button onClick={() => insertTask('code')}     className="text-xs bg-emerald-900/40 hover:bg-emerald-800/60 text-[#FFD60A] border border-emerald-800/30 rounded px-2 py-1">{'<>'} Go код</button>
-          <button onClick={() => insertTask('interactive')} className="text-xs bg-blue-900/40 hover:bg-blue-800/60 text-blue-300 border border-blue-800/30 rounded px-2 py-1">⚡ Интерактив</button>
-          <button onClick={() => setShowFormBuilder(true)} className="text-xs bg-cyan-900/40 hover:bg-cyan-800/60 text-[#FFD60A] border border-cyan-800/30 rounded px-2 py-1">📝 Форма</button>
+          <button onClick={() => insertTask('code')}     className="text-xs bg-[#332D00]/40 hover:bg-[#332D00]/60 text-[#FFD60A] border border-[#665200]/30 rounded px-2 py-1">{'<>'} Go код</button>
+          <button onClick={() => insertTask('interactive')} className="text-xs bg-blue-900/40 hover:bg-[#332D00]/60 text-[#FFD60A] border border-[#332D00]/30 rounded px-2 py-1">⚡ Интерактив</button>
+          <button onClick={() => setShowFormBuilder(true)} className="text-xs bg-[#332D00]/40 hover:bg-[#332D00]/60 text-[#FFD60A] border border-[#332D00]/30 rounded px-2 py-1">📝 Форма</button>
           <button onClick={() => insertTask('continue')} className="text-xs bg-zinc-900/70 hover:bg-zinc-800 text-zinc-200 border border-zinc-700/70 rounded px-2 py-1">⤵ Продолжить</button>
-          <button onClick={() => setShowChatBuilder(true)} className="text-xs bg-indigo-900/40 hover:bg-indigo-800/60 text-indigo-300 border border-indigo-800/30 rounded px-2 py-1">💬 Чат</button>
+          <button onClick={() => setShowChatBuilder(true)} className="text-xs bg-[#1a1500]/40 hover:bg-[#332D00]/60 text-[#FFD60A] border border-[#332D00]/30 rounded px-2 py-1">💬 Чат</button>
           <button onClick={() => setShowChatDialogBuilder(true)} className="text-xs bg-fuchsia-900/40 hover:bg-fuchsia-800/60 text-fuchsia-300 border border-fuchsia-800/30 rounded px-2 py-1">🧵 Диалог</button>
         </div>
 
@@ -1485,7 +1485,7 @@ export default function LessonEditor({
         {/* Templates */}
         <button
           onClick={() => setShowTemplatesModal(true)}
-          className="text-xs bg-violet-900/40 hover:bg-violet-800/60 text-[#FFD60A] border border-violet-800/30 rounded px-2 py-1 font-medium"
+          className="text-xs bg-violet-900/40 hover:bg-[#332D00]/60 text-[#FFD60A] border border-[#332D00]/30 rounded px-2 py-1 font-medium"
         >
           📚 Шаблоны
         </button>
@@ -1506,7 +1506,7 @@ export default function LessonEditor({
             <span className="text-[10px] text-gray-700">Tab = 2 пробела · Перетащи картинку для вставки</span>
           </div>
           {isDragging && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-cyan-500/10 border-2 border-dashed border-cyan-500 pointer-events-none" style={{ top: '32px' }}>
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#FFD60A]/10 border-2 border-dashed border-[#FFD60A] pointer-events-none" style={{ top: '32px' }}>
               <p className="text-[#FFD60A] text-sm font-semibold bg-[#0d0f14]/90 px-6 py-3 rounded-xl">Отпусти для вставки изображения 🖼</p>
             </div>
           )}
@@ -1555,7 +1555,7 @@ export default function LessonEditor({
 
             {/* File upload */}
             <div
-              className="border-2 border-dashed border-gray-600 hover:border-cyan-500 rounded-xl p-4 text-center cursor-pointer transition-colors"
+              className="border-2 border-dashed border-gray-600 hover:border-[#FFD60A] rounded-xl p-4 text-center cursor-pointer transition-colors"
               onClick={() => imgFileRef.current?.click()}
             >
               {imgPreview ? (
@@ -1593,13 +1593,13 @@ export default function LessonEditor({
                 onKeyDown={e => e.key === 'Enter' && insertImage()}
                 placeholder="https://example.com/image.png"
                 disabled={!!imgPreview}
-                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-cyan-500 disabled:opacity-40"
+                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-[#FFD60A] disabled:opacity-40"
               />
             </div>
             <div className="space-y-1">
               <label className="text-xs text-gray-400">Подпись (alt)</label>
               <input value={imgAlt} onChange={e => setImgAlt(e.target.value)} placeholder="Описание картинки"
-                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-cyan-500" />
+                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-[#FFD60A]" />
             </div>
 
             {/* Alignment */}
@@ -1617,7 +1617,7 @@ export default function LessonEditor({
                     onClick={() => setImgAlign(opt.value)}
                     className={`flex-1 py-2 rounded-lg text-xs font-medium border transition-colors ${
                       imgAlign === opt.value
-                        ? 'bg-cyan-700 border-cyan-500 text-white'
+                        ? 'bg-[#B8960A] border-[#FFD60A] text-white'
                         : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200'
                     }`}
                   >
@@ -1629,7 +1629,7 @@ export default function LessonEditor({
 
             <div className="flex gap-2 justify-end pt-1">
               <button onClick={() => { setShowImageModal(false); setImgUrl(''); setImgAlt(''); setImgPreview(''); setImgAlign('center') }} className="text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-lg px-4 py-2">Отмена</button>
-              <button onClick={insertImage} disabled={(!imgUrl.trim() && !imgPreview) || imgUploading} className="text-sm bg-cyan-700 hover:bg-cyan-600 disabled:opacity-40 text-white rounded-lg px-4 py-2 font-medium">{imgUploading ? 'Загрузка...' : 'Вставить'}</button>
+              <button onClick={insertImage} disabled={(!imgUrl.trim() && !imgPreview) || imgUploading} className="text-sm bg-[#B8960A] hover:bg-[#FFD60A] disabled:opacity-40 text-white rounded-lg px-4 py-2 font-medium">{imgUploading ? 'Загрузка...' : 'Вставить'}</button>
             </div>
           </div>
         </div>
@@ -1644,16 +1644,16 @@ export default function LessonEditor({
               <label className="text-xs text-gray-400">URL *</label>
               <input autoFocus value={linkUrl} onChange={e => setLinkUrl(e.target.value)} onKeyDown={e => e.key === 'Enter' && insertLink()}
                 placeholder="https://example.com"
-                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-blue-500" />
+                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-[#FFD60A]" />
             </div>
             <div className="space-y-1">
-              <label className="text-xs text-gray-400">Текст ссылки {linkText && <span className="text-blue-400">(выделенный текст подставлен)</span>}</label>
+              <label className="text-xs text-gray-400">Текст ссылки {linkText && <span className="text-[#FFD60A]">(выделенный текст подставлен)</span>}</label>
               <input value={linkText} onChange={e => setLinkText(e.target.value)} placeholder="Читать подробнее"
-                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-blue-500" />
+                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-[#FFD60A]" />
             </div>
             <div className="flex gap-2 justify-end pt-1">
               <button onClick={() => setShowLinkModal(false)} className="text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-lg px-4 py-2">Отмена</button>
-              <button onClick={insertLink} className="text-sm bg-blue-700 hover:bg-blue-600 text-white rounded-lg px-4 py-2 font-medium">Вставить</button>
+              <button onClick={insertLink} className="text-sm bg-[#997A00] hover:bg-[#FFD60A] text-white rounded-lg px-4 py-2 font-medium">Вставить</button>
             </div>
           </div>
         </div>
@@ -1674,7 +1674,7 @@ export default function LessonEditor({
                 <select
                   value={snippet.language}
                   onChange={e => setSnippet(prev => ({ ...prev, language: e.target.value }))}
-                  className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-cyan-500"
+                  className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-[#FFD60A]"
                 >
                   {CODE_LANG_OPTIONS.map(opt => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -1687,7 +1687,7 @@ export default function LessonEditor({
                   value={snippet.title}
                   onChange={e => setSnippet(prev => ({ ...prev, title: e.target.value }))}
                   placeholder="Например: Пример функции"
-                  className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-cyan-500"
+                  className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-[#FFD60A]"
                 />
               </div>
             </div>
@@ -1701,7 +1701,7 @@ export default function LessonEditor({
                   onChange={e => setSnippet(prev => ({ ...prev, code: e.target.value }))}
                   rows={14}
                   spellCheck={false}
-                  className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-100 font-mono resize-y outline-none focus:border-cyan-500 selection:bg-[#264f78] selection:text-[#d4d4d4]"
+                  className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-100 font-mono resize-y outline-none focus:border-[#FFD60A] selection:bg-[#264f78] selection:text-[#d4d4d4]"
                 />
               </div>
 
@@ -1724,7 +1724,7 @@ export default function LessonEditor({
 
             <div className="flex gap-2 justify-end pt-1">
               <button onClick={() => setShowCodeSnippetModal(false)} className="text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-lg px-4 py-2">Отмена</button>
-              <button onClick={insertCodeSnippet} disabled={!snippet.code.trim()} className="text-sm bg-cyan-700 hover:bg-cyan-600 disabled:opacity-40 text-white rounded-lg px-4 py-2 font-medium">Вставить как блок кода</button>
+              <button onClick={insertCodeSnippet} disabled={!snippet.code.trim()} className="text-sm bg-[#B8960A] hover:bg-[#FFD60A] disabled:opacity-40 text-white rounded-lg px-4 py-2 font-medium">Вставить как блок кода</button>
             </div>
           </div>
         </div>
@@ -1809,7 +1809,7 @@ export default function LessonEditor({
                     onClick={() => setTemplateCategory(cat)}
                     className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
                       templateCategory === cat
-                        ? 'bg-violet-700 border-violet-500 text-white'
+                        ? 'bg-[#B8960A] border-[#FFD60A] text-white'
                         : 'bg-gray-800 border-gray-700 text-gray-400 hover:text-gray-200 hover:border-gray-600'
                     }`}
                   >
@@ -1829,7 +1829,7 @@ export default function LessonEditor({
                       setShowTemplatesModal(false)
                       setTimeout(() => { taRef.current?.focus() }, 0)
                     }}
-                    className="text-left bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-violet-700/50 rounded-xl p-4 transition-colors group"
+                    className="text-left bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-[#997A00]/50 rounded-xl p-4 transition-colors group"
                   >
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <span className="text-sm font-medium text-white group-hover:text-[#FFD60A] transition-colors">{tpl.name}</span>

@@ -62,7 +62,7 @@ export default function CodeEditor({
       </div>
 
       <div className="px-4 py-3 flex items-center gap-2 bg-[#0b1220]">
-        <button onClick={onRun} disabled={running} className="px-4 py-2 rounded-xl border border-[#FFD60A]/40 text-sm text-[#FFD60A] hover:bg-cyan-500/10 transition-colors disabled:opacity-60">{running ? 'Run...' : 'Run'}</button>
+        <button onClick={onRun} disabled={running} className="px-4 py-2 rounded-xl border border-[#FFD60A]/40 text-sm text-[#FFD60A] hover:bg-[#FFD60A]/10 transition-colors disabled:opacity-60">{running ? 'Run...' : 'Run'}</button>
         <button onClick={onSubmit} disabled={submitting} className="px-4 py-2 rounded-xl bg-[#FFD60A] text-slate-900 text-sm font-semibold hover:bg-[#FFD60A] transition-colors disabled:opacity-60">{submitting ? 'Submit...' : 'Submit'}</button>
       </div>
     </div>

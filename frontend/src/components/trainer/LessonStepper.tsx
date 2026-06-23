@@ -33,18 +33,18 @@ export default function LessonStepper({ steps, activeStep, onSelectStep }: Lesso
               disabled={step.locked}
               className={`w-full rounded-xl border p-3 text-left transition-all ${
                 active
-                  ? 'border-[#FFD60A] bg-cyan-500/10'
+                  ? 'border-[#FFD60A] bg-[#FFD60A]/10'
                   : step.locked
                     ? 'border-[#1f2937] bg-[#0b1220] opacity-45 cursor-not-allowed'
-                    : 'border-[#1f2937] bg-[#0b1220] hover:border-cyan-500/40'
+                    : 'border-[#1f2937] bg-[#0b1220] hover:border-[#FFD60A]/40'
               }`}
             >
               <div className="flex items-center gap-3">
                 <span className={`h-6 w-6 shrink-0 rounded-full border text-xs font-semibold flex items-center justify-center ${
                   step.done
-                    ? 'border-emerald-400/60 bg-[#FFD60A]/20 text-[#FFD60A]'
+                    ? 'border-[#FFD60A]/60 bg-[#FFD60A]/20 text-[#FFD60A]'
                     : active
-                      ? 'border-[#FFD60A]/60 bg-cyan-500/20 text-[#FFD60A]'
+                      ? 'border-[#FFD60A]/60 bg-[#FFD60A]/20 text-[#FFD60A]'
                       : 'border-gray-600 text-gray-400'
                 }`}>
                   {step.done ? '✓' : step.id}
@@ -56,7 +56,7 @@ export default function LessonStepper({ steps, activeStep, onSelectStep }: Lesso
               </div>
 
               {active && step.expandedText && (
-                <div className="mt-3 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2">
+                <div className="mt-3 rounded-lg border border-[#FFD60A]/30 bg-[#FFD60A]/10 px-3 py-2">
                   <p className="text-xs leading-relaxed text-[#FFE44D]">{step.expandedText}</p>
                 </div>
               )}

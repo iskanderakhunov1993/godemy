@@ -153,7 +153,7 @@ export default function TrainerPracticeEditorPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="px-5 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-sm font-medium transition-colors disabled:opacity-50"
+          className="px-5 py-2 rounded-lg bg-[#B8960A] hover:bg-[#FFD60A] text-sm font-medium transition-colors disabled:opacity-50"
         >
           {saving ? 'Сохранение...' : 'Сохранить'}
         </button>
@@ -217,7 +217,7 @@ export default function TrainerPracticeEditorPage() {
           <div className="rounded-xl border border-gray-700 bg-gray-950/60 p-4 space-y-3">
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-lg font-semibold">Mini-задачи</h2>
-              <button onClick={addTask} className="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-sm transition-colors">
+              <button onClick={addTask} className="px-3 py-1.5 rounded-lg bg-[#B8960A] hover:bg-[#FFD60A] text-sm transition-colors">
                 + Добавить
               </button>
             </div>
@@ -281,4 +281,4 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 const inputCls =
-  'w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-600 text-white focus:outline-none focus:border-violet-500 text-sm'
+  'w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-600 text-white focus:outline-none focus:border-[#FFD60A] text-sm'

@@ -235,7 +235,7 @@ export default function FlashcardsTab() {
       </div>
       <div className="w-full bg-gray-800 rounded-full h-1.5 mb-6">
         <div
-          className="bg-cyan-500 h-1.5 rounded-full transition-all"
+          className="bg-[#FFD60A] h-1.5 rounded-full transition-all"
           style={{ width: `${(learnedCount / ALL_CARDS.length) * 100}%` }}
         />
       </div>
@@ -254,7 +254,7 @@ export default function FlashcardsTab() {
             <div className="text-center">
               <button
                 onClick={() => setShowAnswer(true)}
-                className="flex items-center gap-2 mx-auto px-6 py-2.5 rounded-xl bg-gray-800 border border-gray-700 text-gray-300 hover:border-cyan-500 hover:text-white transition-colors"
+                className="flex items-center gap-2 mx-auto px-6 py-2.5 rounded-xl bg-gray-800 border border-gray-700 text-gray-300 hover:border-[#FFD60A] hover:text-white transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -277,7 +277,7 @@ export default function FlashcardsTab() {
                 </button>
                 <button
                   onClick={handleLearned}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#FFD60A]/10 border border-emerald-500/30 text-[#FFD60A] hover:bg-[#FFD60A]/20 hover:border-emerald-500 transition-colors font-medium"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#FFD60A]/10 border border-[#FFD60A]/30 text-[#FFD60A] hover:bg-[#FFD60A]/20 hover:border-[#FFD60A] transition-colors font-medium"
                 >
                   <span className="text-lg">✓</span>
                   Отметить выученным

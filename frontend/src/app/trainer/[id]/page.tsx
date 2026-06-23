@@ -288,7 +288,7 @@ export default function ExercisePage() {
 
           <aside className="space-y-4 xl:sticky xl:top-4">
             {showCelebration ? (
-              <section className="rounded-2xl border-2 border-emerald-400 bg-gradient-to-r from-emerald-950 to-emerald-900 p-5 shadow-[0_10px_30px_rgba(16,185,129,0.3)] animate-pulse">
+              <section className="rounded-2xl border-2 border-[#FFD60A] bg-gradient-to-r from-[#1a1500] to-[#332D00] p-5 shadow-[0_10px_30px_rgba(16,185,129,0.3)] animate-pulse">
                 <div className="text-center">
                   <p className="text-xl sm:text-2xl font-bold text-[#FFD60A] mb-2">🎉 Отлично!</p>
                   <p className="text-sm sm:text-base text-[#FFD60A]">Все mini-задачи закрыты.</p>
@@ -298,7 +298,7 @@ export default function ExercisePage() {
             ) : null}
 
             <section className={`rounded-2xl border p-4 shadow-[0_10px_30px_rgba(0,0,0,0.28)] transition-all duration-300 ${
-              completedCount === layout.tasks.length ? 'border-emerald-500 bg-emerald-950' : 'border-[#1f2937] bg-[#111827]'
+              completedCount === layout.tasks.length ? 'border-[#FFD60A] bg-[#1a1500]' : 'border-[#1f2937] bg-[#111827]'
             }`}>
               <div className="flex items-center justify-between mb-3 gap-3">
                 <h2 className="text-lg font-semibold">{layout.taskSectionTitle || 'Mini-задачи'}</h2>
@@ -338,7 +338,7 @@ export default function ExercisePage() {
                       key={`${task.title}-${index}`}
                       className={`rounded-xl border p-3 ${
                         passed
-                          ? 'border-emerald-500/60 bg-emerald-950/40'
+                          ? 'border-[#FFD60A]/60 bg-[#1a1500]/40'
                           : status === 'failed'
                             ? 'border-rose-500/40 bg-rose-950/20'
                             : 'border-[#1f2937] bg-[#0b1220]'
@@ -366,7 +366,7 @@ export default function ExercisePage() {
                         placeholder={task.placeholder}
                         className={`mb-2 min-h-[130px] w-full rounded-xl border bg-[#020617] px-3 py-2 text-xs text-[#FFE44D] outline-none transition-colors ${monoClassName} ${
                           passed
-                            ? 'border-emerald-500/50'
+                            ? 'border-[#FFD60A]/50'
                             : status === 'failed'
                               ? 'border-rose-500/40'
                               : 'border-[#1f2937] focus:border-[#FFD60A]/60'

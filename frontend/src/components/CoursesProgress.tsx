@@ -31,8 +31,8 @@ export default function CoursesProgress({
     <div className="space-y-6">
       {/* Overall Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-4">
-          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-[#332D00]/20 rounded-lg p-4">
+          <div className="text-2xl font-bold text-[#FFD60A] dark:text-[#FFD60A]">
             {completedSprints}
           </div>
           <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
@@ -40,8 +40,8 @@ export default function CoursesProgress({
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg p-4">
-          <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+        <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-[#332D00]/20 rounded-lg p-4">
+          <div className="text-2xl font-bold text-green-600 dark:text-[#FFD60A]">
             {completedLessons}/{totalLessonsCount}
           </div>
           <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">Уроков завершено</div>
@@ -74,7 +74,7 @@ export default function CoursesProgress({
         </div>
         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
           <div
-            className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 h-3 rounded-full transition-all duration-500"
+            className="bg-gradient-to-r from-[#FFD60A] via-[#FFD60A] to-[#FFE44D] h-3 rounded-full transition-all duration-500"
             style={{ width: `${overallProgress}%` }}
           />
         </div>
@@ -93,7 +93,7 @@ export default function CoursesProgress({
                   rounded-lg p-4 transition-all
                   ${
                     course.completed
-                      ? 'bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800'
+                      ? 'bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-[#332D00]'
                       : 'bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700'
                   }
                 `}
@@ -105,7 +105,7 @@ export default function CoursesProgress({
                         {course.module}
                       </h4>
                       {course.completed && (
-                        <span className="inline-flex items-center gap-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-semibold px-2 py-1 rounded-full">
+                        <span className="inline-flex items-center gap-1 bg-green-100 dark:bg-green-900/30 text-[#997A00] dark:text-[#FFD60A] text-xs font-semibold px-2 py-1 rounded-full">
                           ✓ Завершен
                         </span>
                       )}
@@ -128,8 +128,8 @@ export default function CoursesProgress({
                       h-2 rounded-full transition-all duration-500
                       ${
                         course.completed
-                          ? 'bg-gradient-to-r from-green-500 to-emerald-500'
-                          : 'bg-gradient-to-r from-blue-500 to-cyan-500'
+                          ? 'bg-gradient-to-r from-[#FFD60A] to-[#FFE44D]'
+                          : 'bg-gradient-to-r from-[#FFD60A] to-[#FFD60A]'
                       }
                     `}
                     style={{ width: `${course.progress}%` }}
@@ -139,7 +139,7 @@ export default function CoursesProgress({
                 {/* Completion status */}
                 <div className="mt-3 text-xs text-gray-600 dark:text-gray-400">
                   {course.completed ? (
-                    <span className="text-green-600 dark:text-green-400 font-semibold">
+                    <span className="text-green-600 dark:text-[#FFD60A] font-semibold">
                       🎉 Спринт успешно завершен! Ты заработал новые навыки.
                     </span>
                   ) : (

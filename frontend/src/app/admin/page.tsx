@@ -12,7 +12,7 @@ export default function AdminDashboard() {
       <div className="flex flex-wrap gap-3">
         <Link
           href="/admin/structure"
-          className="inline-flex items-center bg-cyan-700 hover:bg-cyan-600 text-white rounded-lg px-4 py-2 transition-colors"
+          className="inline-flex items-center bg-[#B8960A] hover:bg-[#FFD60A] text-white rounded-lg px-4 py-2 transition-colors"
         >
           Открыть редактор курса
         </Link>
@@ -24,7 +24,7 @@ export default function AdminDashboard() {
         </Link>
         <Link
           href="/admin/exercises"
-          className="inline-flex items-center bg-violet-700 hover:bg-violet-600 text-white rounded-lg px-4 py-2 transition-colors"
+          className="inline-flex items-center bg-[#B8960A] hover:bg-[#B8960A] text-white rounded-lg px-4 py-2 transition-colors"
         >
           Упражнения тренажёра
         </Link>
@@ -36,7 +36,7 @@ export default function AdminDashboard() {
         </Link>
         <Link
           href="/admin/course-generator"
-          className="inline-flex items-center bg-emerald-700 hover:bg-emerald-600 text-white rounded-lg px-4 py-2 transition-colors"
+          className="inline-flex items-center bg-[#B8960A] hover:bg-[#FFD60A] text-white rounded-lg px-4 py-2 transition-colors"
         >
           Генератор курса
         </Link>

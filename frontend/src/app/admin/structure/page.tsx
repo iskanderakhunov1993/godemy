@@ -1148,7 +1148,7 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
                     <button
                       onClick={() => handleUpdateLevel(level)}
                       disabled={saving}
-                      className="text-xs bg-cyan-700 hover:bg-cyan-600 text-white rounded px-2 py-1"
+                      className="text-xs bg-[#B8960A] hover:bg-[#FFD60A] text-white rounded px-2 py-1"
                     >Сохранить</button>
                     <button
                       onClick={() => {
@@ -1202,7 +1202,7 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
         </div>
 
         {successMsg && (
-          <div className="text-green-400 bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 inline-block">
+          <div className="text-[#FFD60A] bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 inline-block">
             {successMsg}
           </div>
         )}
@@ -1304,7 +1304,7 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
                                 <button
                                   onClick={() => handleRenameModule(module.level, module.name)}
                                   disabled={saving}
-                                  className="text-sm bg-cyan-700 hover:bg-cyan-600 text-white rounded px-3 py-1"
+                                  className="text-sm bg-[#B8960A] hover:bg-[#FFD60A] text-white rounded px-3 py-1"
                                 >
                                   Сохранить
                                 </button>
@@ -1483,12 +1483,12 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
                               >
                                 {/* Topic header */}
                                 <div className="flex items-center gap-2 mb-3">
-                                  <div className="w-2 h-2 rounded-full bg-sky-500 flex-shrink-0" />
+                                  <div className="w-2 h-2 rounded-full bg-[#FFD60A] flex-shrink-0" />
                                   {isEditingTopic ? (
                                     <input
                                       value={editingTopicValue}
                                       onChange={(e) => setEditingTopicValue(e.target.value)}
-                                      className="bg-gray-800 border border-sky-600 rounded px-2 py-0.5 text-sm text-sky-200 flex-1"
+                                      className="bg-gray-800 border border-[#FFD60A] rounded px-2 py-0.5 text-sm text-[#FFE44D] flex-1"
                                       autoFocus
                                       onKeyDown={(e) => {
                                         if (e.key === "Enter") handleRenameTopic(module.level, module.name, topic.name, editingTopicValue)
@@ -1496,12 +1496,12 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
                                       }}
                                     />
                                   ) : (
-                                    <span className="text-sky-300 font-medium text-sm flex-1">{topic.name}</span>
+                                    <span className="text-[#FFD60A] font-medium text-sm flex-1">{topic.name}</span>
                                   )}
-                                  <span className="text-xs text-sky-300/70">↕ Перетащи</span>
+                                  <span className="text-xs text-[#FFD60A]/70">↕ Перетащи</span>
                                   {isEditingTopic ? (
                                     <>
-                                      <button onClick={() => handleRenameTopic(module.level, module.name, topic.name, editingTopicValue)} disabled={saving} className="text-xs bg-sky-700 hover:bg-sky-600 text-white rounded px-2 py-0.5">Сохранить</button>
+                                      <button onClick={() => handleRenameTopic(module.level, module.name, topic.name, editingTopicValue)} disabled={saving} className="text-xs bg-sky-700 hover:bg-[#B8960A] text-white rounded px-2 py-0.5">Сохранить</button>
                                       <button onClick={() => { setEditingTopicKey(null); setEditingTopicValue("") }} className="text-xs bg-gray-700 hover:bg-gray-600 text-white rounded px-2 py-0.5">Отмена</button>
                                     </>
                                   ) : (
@@ -1671,13 +1671,13 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
                                           {editingLessonId === lesson.id ? (
                                             <input value={editingLessonTitle} onChange={(e) => setEditingLessonTitle(e.target.value)} className="bg-gray-800 border border-gray-600 rounded px-2 py-1 text-white w-full text-sm" autoFocus />
                                           ) : (
-                                            <span className="text-gray-200 text-sm">{lesson.title} <span className="text-indigo-300/70 text-xs">↕</span></span>
+                                            <span className="text-gray-200 text-sm">{lesson.title} <span className="text-[#FFD60A]/70 text-xs">↕</span></span>
                                           )}
                                         </div>
                                         <div className="flex items-center gap-2 flex-shrink-0">
                                           {editingLessonId === lesson.id ? (
                                             <>
-                                              <button onClick={() => handleUpdateLesson(lesson)} disabled={saving} className="text-xs bg-cyan-700 hover:bg-cyan-600 text-white rounded px-2 py-1">Сохранить</button>
+                                              <button onClick={() => handleUpdateLesson(lesson)} disabled={saving} className="text-xs bg-[#B8960A] hover:bg-[#FFD60A] text-white rounded px-2 py-1">Сохранить</button>
                                               <button onClick={() => { setEditingLessonId(null); setEditingLessonTitle("") }} disabled={saving} className="text-xs bg-gray-700 hover:bg-gray-600 text-white rounded px-2 py-1">Отмена</button>
                                             </>
                                           ) : (
@@ -1722,12 +1722,12 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
                                               </select>
                                             </>
                                           )}
-                                          <button onClick={() => handleOpenLesson(lesson)} disabled={saving} className="text-xs bg-indigo-700 hover:bg-indigo-600 text-white rounded px-2 py-1">Открыть</button>
+                                          <button onClick={() => handleOpenLesson(lesson)} disabled={saving} className="text-xs bg-indigo-700 hover:bg-[#B8960A] text-white rounded px-2 py-1">Открыть</button>
                                           <button onClick={() => handleDeleteLesson(lesson.id, lesson.title)} disabled={saving} className="text-xs text-red-300 hover:text-red-200">✕</button>
                                         </div>
                                       </div>
                                       {openedLessonId === lesson.id && (
-                                        <div className="rounded-2xl border border-indigo-500/25 bg-gray-950/60 p-3">
+                                        <div className="rounded-2xl border border-[#FFD60A]/25 bg-gray-950/60 p-3">
                                           <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-gray-500">
                                             Короткое описание на карточке урока
                                           </label>
@@ -1768,7 +1768,7 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
                                     <button
                                       onClick={() => handleCreateLessonInTopic(module.level, module.name, topic.name)}
                                       disabled={saving || !(newLessonByTopic[topicKey] || "").trim()}
-                                      className="bg-emerald-700 hover:bg-emerald-600 disabled:opacity-60 text-white rounded px-3 py-1.5 text-sm whitespace-nowrap"
+                                      className="bg-[#B8960A] hover:bg-[#FFD60A] disabled:opacity-60 text-white rounded px-3 py-1.5 text-sm whitespace-nowrap"
                                     >+ Урок</button>
                                   </div>
                                 </div>
@@ -1781,7 +1781,7 @@ export function AdminStructureEditor({ mode = "course" }: { mode?: AdminEditorMo
                             <button
                               onClick={() => handleAddTopicToModule(module.level, module.name)}
                               disabled={saving}
-                              className="text-sm bg-sky-900 hover:bg-sky-800 text-sky-300 rounded px-3 py-1.5"
+                              className="text-sm bg-sky-900 hover:bg-[#332D00] text-[#FFD60A] rounded px-3 py-1.5"
                             >+ Тема</button>
                           </div>
                         </div>

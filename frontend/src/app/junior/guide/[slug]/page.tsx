@@ -244,7 +244,7 @@ function Sprint17InterviewContent() {
 
   return (
     <section className="space-y-6">
-      <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-5">
+      <div className="rounded-2xl border border-[#FFD60A]/20 bg-[#FFD60A]/10 p-5">
         <div className="text-xs font-semibold uppercase tracking-wide text-[#FFD60A] mb-2">Sprint 1.7</div>
         <h2 className="text-2xl font-bold text-white mb-3">Вопросы с собеседований</h2>
         <p className="text-sm text-[#FFE44D]/90 leading-relaxed">
@@ -275,7 +275,7 @@ function Sprint17InterviewContent() {
           {['handler', 'route -> handler', 'GET vs POST', 'status code', 'JSON контракт'].map((item) => (
             <span
               key={item}
-              className="inline-flex items-center rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-[#FFD60A]"
+              className="inline-flex items-center rounded-full border border-[#FFD60A]/20 bg-[#FFD60A]/10 px-3 py-1 text-xs font-semibold text-[#FFD60A]"
             >
               {item}
             </span>
@@ -302,7 +302,7 @@ function Sprint17InterviewContent() {
             ) : (
               <button
                 onClick={openAllQuestions}
-                className="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-semibold text-[#FFD60A] hover:bg-cyan-500/20 transition-colors"
+                className="rounded-lg border border-[#FFD60A]/30 bg-[#FFD60A]/10 px-3 py-2 text-xs font-semibold text-[#FFD60A] hover:bg-[#FFD60A]/20 transition-colors"
               >
                 Раскрыть все
               </button>
@@ -312,7 +312,7 @@ function Sprint17InterviewContent() {
 
         <div className="h-2 w-full rounded-full bg-gray-800 overflow-hidden mb-2">
           <div
-            className="h-full bg-cyan-500"
+            className="h-full bg-[#FFD60A]"
             style={{ width: `${(openedCount / totalQuestions) * 100}%` }}
           />
         </div>
@@ -324,7 +324,7 @@ function Sprint17InterviewContent() {
           return (
           <div
             key={item.question}
-            className={`group rounded-2xl border bg-gray-900 transition-colors ${isOpen ? 'border-cyan-500/30 bg-cyan-500/5' : 'border-gray-800'}`}
+            className={`group rounded-2xl border bg-gray-900 transition-colors ${isOpen ? 'border-[#FFD60A]/30 bg-[#FFD60A]/5' : 'border-gray-800'}`}
           >
             <button
               onClick={() => toggleQuestion(index)}
@@ -361,7 +361,7 @@ function Sprint17InterviewContent() {
           </div>
           <button
             onClick={regenerateQuiz}
-            className="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-semibold text-[#FFD60A] hover:bg-cyan-500/20 transition-colors"
+            className="rounded-lg border border-[#FFD60A]/30 bg-[#FFD60A]/10 px-3 py-2 text-xs font-semibold text-[#FFD60A] hover:bg-[#FFD60A]/20 transition-colors"
           >
             Новый набор
           </button>
@@ -387,7 +387,7 @@ function Sprint17InterviewContent() {
                   </button>
                   <button
                     onClick={() => markQuiz(item.question, 'ok')}
-                    className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${mark === 'ok' ? 'bg-[#FFD60A]/20 text-[#FFD60A] border border-emerald-500/30' : 'border border-gray-700 bg-gray-900 text-gray-300 hover:text-white'}`}
+                    className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${mark === 'ok' ? 'bg-[#FFD60A]/20 text-[#FFD60A] border border-[#FFD60A]/30' : 'border border-gray-700 bg-gray-900 text-gray-300 hover:text-white'}`}
                   >
                     Ответил уверенно
                   </button>
@@ -492,9 +492,9 @@ export default function JuniorLessonPage() {
                         <Link
                           key={l.slug}
                           href={`/junior/guide/${l.slug}`}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${l.slug === slug ? 'bg-cyan-500/10 text-[#FFD60A] border border-cyan-500/20' : 'text-gray-400 hover:text-white hover:bg-gray-800'}`}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${l.slug === slug ? 'bg-[#FFD60A]/10 text-[#FFD60A] border border-[#FFD60A]/20' : 'text-gray-400 hover:text-white hover:bg-gray-800'}`}
                         >
-                          <div className={`w-4 h-4 rounded-full border flex-shrink-0 flex items-center justify-center ${done ? 'bg-[#FFD60A] border-emerald-500' : 'border-gray-600'}`}>
+                          <div className={`w-4 h-4 rounded-full border flex-shrink-0 flex items-center justify-center ${done ? 'bg-[#FFD60A] border-[#FFD60A]' : 'border-gray-600'}`}>
                             {done && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                           </div>
                           <span className="truncate">{l.title}</span>

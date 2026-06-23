@@ -260,7 +260,7 @@ export default function AdminPrakterPage() {
           <div className="flex gap-2">
             <button
               onClick={handleCreateNew}
-              className="rounded-lg bg-cyan-600 hover:bg-cyan-700 px-4 py-2 text-sm font-semibold transition-colors"
+              className="rounded-lg bg-[#B8960A] hover:bg-[#B8960A] px-4 py-2 text-sm font-semibold transition-colors"
             >
               ➕ Новая задача
             </button>
@@ -282,7 +282,7 @@ export default function AdminPrakterPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Поиск по задачам"
-                className="mb-3 w-full rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
+                className="mb-3 w-full rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-[#FFD60A] focus:outline-none"
               />
               <div className="space-y-2">
                 {filteredExercises.map((item) => (
@@ -291,7 +291,7 @@ export default function AdminPrakterPage() {
                     onClick={() => handleSelectExercise(item)}
                     className={`w-full rounded-lg border px-3 py-2 text-left transition-colors ${
                       selectedSlug === item.slug && !isCreating
-                        ? 'border-cyan-500/70 bg-cyan-500/10'
+                        ? 'border-[#FFD60A]/70 bg-[#FFD60A]/10'
                         : 'border-slate-700 bg-slate-900/50 hover:border-slate-500'
                     }`}
                   >
@@ -337,7 +337,7 @@ export default function AdminPrakterPage() {
                     <input
                       value={formData.slug}
                       onChange={(e) => handleFormChange('slug', e.target.value)}
-                      className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
+                      className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-[#FFD60A] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -349,7 +349,7 @@ export default function AdminPrakterPage() {
                     value={formData.displayName}
                     onChange={(e) => handleFormChange('displayName', e.target.value)}
                     placeholder="Например: Echo, Raindrops, Leap..."
-                    className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
+                    className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-[#FFD60A] focus:outline-none"
                   />
                 </div>
 
@@ -358,7 +358,7 @@ export default function AdminPrakterPage() {
                   <input
                     value={formData.title}
                     onChange={(e) => handleFormChange('title', e.target.value)}
-                    className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
+                    className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-[#FFD60A] focus:outline-none"
                   />
                 </div>
 
@@ -368,7 +368,7 @@ export default function AdminPrakterPage() {
                     value={formData.summary}
                     onChange={(e) => handleFormChange('summary', e.target.value)}
                     rows={3}
-                    className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-cyan-500 focus:outline-none resize-none"
+                    className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-[#FFD60A] focus:outline-none resize-none"
                   />
                 </div>
 
@@ -377,7 +377,7 @@ export default function AdminPrakterPage() {
                     <label className="block text-sm font-semibold text-slate-200">Иконка</label>
                     <button
                       onClick={() => setShowIconPicker(!showIconPicker)}
-                      className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-3 text-2xl hover:border-cyan-500/60 transition-colors"
+                      className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-3 text-2xl hover:border-[#FFD60A]/60 transition-colors"
                     >
                       {formData.icon}
                     </button>
@@ -404,7 +404,7 @@ export default function AdminPrakterPage() {
                     <select
                       value={formData.difficulty}
                       onChange={(e) => handleFormChange('difficulty', e.target.value)}
-                      className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-slate-100 focus:border-cyan-500 focus:outline-none"
+                      className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-slate-100 focus:border-[#FFD60A] focus:outline-none"
                     >
                       {DIFFICULTIES.map(d => (
                         <option key={d} value={d}>{d}</option>
@@ -420,7 +420,7 @@ export default function AdminPrakterPage() {
                     value={formData.category}
                     onChange={(e) => handleFormChange('category', e.target.value)}
                     placeholder="functions, loops, strings..."
-                    className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
+                    className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-[#FFD60A] focus:outline-none"
                   />
                 </div>
 
@@ -430,7 +430,7 @@ export default function AdminPrakterPage() {
                     value={formData.instructions}
                     onChange={(e) => handleFormChange('instructions', e.target.value)}
                     rows={8}
-                    className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-cyan-500 focus:outline-none resize-none"
+                    className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-[#FFD60A] focus:outline-none resize-none"
                   />
                 </div>
 
@@ -441,14 +441,14 @@ export default function AdminPrakterPage() {
                     onChange={(e) => handleFormChange('requiredPatterns', e.target.value)}
                     rows={4}
                     placeholder="func\\s+main\\s*\\("
-                    className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-cyan-500 focus:outline-none font-mono text-sm resize-none"
+                    className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-[#FFD60A] focus:outline-none font-mono text-sm resize-none"
                   />
                 </div>
 
                 <div className="flex gap-3 pt-4">
                   <button
                     onClick={handleSave}
-                    className="flex-1 rounded-lg bg-cyan-600 hover:bg-cyan-700 px-6 py-3 font-semibold transition-colors"
+                    className="flex-1 rounded-lg bg-[#B8960A] hover:bg-[#B8960A] px-6 py-3 font-semibold transition-colors"
                   >
                     💾 {isCreating ? 'Создать задачу' : 'Сохранить изменения'}
                   </button>
@@ -471,7 +471,7 @@ export default function AdminPrakterPage() {
                 value={formData.starterCode}
                 onChange={(e) => handleFormChange('starterCode', e.target.value)}
                 rows={4}
-                className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2 text-slate-100 text-xs font-mono resize-none focus:border-cyan-500 focus:outline-none"
+                className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2 text-slate-100 text-xs font-mono resize-none focus:border-[#FFD60A] focus:outline-none"
               />
             </div>
 
@@ -489,7 +489,7 @@ export default function AdminPrakterPage() {
 
             <button
               onClick={handleTestCode}
-              className="w-full rounded-lg bg-green-600 hover:bg-green-700 px-4 py-2 font-semibold text-sm transition-colors"
+              className="w-full rounded-lg bg-green-600 hover:bg-[#997A00] px-4 py-2 font-semibold text-sm transition-colors"
             >
               ▶️ Проверить по паттернам
             </button>
@@ -497,7 +497,7 @@ export default function AdminPrakterPage() {
             {testResult && (
               <div className={`rounded-lg border px-4 py-3 text-sm ${
                 testResult.success
-                  ? 'border-green-500/60 bg-green-500/10 text-green-200'
+                  ? 'border-[#FFD60A]/60 bg-[#FFD60A]/10 text-[#FFE44D]'
                   : 'border-red-500/60 bg-red-500/10 text-red-200'
               }`}>
                 {testResult.message}

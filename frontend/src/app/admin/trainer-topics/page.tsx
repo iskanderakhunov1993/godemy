@@ -47,7 +47,7 @@ export default function AdminTrainerTopicsPage() {
         </div>
         <Link
           href="/admin/trainer-topics/new"
-          className="px-4 py-2 bg-violet-600 hover:bg-violet-500 rounded-lg text-sm font-medium transition-colors"
+          className="px-4 py-2 bg-[#B8960A] hover:bg-[#FFD60A] rounded-lg text-sm font-medium transition-colors"
         >
           + Новая тема
         </Link>
@@ -59,7 +59,7 @@ export default function AdminTrainerTopicsPage() {
           <p className="text-gray-400 mb-4">Тем пока нет. Создайте первую!</p>
           <Link
             href="/admin/trainer-topics/new"
-            className="px-4 py-2 bg-violet-600 hover:bg-violet-500 rounded-lg text-sm font-medium transition-colors"
+            className="px-4 py-2 bg-[#B8960A] hover:bg-[#FFD60A] rounded-lg text-sm font-medium transition-colors"
           >
             + Создать тему
           </Link>
@@ -71,7 +71,7 @@ export default function AdminTrainerTopicsPage() {
               key={topic.id}
               className="bg-gray-900 border border-gray-700 rounded-xl px-5 py-4 flex items-center gap-4 hover:border-gray-600 transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-violet-700/40 border border-violet-600/50 text-[#FFD60A] text-sm flex items-center justify-center font-bold shrink-0">
+              <div className="w-8 h-8 rounded-full bg-[#B8960A]/40 border border-[#FFD60A]/50 text-[#FFD60A] text-sm flex items-center justify-center font-bold shrink-0">
                 {topic.order || topic.id}
               </div>
               <div className="flex-1 min-w-0">

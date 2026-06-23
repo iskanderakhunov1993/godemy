@@ -182,7 +182,7 @@ export default function PratkorExercisePage() {
               <span
                 className={`rounded-full border px-2.5 py-1 text-xs ${
                   exercise.difficulty === 'easy'
-                    ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                    ? 'border-[#FFD60A] bg-[#FFF8DC] text-[#997A00]'
                     : exercise.difficulty === 'medium'
                       ? 'border-amber-200 bg-amber-50 text-amber-700'
                       : 'border-rose-200 bg-rose-50 text-rose-700'
@@ -191,7 +191,7 @@ export default function PratkorExercisePage() {
                 {exercise.difficulty}
               </span>
               {isCompleted ? (
-                <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                <span className="rounded-full border border-[#FFD60A] bg-[#FFF8DC] px-2.5 py-1 text-xs font-semibold text-[#997A00]">
                   completed
                 </span>
               ) : null}
@@ -226,7 +226,7 @@ export default function PratkorExercisePage() {
             {statusMessage ? (
               <p className={`mt-4 rounded-xl border px-3 py-2 text-sm ${
                 isCompleted
-                  ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                  ? 'border-[#FFD60A] bg-[#FFF8DC] text-[#997A00]'
                   : 'border-amber-200 bg-amber-50 text-amber-700'
               }`}>
                 {statusMessage}

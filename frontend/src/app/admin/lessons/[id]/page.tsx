@@ -54,7 +54,7 @@ function ImageUploadDropdown({ onInsert }: { onInsert: (markdown: string) => voi
           <div className="flex gap-2">
             <button
               type="button"
-              className="px-3 py-1 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-medium"
+              className="px-3 py-1 bg-[#B8960A] hover:bg-[#FFD60A] text-white rounded-lg text-xs font-medium"
               onClick={handleInsert}
               disabled={!preview}
             >Вставить</button>
@@ -259,7 +259,7 @@ export default function LessonEditorPage() {
             <button
               onClick={() => setPreview(p => !p)}
               className={`px-3 py-1 rounded-lg text-sm transition-colors ${
-                preview ? 'bg-cyan-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                preview ? 'bg-[#B8960A] text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
               }`}
             >
               {preview ? 'Редактор' : 'Превью'}
@@ -277,7 +277,7 @@ export default function LessonEditorPage() {
             value={form.content}
             onChange={e => handleChange('content', e.target.value)}
             rows={20}
-            className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white font-mono text-sm focus:outline-none focus:border-cyan-500 resize-y"
+            className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white font-mono text-sm focus:outline-none focus:border-[#FFD60A] resize-y"
             placeholder="# Заголовок урока&#10;&#10;Текст урока в формате Markdown...&#10;&#10;![Изображение](https://example.com/image.png)&#10;&#10;```go&#10;package main&#10;&#10;func main() {}&#10;```"
             onDrop={handleDrop}
             onDragOver={handleDragOver}
@@ -289,7 +289,7 @@ export default function LessonEditorPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="px-6 py-2 bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 rounded-lg font-medium transition-colors"
+          className="px-6 py-2 bg-[#B8960A] hover:bg-[#FFD60A] disabled:opacity-50 rounded-lg font-medium transition-colors"
         >
           {saving ? 'Сохранение...' : isNew ? 'Создать урок' : 'Сохранить изменения'}
         </button>
@@ -354,4 +354,4 @@ function MarkdownPreview({ content }: { content: string }) {
 }
 
 const inputCls =
-  'w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white focus:outline-none focus:border-cyan-500 text-sm'
+  'w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white focus:outline-none focus:border-[#FFD60A] text-sm'

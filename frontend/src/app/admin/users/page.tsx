@@ -154,7 +154,7 @@ export default function AdminUsersPage() {
       </div>
 
       {error && <div className="rounded-lg border border-red-900 bg-red-950/40 p-3 text-sm text-red-300">Ошибка: {error}</div>}
-      {message && <div className="rounded-lg border border-emerald-900 bg-emerald-950/40 p-3 text-sm text-[#FFD60A]">{message}</div>}
+      {message && <div className="rounded-lg border border-[#332D00] bg-[#1a1500]/40 p-3 text-sm text-[#FFD60A]">{message}</div>}
 
       <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
         <aside className="rounded-lg border border-gray-800 bg-gray-900">
@@ -163,7 +163,7 @@ export default function AdminUsersPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Поиск по id, email, имени"
-              className="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white outline-none focus:border-cyan-500"
+              className="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white outline-none focus:border-[#FFD60A]"
             />
           </div>
           <div className="max-h-[680px] overflow-y-auto">
@@ -213,7 +213,7 @@ export default function AdminUsersPage() {
                   type="button"
                   onClick={saveUser}
                   disabled={saving}
-                  className="rounded-lg bg-cyan-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-cyan-600 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-lg bg-[#B8960A] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#FFD60A] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {saving ? 'Сохранение...' : 'Сохранить'}
                 </button>
@@ -244,7 +244,7 @@ export default function AdminUsersPage() {
                   <input
                     value={form.fullName}
                     onChange={(e) => setForm((current) => ({ ...current, fullName: e.target.value }))}
-                    className="mt-2 w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-white outline-none focus:border-cyan-500"
+                    className="mt-2 w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-white outline-none focus:border-[#FFD60A]"
                   />
                 </label>
                 <label className="block">
@@ -255,7 +255,7 @@ export default function AdminUsersPage() {
                     max={100}
                     value={form.juniorReadiness}
                     onChange={(e) => setForm((current) => ({ ...current, juniorReadiness: Number(e.target.value) }))}
-                    className="mt-2 w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-white outline-none focus:border-cyan-500"
+                    className="mt-2 w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-white outline-none focus:border-[#FFD60A]"
                   />
                 </label>
               </div>
@@ -288,7 +288,7 @@ export default function AdminUsersPage() {
                   value={form.premiumUntil}
                   onChange={(e) => setForm((current) => ({ ...current, premiumUntil: e.target.value }))}
                   disabled={!form.isPremium}
-                  className="mt-2 w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-white outline-none focus:border-cyan-500 disabled:opacity-50"
+                  className="mt-2 w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-white outline-none focus:border-[#FFD60A] disabled:opacity-50"
                 />
               </label>
 
@@ -299,7 +299,7 @@ export default function AdminUsersPage() {
                   onChange={(e) => setForm((current) => ({ ...current, adminDescription: e.target.value }))}
                   rows={5}
                   placeholder="Например: интересуется backend, просил созвон, оплату проверили вручную"
-                  className="mt-2 w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-white outline-none focus:border-cyan-500"
+                  className="mt-2 w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-white outline-none focus:border-[#FFD60A]"
                 />
               </label>
 

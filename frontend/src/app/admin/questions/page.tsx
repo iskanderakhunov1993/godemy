@@ -95,7 +95,7 @@ export default function AdminQuestionsPage() {
 
   const badgeClass = (difficulty: string) => {
     if (difficulty === 'easy')
-      return 'bg-green-500/20 text-green-200 border-green-500/50'
+      return 'bg-[#FFD60A]/20 text-[#FFE44D] border-[#FFD60A]/50'
     if (difficulty === 'medium')
       return 'bg-yellow-500/20 text-yellow-200 border-yellow-500/50'
     return 'bg-red-500/20 text-red-200 border-red-500/50'
@@ -124,7 +124,7 @@ export default function AdminQuestionsPage() {
               })
             }
           }}
-          className="px-6 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-700 text-white font-semibold transition-colors"
+          className="px-6 py-2 rounded-lg bg-[#B8960A] hover:bg-[#B8960A] text-white font-semibold transition-colors"
         >
           {showForm ? '❌ Отменить' : '➕ Новый вопрос'}
         </button>
@@ -145,7 +145,7 @@ export default function AdminQuestionsPage() {
                   setNewQuestion({ ...newQuestion, category: e.target.value })
                 }
                 placeholder="Go, Backend, Database..."
-                className="w-full rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
+                className="w-full rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-white focus:outline-none focus:border-[#FFD60A]"
               />
             </div>
             <div>
@@ -160,7 +160,7 @@ export default function AdminQuestionsPage() {
                     difficulty: e.target.value as InterviewQuestion['difficulty'],
                   })
                 }
-                className="w-full rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
+                className="w-full rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-white focus:outline-none focus:border-[#FFD60A]"
               >
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
@@ -180,7 +180,7 @@ export default function AdminQuestionsPage() {
               }
               placeholder="Введите вопрос для собеседования..."
               rows={3}
-              className="w-full rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-white resize-none focus:outline-none focus:border-cyan-500"
+              className="w-full rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-white resize-none focus:outline-none focus:border-[#FFD60A]"
             />
           </div>
 
@@ -195,7 +195,7 @@ export default function AdminQuestionsPage() {
               }
               placeholder="Введите ожидаемый ответ или подсказку..."
               rows={4}
-              className="w-full rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-white resize-none focus:outline-none focus:border-cyan-500"
+              className="w-full rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-white resize-none focus:outline-none focus:border-[#FFD60A]"
             />
           </div>
 
@@ -213,14 +213,14 @@ export default function AdminQuestionsPage() {
                 })
               }
               placeholder="goroutine, channel, mutex..."
-              className="w-full rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
+              className="w-full rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-white focus:outline-none focus:border-[#FFD60A]"
             />
           </div>
 
           <div className="flex gap-3 pt-4">
             <button
               onClick={handleAddQuestion}
-              className="flex-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-white font-semibold transition-colors"
+              className="flex-1 rounded-lg bg-[#B8960A] hover:bg-[#B8960A] px-4 py-2 text-white font-semibold transition-colors"
             >
               {editingId ? '💾 Сохранить изменения' : '✅ Добавить вопрос'}
             </button>
@@ -245,7 +245,7 @@ export default function AdminQuestionsPage() {
             onClick={() => setFilter(f)}
             className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
               filter === f
-                ? 'bg-cyan-600 text-white'
+                ? 'bg-[#B8960A] text-white'
                 : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
             }`}
           >
@@ -294,7 +294,7 @@ export default function AdminQuestionsPage() {
                   {question.keywords.map((kw) => (
                     <span
                       key={kw}
-                      className="text-xs px-2 py-1 rounded bg-violet-500/20 text-violet-200"
+                      className="text-xs px-2 py-1 rounded bg-[#FFD60A]/20 text-[#FFE44D]"
                     >
                       {kw}
                     </span>
@@ -305,7 +305,7 @@ export default function AdminQuestionsPage() {
               <div className="flex gap-2 justify-end">
                 <button
                   onClick={() => handleEditQuestion(question)}
-                  className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-sm text-white font-medium transition-colors"
+                  className="px-3 py-1.5 rounded-lg bg-[#FFD60A] hover:bg-[#997A00] text-sm text-white font-medium transition-colors"
                 >
                   ✏️ Редактировать
                 </button>

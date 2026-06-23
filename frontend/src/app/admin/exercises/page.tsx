@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { adminApi, AdminExercise } from '@/lib/api'
 
 const difficultyColor: Record<string, string> = {
-  easy: 'text-green-400',
+  easy: 'text-[#FFD60A]',
   medium: 'text-yellow-400',
   hard: 'text-red-400',
 }
@@ -83,13 +83,13 @@ export default function AdminExercisesPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/admin/trainer-practice"
-            className="px-4 py-2 bg-violet-600 hover:bg-violet-500 rounded-lg text-sm font-medium transition-colors"
+            className="px-4 py-2 bg-[#B8960A] hover:bg-[#FFD60A] rounded-lg text-sm font-medium transition-colors"
           >
             Практика по синтаксису
           </Link>
           <Link
             href="/admin/exercises/new"
-            className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 rounded-lg text-sm font-medium transition-colors"
+            className="px-4 py-2 bg-[#B8960A] hover:bg-[#FFD60A] rounded-lg text-sm font-medium transition-colors"
           >
             + Новое упражнение
           </Link>

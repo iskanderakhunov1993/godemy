@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-gray-100 focus:outline-none focus:border-cyan-500"
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-gray-100 focus:outline-none focus:border-[#FFD60A]"
               placeholder="you@example.com"
             />
           </div>
@@ -51,7 +51,7 @@ export default function ForgotPasswordPage() {
           )}
 
           {success && (
-            <div className="text-sm text-[#FFD60A] bg-[#FFD60A]/10 border border-emerald-500/20 rounded-lg px-3 py-2">
+            <div className="text-sm text-[#FFD60A] bg-[#FFD60A]/10 border border-[#FFD60A]/20 rounded-lg px-3 py-2">
               {success}
             </div>
           )}

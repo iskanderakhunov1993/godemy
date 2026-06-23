@@ -19,7 +19,7 @@ function CopyButton({ text, label }: { text: string; label?: string }) {
       onClick={copy}
       className={`text-xs px-3 py-1 rounded-lg border transition-all font-medium ${
         copied
-          ? 'border-emerald-500/40 bg-[#FFD60A]/10 text-[#FFD60A]'
+          ? 'border-[#FFD60A]/40 bg-[#FFD60A]/10 text-[#FFD60A]'
           : 'border-gray-700 bg-gray-800 text-gray-400 hover:text-white hover:border-gray-600'
       }`}
     >
@@ -57,7 +57,7 @@ export default function FeedbackPage() {
         {/* 1 — General questions */}
         <section id="questions" className="rounded-[28px] border border-gray-800 bg-[#111315] p-8">
           <div className="flex items-start gap-4 mb-6">
-            <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-2xl flex-shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-[#FFD60A]/10 border border-[#FFD60A]/20 flex items-center justify-center text-2xl flex-shrink-0">
               ✉️
             </div>
             <div>
@@ -79,7 +79,7 @@ export default function FeedbackPage() {
               href={TELEGRAM_LINK}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between bg-gray-800/50 border border-gray-700/60 hover:border-cyan-500/30 rounded-xl px-4 py-3 transition-colors group"
+              className="flex items-center justify-between bg-gray-800/50 border border-gray-700/60 hover:border-[#FFD60A]/30 rounded-xl px-4 py-3 transition-colors group"
             >
               <div>
                 <p className="text-xs text-gray-500 mb-0.5">Telegram</p>

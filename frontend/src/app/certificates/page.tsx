@@ -41,8 +41,8 @@ function getCertificateState(cert: CertificateStatus) {
   if (!cert.previewAllowed) {
     return {
       label: 'Нужно ФИО',
-      tone: 'bg-cyan-500/15 text-[#FFD60A] border border-cyan-500/20',
-      panelTone: 'border-cyan-500/30 bg-[radial-gradient(circle_at_top_right,rgba(6,182,212,0.14),rgba(17,24,39,0.96)_42%)]',
+      tone: 'bg-[#FFD60A]/15 text-[#FFD60A] border border-[#FFD60A]/20',
+      panelTone: 'border-[#FFD60A]/30 bg-[radial-gradient(circle_at_top_right,rgba(6,182,212,0.14),rgba(17,24,39,0.96)_42%)]',
       summary: 'Сертификат уже заработан, но нужно заполнить ФИО для выпуска.',
     }
   }
@@ -51,15 +51,15 @@ function getCertificateState(cert: CertificateStatus) {
     return {
       label: 'Нужен Pro',
       tone: 'bg-amber-500/15 text-amber-300 border border-amber-500/20',
-      panelTone: 'border-violet-500/30 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.18),rgba(17,24,39,0.96)_42%)]',
+      panelTone: 'border-[#FFD60A]/30 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.18),rgba(17,24,39,0.96)_42%)]',
       summary: 'Сертификат готов. Просмотр доступен, скачивание и email — по подписке.',
     }
   }
 
   return {
     label: 'Готов',
-    tone: 'bg-[#FFD60A]/15 text-[#FFD60A] border border-emerald-500/20',
-    panelTone: 'border-violet-500/30 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.18),rgba(17,24,39,0.96)_42%)] shadow-[0_16px_50px_rgba(76,29,149,0.18)]',
+    tone: 'bg-[#FFD60A]/15 text-[#FFD60A] border border-[#FFD60A]/20',
+    panelTone: 'border-[#FFD60A]/30 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.18),rgba(17,24,39,0.96)_42%)] shadow-[0_16px_50px_rgba(76,29,149,0.18)]',
     summary: 'Сертификат полностью доступен: просмотр, PDF и отправка на почту.',
   }
 }
@@ -161,24 +161,24 @@ function CertificatesContent() {
         </div>
 
         <div className="mt-5 grid gap-3 md:grid-cols-3">
-          <div className="rounded-2xl border border-emerald-500/20 bg-[#FFD60A]/10 p-4">
+          <div className="rounded-2xl border border-[#FFD60A]/20 bg-[#FFD60A]/10 p-4">
             <p className="text-xs uppercase tracking-[0.18em] text-[#FFD60A]">Полностью доступны</p>
             <p className="mt-2 text-3xl font-black text-white">{readyToDownloadCount}</p>
             <p className="mt-2 text-sm text-[#FFE44D]/80">Можно скачать PDF и выслать на почту.</p>
           </div>
-          <div className="rounded-2xl border border-violet-500/20 bg-violet-500/10 p-4">
+          <div className="rounded-2xl border border-[#FFD60A]/20 bg-[#FFD60A]/10 p-4">
             <p className="text-xs uppercase tracking-[0.18em] text-[#FFD60A]">Уже заработаны</p>
             <p className="mt-2 text-3xl font-black text-white">{earnedCount}</p>
             <p className="mt-2 text-sm text-[#FFF8DC]/80">Сертификаты, которые уже можно выпустить или открыть.</p>
           </div>
-          <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-4">
+          <div className="rounded-2xl border border-[#FFD60A]/20 bg-[#FFD60A]/10 p-4">
             <p className="text-xs uppercase tracking-[0.18em] text-[#FFD60A]">Требуют ФИО</p>
             <p className="mt-2 text-3xl font-black text-white">{needsFullNameCount}</p>
             <p className="mt-2 text-sm text-[#FFE44D]/80">Заполни имя и фамилию, чтобы выпустить сертификат.</p>
           </div>
         </div>
 
-        <div className="mt-5 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-4">
+        <div className="mt-5 rounded-2xl border border-[#FFD60A]/20 bg-[#FFD60A]/5 p-4">
           <p className="text-sm text-[#FFD60A] font-semibold mb-2">ФИО для сертификата</p>
           <div className="flex flex-col sm:flex-row gap-2">
             <input
@@ -186,12 +186,12 @@ function CertificatesContent() {
               value={fullNameDraft}
               onChange={(e) => setFullNameDraft(e.target.value)}
               placeholder="Например: Иванов Иван Иванович"
-              className="flex-1 rounded-xl border border-gray-700 bg-gray-900 px-4 py-2.5 text-sm text-white outline-none focus:border-cyan-500"
+              className="flex-1 rounded-xl border border-gray-700 bg-gray-900 px-4 py-2.5 text-sm text-white outline-none focus:border-[#FFD60A]"
             />
             <button
               onClick={saveFullName}
               disabled={savingName || fullNameDraft.trim().length < 5}
-              className="rounded-xl bg-cyan-500 hover:bg-[#FFD60A] disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold px-4 py-2.5 text-sm"
+              className="rounded-xl bg-[#FFD60A] hover:bg-[#FFD60A] disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold px-4 py-2.5 text-sm"
             >
               {savingName ? 'Сохраняем...' : 'Сохранить ФИО'}
             </button>
@@ -202,7 +202,7 @@ function CertificatesContent() {
         </div>
 
         {flashMessage && (
-          <div className="mt-4 rounded-2xl border border-violet-500/20 bg-violet-500/10 px-4 py-3 text-sm text-[#FFF8DC]">
+          <div className="mt-4 rounded-2xl border border-[#FFD60A]/20 bg-[#FFD60A]/10 px-4 py-3 text-sm text-[#FFF8DC]">
             {flashMessage}
           </div>
         )}
@@ -238,7 +238,7 @@ function CertificatesContent() {
               </div>
               <div className="mt-2 h-2 rounded-full bg-gray-800 overflow-hidden">
                 <div
-                  className={`h-full rounded-full transition-all ${cert.earned ? 'bg-[#FFD60A]' : 'bg-violet-400'}`}
+                  className={`h-full rounded-full transition-all ${cert.earned ? 'bg-[#FFD60A]' : 'bg-[#FFE44D]'}`}
                   style={{ width: `${cert.total > 0 ? (cert.progress / cert.total) * 100 : 0}%` }}
                 />
               </div>
@@ -269,21 +269,21 @@ function CertificatesContent() {
               {cert.previewAllowed ? (
                 <Link
                   href={`/certificate?type=${cert.id}`}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-violet-500 hover:bg-violet-400 text-white font-bold px-4 py-3 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#FFD60A] hover:bg-[#FFE44D] text-white font-bold px-4 py-3 transition-colors"
                 >
                   Открыть сертификат
                 </Link>
               ) : cert.earned && cert.fullNameRequired ? (
                 <button
                   onClick={() => document.getElementById('certificate-full-name')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-cyan-500 hover:bg-[#FFD60A] text-black font-bold px-4 py-3 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#FFD60A] hover:bg-[#FFD60A] text-black font-bold px-4 py-3 transition-colors"
                 >
                   Заполнить ФИО
                 </button>
               ) : (
                 <Link
                   href={cert.ctaHref}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/10 hover:bg-cyan-500/20 text-[#FFD60A] font-semibold px-4 py-3 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-[#FFD60A]/20 bg-[#FFD60A]/10 hover:bg-[#FFD60A]/20 text-[#FFD60A] font-semibold px-4 py-3 transition-colors"
                 >
                   {cert.ctaLabel}
                 </Link>
@@ -319,14 +319,14 @@ function CertificatesContent() {
                   <button
                     onClick={() => sendToEmail(cert.id)}
                     disabled={emailingId === cert.id}
-                    className="rounded-xl border border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/20 disabled:opacity-50 text-violet-200 font-semibold px-4 py-2.5 transition-colors"
+                    className="rounded-xl border border-[#FFD60A]/30 bg-[#FFD60A]/10 hover:bg-[#FFD60A]/20 disabled:opacity-50 text-[#FFE44D] font-semibold px-4 py-2.5 transition-colors"
                   >
                     {emailingId === cert.id ? 'Отправляем...' : 'Выслать на почту'}
                   </button>
                 ) : cert.previewAllowed ? (
                   <Link
                     href="/bootcamp/buy"
-                    className="flex items-center justify-center rounded-xl border border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/20 text-violet-200 font-semibold px-4 py-2.5 transition-colors"
+                    className="flex items-center justify-center rounded-xl border border-[#FFD60A]/30 bg-[#FFD60A]/10 hover:bg-[#FFD60A]/20 text-[#FFE44D] font-semibold px-4 py-2.5 transition-colors"
                   >
                     Email с Pro
                   </Link>

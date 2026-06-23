@@ -37,7 +37,7 @@ export default function CourseTreeSidebar({
     return (
       <div
         key={node.id}
-        className={`group pl-2 border-l-2 border-cyan-900 my-1 rounded-lg transition-colors ${isSelected ? "bg-cyan-950 border-cyan-500" : "hover:bg-gray-900/60"}`}
+        className={`group pl-2 border-l-2 border-[#332D00] my-1 rounded-lg transition-colors ${isSelected ? "bg-cyan-950 border-[#FFD60A]" : "hover:bg-gray-900/60"}`}
         draggable
         onDragStart={() => setDraggedId(node.id)}
         onDragOver={e => e.preventDefault()}
@@ -54,10 +54,10 @@ export default function CourseTreeSidebar({
             {iconForType(node.type)} {node.title}
           </span>
           <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button onClick={() => onAdd(node.id, nextType(node.type))} className="text-xs bg-cyan-800 hover:bg-cyan-700 text-white rounded px-1" title="Добавить">＋</button>
+            <button onClick={() => onAdd(node.id, nextType(node.type))} className="text-xs bg-[#332D00] hover:bg-[#B8960A] text-white rounded px-1" title="Добавить">＋</button>
             <button onClick={() => onEdit(node.id)} className="text-xs bg-gray-700 hover:bg-gray-600 text-white rounded px-1" title="Редактировать">✏️</button>
             <button onClick={() => onDelete(node.id)} className="text-xs bg-red-800 hover:bg-red-700 text-white rounded px-1" title="Удалить">🗑️</button>
-            <button onClick={() => onMove(node.id, parentId)} className="text-xs bg-gray-800 hover:bg-cyan-900 text-white rounded px-1" title="Переместить">↕️</button>
+            <button onClick={() => onMove(node.id, parentId)} className="text-xs bg-gray-800 hover:bg-[#332D00] text-white rounded px-1" title="Переместить">↕️</button>
           </div>
         </div>
         {node.children && node.children.length > 0 && (
@@ -86,11 +86,11 @@ export default function CourseTreeSidebar({
   }
 
   return (
-    <aside className="w-80 min-h-screen bg-white dark:bg-gradient-to-b dark:from-gray-950 dark:to-gray-900 border-r border-gray-200 dark:border-cyan-900 p-6 overflow-y-auto shadow-2xl font-sans transition-all">
+    <aside className="w-80 min-h-screen bg-white dark:bg-gradient-to-b dark:from-gray-950 dark:to-gray-900 border-r border-gray-200 dark:border-[#332D00] p-6 overflow-y-auto shadow-2xl font-sans transition-all">
       <div className="flex justify-between items-center mb-6">
         <span className="text-xl font-bold text-cyan-600 dark:text-[#FFD60A] tracking-wide select-none">Структура курса</span>
         <button onClick={() => onAdd(null, "level")}
-          className="text-xs bg-cyan-500 hover:bg-[#FFD60A] text-white rounded-lg px-3 py-1 shadow font-semibold transition-colors">
+          className="text-xs bg-[#FFD60A] hover:bg-[#FFD60A] text-white rounded-lg px-3 py-1 shadow font-semibold transition-colors">
           ＋ Уровень
         </button>
       </div>

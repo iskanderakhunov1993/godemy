@@ -29,8 +29,8 @@ export default function PracticeBlock({ items, onRunItem, monoClassName = '' }: 
             onClick={() => onRunItem(item.id)}
             className={`mt-2 px-3 py-1.5 rounded-lg text-xs transition-colors ${
               item.done
-                ? 'border border-emerald-400/40 bg-[#FFD60A]/20 text-[#FFD60A]'
-                : 'border border-[#1f2937] text-gray-300 hover:border-cyan-500/40 hover:text-white'
+                ? 'border border-[#FFD60A]/40 bg-[#FFD60A]/20 text-[#FFD60A]'
+                : 'border border-[#1f2937] text-gray-300 hover:border-[#FFD60A]/40 hover:text-white'
             }`}
           >
             {item.done ? 'Run ✓' : 'Run'}

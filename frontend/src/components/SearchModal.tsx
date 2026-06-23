@@ -152,7 +152,7 @@ export function SearchModal({ open, onClose }: Props) {
                     key={`page-${result.href}`}
                     onClick={() => navigate(result)}
                     onMouseEnter={() => setSelected(i)}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${isSelected ? 'bg-cyan-500/10' : 'hover:bg-gray-800/50'}`}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${isSelected ? 'bg-[#FFD60A]/10' : 'hover:bg-gray-800/50'}`}
                   >
                     <span className="w-7 h-7 rounded-lg bg-gray-700/60 flex items-center justify-center text-sm flex-shrink-0">🔗</span>
                     <div>
@@ -167,9 +167,9 @@ export function SearchModal({ open, onClose }: Props) {
                     key={`lesson-${result.item.id}`}
                     onClick={() => navigate(result)}
                     onMouseEnter={() => setSelected(i)}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${isSelected ? 'bg-cyan-500/10' : 'hover:bg-gray-800/50'}`}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${isSelected ? 'bg-[#FFD60A]/10' : 'hover:bg-gray-800/50'}`}
                   >
-                    <span className="w-7 h-7 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-sm flex-shrink-0">📖</span>
+                    <span className="w-7 h-7 rounded-lg bg-[#FFD60A]/10 border border-[#FFD60A]/20 flex items-center justify-center text-sm flex-shrink-0">📖</span>
                     <div>
                       <p className={`text-sm font-medium ${isSelected ? 'text-[#FFD60A]' : 'text-gray-200'}`}>{result.item.title}</p>
                       <p className="text-xs text-gray-500">Урок · {result.item.category}</p>
@@ -182,9 +182,9 @@ export function SearchModal({ open, onClose }: Props) {
                     key={`ex-${result.item.id}`}
                     onClick={() => navigate(result)}
                     onMouseEnter={() => setSelected(i)}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${isSelected ? 'bg-cyan-500/10' : 'hover:bg-gray-800/50'}`}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${isSelected ? 'bg-[#FFD60A]/10' : 'hover:bg-gray-800/50'}`}
                   >
-                    <span className="w-7 h-7 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-sm flex-shrink-0">⚡</span>
+                    <span className="w-7 h-7 rounded-lg bg-[#FFD60A]/10 border border-[#FFD60A]/20 flex items-center justify-center text-sm flex-shrink-0">⚡</span>
                     <div>
                       <p className={`text-sm font-medium ${isSelected ? 'text-[#FFD60A]' : 'text-gray-200'}`}>{result.item.title}</p>
                       <p className="text-xs text-gray-500">Задача · {result.item.category}</p>

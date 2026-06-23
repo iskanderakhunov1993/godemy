@@ -83,10 +83,10 @@ function intensityClass(count: number, maxCount: number): string {
   if (count === 0 || maxCount === 0) return 'bg-gray-700/70'
 
   const ratio = count / maxCount
-  if (ratio >= 0.75) return 'bg-[#FFD60A] border-cyan-200/60'
+  if (ratio >= 0.75) return 'bg-[#FFD60A] border-[#FFD60A]/60'
   if (ratio >= 0.5) return 'bg-[#FFD60A]/80 border-[#FFD60A]/50'
-  if (ratio >= 0.25) return 'bg-cyan-500/60 border-[#FFD60A]/40'
-  return 'bg-cyan-600/40 border-cyan-500/30'
+  if (ratio >= 0.25) return 'bg-[#FFD60A]/60 border-[#FFD60A]/40'
+  return 'bg-[#B8960A]/40 border-[#FFD60A]/30'
 }
 
 function isCourseLesson(lesson: Lesson): boolean {
@@ -479,10 +479,10 @@ function ProfileContent() {
               <div className="flex items-center gap-2">
                 <span>Меньше</span>
                 <div className="h-4 w-4 rounded border border-transparent bg-gray-700/70" />
-                <div className="h-4 w-4 rounded border border-cyan-500/30 bg-cyan-600/40" />
-                <div className="h-4 w-4 rounded border border-[#FFD60A]/40 bg-cyan-500/60" />
+                <div className="h-4 w-4 rounded border border-[#FFD60A]/30 bg-[#B8960A]/40" />
+                <div className="h-4 w-4 rounded border border-[#FFD60A]/40 bg-[#FFD60A]/60" />
                 <div className="h-4 w-4 rounded border border-[#FFD60A]/50 bg-[#FFD60A]/80" />
-                <div className="h-4 w-4 rounded border border-cyan-200/60 bg-[#FFD60A]" />
+                <div className="h-4 w-4 rounded border border-[#FFD60A]/60 bg-[#FFD60A]" />
                 <span>Больше</span>
               </div>
             </div>
@@ -516,7 +516,7 @@ function ProfileContent() {
                   title={cert.title}
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm border transition-all ${
                     cert.earned
-                      ? 'bg-[#FFD60A]/10 border-emerald-500/25 text-[#FFD60A]'
+                      ? 'bg-[#FFD60A]/10 border-[#FFD60A]/25 text-[#FFD60A]'
                       : 'bg-gray-800/50 border-gray-700/50 text-gray-500'
                   }`}
                 >

@@ -53,7 +53,7 @@ function OAuthCallbackContent({ providerLabel, exchange, successRedirect = '/gui
   return (
     <div className="min-h-[calc(100vh-56px)] flex items-center justify-center px-4">
       <div className="text-center">
-        <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <div className="w-8 h-8 border-2 border-[#FFD60A] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
         <p className="text-gray-400 text-sm">Входим через {providerLabel}...</p>
       </div>
     </div>

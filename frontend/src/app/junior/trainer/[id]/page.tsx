@@ -170,8 +170,8 @@ export default function JuniorExercisePage() {
                   <p className="text-gray-300 mt-2">Спринт {sprint}. Практика с проверкой тестами.</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 rounded-full border border-[#FFD60A]/30 bg-cyan-500/10 text-[#FFD60A] text-xs font-semibold">sprint {sprint}</span>
-                  {completed && <span className="px-2.5 py-1 rounded-full border border-emerald-500/30 bg-[#FFD60A]/10 text-[#FFD60A] text-xs">пройдено</span>}
+                  <span className="px-2.5 py-1 rounded-full border border-[#FFD60A]/30 bg-[#FFD60A]/10 text-[#FFD60A] text-xs font-semibold">sprint {sprint}</span>
+                  {completed && <span className="px-2.5 py-1 rounded-full border border-[#FFD60A]/30 bg-[#FFD60A]/10 text-[#FFD60A] text-xs">пройдено</span>}
                 </div>
               </div>
 
@@ -194,7 +194,7 @@ export default function JuniorExercisePage() {
 
             {nextExercise && nextExerciseUnlocked && (
               <Card>
-                <Link href={`/junior/trainer/${nextExercise.id}`} className="inline-flex px-4 py-2 rounded-xl border border-[#FFD60A]/30 text-[#FFD60A] hover:bg-cyan-500/10 transition-colors">
+                <Link href={`/junior/trainer/${nextExercise.id}`} className="inline-flex px-4 py-2 rounded-xl border border-[#FFD60A]/30 text-[#FFD60A] hover:bg-[#FFD60A]/10 transition-colors">
                   Следующая задача →
                 </Link>
               </Card>
@@ -239,7 +239,7 @@ export default function JuniorExercisePage() {
 
               <div className="px-4 py-3 flex items-center gap-2 bg-[#0b1220] border-b border-[#1f2937]">
                 <button onClick={resetCode} className="px-4 py-2 rounded-xl border border-[#1f2937] text-sm text-gray-300 hover:border-[#FFD60A] hover:text-white transition-colors">Сбросить</button>
-                <button onClick={handleRun} disabled={running} className="px-4 py-2 rounded-xl border border-[#FFD60A]/40 text-sm text-[#FFD60A] hover:bg-cyan-500/10 transition-colors disabled:opacity-60">{running ? 'Run...' : 'Run'}</button>
+                <button onClick={handleRun} disabled={running} className="px-4 py-2 rounded-xl border border-[#FFD60A]/40 text-sm text-[#FFD60A] hover:bg-[#FFD60A]/10 transition-colors disabled:opacity-60">{running ? 'Run...' : 'Run'}</button>
                 <button onClick={handleSubmit} disabled={submitting || !token} className="px-4 py-2 rounded-xl bg-[#FFD60A] text-slate-900 text-sm font-semibold hover:bg-[#FFD60A] transition-colors disabled:opacity-60">{submitting ? 'Submit...' : 'Submit'}</button>
               </div>
 
@@ -249,7 +249,7 @@ export default function JuniorExercisePage() {
                   result?.error
                     ? 'border-red-500/40 bg-red-950/20 text-red-200'
                     : result?.passed
-                    ? 'border-emerald-500/40 bg-emerald-950/20 text-[#FFD60A]'
+                    ? 'border-[#FFD60A]/40 bg-[#1a1500]/20 text-[#FFD60A]'
                     : 'border-[#1f2937] bg-[#020617] text-gray-300'
                 }`}>
                   {result ? (result.error || result.output || (result.passed ? 'Тесты пройдены.' : 'Нет вывода')) : 'Нажми Run для запуска кода...'}
@@ -280,7 +280,7 @@ export default function JuniorExercisePage() {
                     <button
                       key={level}
                       onClick={() => setHintsOpen((prev) => (prev.includes(level) ? prev.filter((x) => x !== level) : [...prev, level]))}
-                      className="w-full text-left rounded-xl border border-[#1f2937] bg-[#0b1220] p-3 hover:border-cyan-500/40 transition-colors"
+                      className="w-full text-left rounded-xl border border-[#1f2937] bg-[#0b1220] p-3 hover:border-[#FFD60A]/40 transition-colors"
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-gray-200">{level}. Уровень {level}</span>

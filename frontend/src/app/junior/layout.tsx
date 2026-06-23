@@ -24,7 +24,7 @@ export default function JuniorLayout({ children }: { children: React.ReactNode }
     return (
       <div className="mx-auto flex min-h-[55vh] max-w-xl items-center justify-center px-4 text-center">
         <div>
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gray-700 border-t-violet-400" />
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gray-700 border-t-[#FFD60A]" />
           <p className="mt-4 text-sm text-gray-500">Проверяем доступ к Bootcamp…</p>
         </div>
       </div>

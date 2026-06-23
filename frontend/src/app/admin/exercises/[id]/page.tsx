@@ -165,7 +165,7 @@ export default function ExerciseEditorPage() {
         {!isNew ? (
           <button
             onClick={() => router.push(`/admin/trainer-practice/${id}`)}
-            className="ml-auto px-4 py-2 bg-violet-600 hover:bg-violet-500 rounded-lg text-sm font-medium transition-colors"
+            className="ml-auto px-4 py-2 bg-[#B8960A] hover:bg-[#FFD60A] rounded-lg text-sm font-medium transition-colors"
           >
             Открыть практику
           </button>
@@ -186,7 +186,7 @@ export default function ExerciseEditorPage() {
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px ${
               activeTab === tab
-                ? 'border-cyan-500 text-[#FFD60A]'
+                ? 'border-[#FFD60A] text-[#FFD60A]'
                 : 'border-transparent text-gray-400 hover:text-white'
             }`}
           >
@@ -340,7 +340,7 @@ export default function ExerciseEditorPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="px-6 py-2 bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 rounded-lg font-medium transition-colors"
+          className="px-6 py-2 bg-[#B8960A] hover:bg-[#FFD60A] disabled:opacity-50 rounded-lg font-medium transition-colors"
         >
           {saving ? 'Сохранение...' : isNew ? 'Создать упражнение' : 'Сохранить изменения'}
         </button>
@@ -373,4 +373,4 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 const inputCls =
-  'w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white focus:outline-none focus:border-cyan-500 text-sm user-select-text'
+  'w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white focus:outline-none focus:border-[#FFD60A] text-sm user-select-text'

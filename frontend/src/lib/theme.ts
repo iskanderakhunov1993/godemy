@@ -8,9 +8,9 @@ export type AccentColor = 'cyan' | 'blue' | 'violet' | 'green' | 'orange'
 
 export const ACCENT_OPTIONS: { value: AccentColor; label: string; bg: string; border: string }[] = [
   { value: 'cyan',   label: 'Голубой',  bg: 'bg-[#FFD60A]',   border: 'border-[#FFD60A]' },
-  { value: 'blue',   label: 'Синий',    bg: 'bg-blue-500',   border: 'border-blue-500' },
-  { value: 'violet', label: 'Фиолет.',  bg: 'bg-violet-500', border: 'border-violet-500' },
-  { value: 'green',  label: 'Зелёный',  bg: 'bg-[#FFD60A]',border: 'border-emerald-500' },
+  { value: 'blue',   label: 'Синий',    bg: 'bg-[#FFD60A]',   border: 'border-[#FFD60A]' },
+  { value: 'violet', label: 'Фиолет.',  bg: 'bg-[#FFD60A]', border: 'border-[#FFD60A]' },
+  { value: 'green',  label: 'Зелёный',  bg: 'bg-[#FFD60A]',border: 'border-[#FFD60A]' },
   { value: 'orange', label: 'Оранж.',   bg: 'bg-orange-400', border: 'border-orange-400' },
 ]
 

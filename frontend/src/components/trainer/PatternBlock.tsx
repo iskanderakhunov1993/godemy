@@ -16,8 +16,8 @@ export default function PatternBlock({ code, onApply, applied, monoClassName = '
         onClick={onApply}
         className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
           applied
-            ? 'border border-emerald-400/40 bg-[#FFD60A]/20 text-[#FFD60A]'
-            : 'bg-cyan-500 text-slate-900 hover:bg-[#FFD60A]'
+            ? 'border border-[#FFD60A]/40 bg-[#FFD60A]/20 text-[#FFD60A]'
+            : 'bg-[#FFD60A] text-slate-900 hover:bg-[#FFD60A]'
         }`}
       >
         {applied ? 'Паттерн применён ✓' : 'Применить паттерн'}

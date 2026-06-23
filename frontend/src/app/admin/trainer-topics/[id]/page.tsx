@@ -28,7 +28,7 @@ const emptyTopic: Omit<AdminTrainerTopic, 'id' | 'createdAt' | 'updatedAt'> = {
 const tabs = ['Основное', 'Синтаксис', 'Объяснение', 'Примеры', 'Паттерны', 'Задания'] as const
 type Tab = (typeof tabs)[number]
 
-const inputCls = 'w-full px-3 py-2 rounded-lg bg-gray-800 border border-gray-600 text-white text-sm focus:outline-none focus:border-cyan-500'
+const inputCls = 'w-full px-3 py-2 rounded-lg bg-gray-800 border border-gray-600 text-white text-sm focus:outline-none focus:border-[#FFD60A]'
 const labelCls = 'block text-sm text-gray-400 mb-1'
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -180,7 +180,7 @@ export default function TrainerTopicEditorPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="px-5 py-2 bg-violet-600 hover:bg-violet-500 text-white text-sm font-medium rounded-lg disabled:opacity-50 transition-colors"
+          className="px-5 py-2 bg-[#B8960A] hover:bg-[#FFD60A] text-white text-sm font-medium rounded-lg disabled:opacity-50 transition-colors"
         >
           {saving ? 'Сохранение...' : 'Сохранить'}
         </button>
@@ -200,7 +200,7 @@ export default function TrainerTopicEditorPage() {
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
               activeTab === tab
-                ? 'border-violet-500 text-[#FFD60A]'
+                ? 'border-[#FFD60A] text-[#FFD60A]'
                 : 'border-transparent text-gray-400 hover:text-white'
             }`}
           >
@@ -366,7 +366,7 @@ export default function TrainerTopicEditorPage() {
                   {linkedExercises.map(ex => (
                     <div key={ex.id} className="flex items-center gap-3 bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5">
                       <span className={`text-xs font-medium w-12 ${
-                        ex.difficulty === 'easy' ? 'text-green-400' : ex.difficulty === 'medium' ? 'text-yellow-400' : 'text-red-400'
+                        ex.difficulty === 'easy' ? 'text-[#FFD60A]' : ex.difficulty === 'medium' ? 'text-yellow-400' : 'text-red-400'
                       }`}>{ex.difficulty}</span>
                       <span className="flex-1 text-sm text-white">{ex.title}</span>
                       <span className="text-xs text-gray-500">{ex.category}</span>
@@ -388,7 +388,7 @@ export default function TrainerTopicEditorPage() {
                   {unlinked.slice(0, 30).map(ex => (
                     <div key={ex.id} className="flex items-center gap-3 bg-gray-900/50 border border-gray-800 rounded-lg px-4 py-2.5 hover:border-gray-700 transition-colors">
                       <span className={`text-xs font-medium w-12 ${
-                        ex.difficulty === 'easy' ? 'text-green-400' : ex.difficulty === 'medium' ? 'text-yellow-400' : 'text-red-400'
+                        ex.difficulty === 'easy' ? 'text-[#FFD60A]' : ex.difficulty === 'medium' ? 'text-yellow-400' : 'text-red-400'
                       }`}>{ex.difficulty}</span>
                       <span className="flex-1 text-sm text-gray-300">{ex.title}</span>
                       <span className="text-xs text-gray-500">{ex.category}</span>
@@ -412,7 +412,7 @@ export default function TrainerTopicEditorPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="px-6 py-2.5 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg disabled:opacity-50 transition-colors"
+          className="px-6 py-2.5 bg-[#B8960A] hover:bg-[#FFD60A] text-white font-medium rounded-lg disabled:opacity-50 transition-colors"
         >
           {saving ? 'Сохранение...' : 'Сохранить тему'}
         </button>
