@@ -888,6 +888,10 @@ func increment() {
 
 	SeedCourseStructure(db)
 	SeedModule1Content(db)
+	SeedModule2to5Content(db)
+	SeedSprint4to5Content(db)
+	SeedSprint6to7Content(db)
+	SeedSprint8to9Content(db)
 	SeedModule6to7Content(db)
 
 	exercises := generatedPracticeExercises("core", 1, 50)
