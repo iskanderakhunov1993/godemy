@@ -1,259 +1,300 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useMemo } from 'react'
-import { getStoryModuleMeta, storyModuleMeta, type StoryModuleMeta } from '@/lib/storyCourse'
+import { useEffect, useMemo, useState } from 'react'
+import { api, getLevels, type AdminLevel, type Lesson } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
-import { useFlagshipCourse } from '@/lib/useFlagshipCourse'
 
-type SprintState = 'done' | 'active' | 'queued'
+type SprintGroup = {
+  sprintKey: string
+  sprintNum: number
+  moduleSlug: string
+  lessons: Lesson[]
+}
 
-const sprintSkills = [
-  'Первый день',
-  'Основы Go',
-  'Данные из интернета',
-  'Проект с записями',
-  'Итог и портфолио',
-]
+const sprintMeta: Record<number, { name: string; icon: string; desc: string }> = {
+  1:  { name: 'Введение в разработку',  icon: '🚀', desc: 'Почему Go, терминал, первая программа' },
+  2:  { name: 'Фундамент инженерии',    icon: '🌐', desc: 'Интернет, HTTP, API, JSON' },
+  3:  { name: 'IT-команда и Git',       icon: '👥', desc: 'Agile, Git, GitHub, задачи' },
+  4:  { name: 'Подготовка: Угадайка',   icon: '📖', desc: 'Переменные, циклы, функции' },
+  5:  { name: 'Проект: Угадайка',       icon: '🎮', desc: 'CLI-игра по шагам' },
+  6:  { name: 'Подготовка: Погода',     icon: '📖', desc: 'HTTP-сервер, JSON, Docker' },
+  7:  { name: 'Проект: Погода',         icon: '🌤', desc: 'API-сервис по шагам' },
+  8:  { name: 'Подготовка: Todo-list',  icon: '📖', desc: 'SQL, CRUD, архитектура' },
+  9:  { name: 'Проект: Todo-list',      icon: '📋', desc: 'REST API + PostgreSQL' },
+  10: { name: 'Подготовка: Диплом',     icon: '📖', desc: 'Тесты, shutdown, логи' },
+  11: { name: 'Дипломный проект',       icon: '🎓', desc: 'Финальная сборка' },
+  12: { name: 'Карьера',               icon: '💼', desc: 'Резюме, портфолио, план' },
+}
 
-function SprintNode({
-  index,
-  sprint,
-  state,
-  completedCount,
-  lessonCount,
-}: {
-  index: number
-  sprint: StoryModuleMeta
-  state: SprintState
-  completedCount: number
-  lessonCount: number
-}) {
-  const statusLabel = state === 'done' ? 'Готово' : state === 'active' ? 'Сейчас' : 'В очереди'
+const moduleNames: Record<string, string> = {
+  'module-1': 'Модуль 1. Погружение в профессию',
+  'module-2': 'Модуль 2. Процессы и инструменты',
+  'module-3': 'Модуль 3. Проект: Угадайка',
+  'module-4': 'Модуль 4. Проект: Погода',
+  'module-5': 'Модуль 5. Проект: Todo-list',
+  'module-6': 'Модуль 6. Дипломный проект',
+  'module-7': 'Модуль 7. Карьера и развитие',
+}
 
-  return (
-    <li>
-      <Link
-        href={`/guide/module/${encodeURIComponent(sprint.name)}`}
-        aria-current={state === 'active' ? 'step' : undefined}
-        className={`group grid gap-4 rounded-2xl border p-4 transition duration-200 sm:grid-cols-[auto_1fr_auto] sm:items-center ${
-          state === 'active'
-            ? 'border-[#FFD60A]/40 bg-[#FFD60A]/[0.08]'
-            : state === 'done'
-              ? 'border-[#FFD60A]/20 bg-[#FFD60A]/[0.05] hover:border-[#FFD60A]/35'
-              : 'border-white/8 bg-white/[0.025] hover:border-white/16 hover:bg-white/[0.045]'
-        }`}
-      >
-        <span
-          className={`flex h-10 w-10 items-center justify-center rounded-2xl border font-mono text-xs font-bold ${
-            state === 'active'
-              ? 'border-[#FFD60A]/40 bg-[#FFD60A] text-black'
-              : state === 'done'
-                ? 'border-[#FFD60A]/30 bg-[#FFD60A]/15 text-[#FFD60A]'
-                : 'border-white/10 bg-white/5 text-gray-500'
-          }`}
-        >
-          {state === 'done' ? '✓' : String(index + 1).padStart(2, '0')}
-        </span>
+function getSprintNum(level: string): number {
+  const m = level.match(/sprint-(\d+)/)
+  return m ? parseInt(m[1], 10) : 0
+}
 
-        <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-base font-semibold leading-snug text-white">
-              {sprintSkills[index] ?? sprint.name}
-            </h2>
-            <span
-              className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${
-                state === 'active'
-                  ? 'bg-[#FFD60A]/15 text-[#FFD60A]'
-                  : state === 'done'
-                    ? 'bg-[#FFD60A]/10 text-[#FFD60A]'
-                    : 'bg-white/5 text-gray-500'
-              }`}
-            >
-              {statusLabel}
-            </span>
-          </div>
-          <p className="mt-1 text-sm leading-6 text-gray-400">{sprint.project}</p>
-        </div>
-
-        <div className="min-w-36">
-          <div className="flex items-center justify-between text-[11px] text-gray-500">
-            <span>{completedCount}/{lessonCount}</span>
-            <span className="text-gray-400 transition group-hover:text-white">Открыть →</span>
-          </div>
-          <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/8">
-            <div
-              className={`h-full rounded-full ${state === 'done' ? 'bg-[#FFD60A]' : 'bg-[#FFD60A]'}`}
-              style={{ width: `${lessonCount ? (completedCount / lessonCount) * 100 : 0}%` }}
-            />
-          </div>
-        </div>
-      </Link>
-    </li>
-  )
+function getModuleSlug(sprintNum: number): string {
+  if (sprintNum <= 2) return 'module-1'
+  if (sprintNum <= 3) return 'module-2'
+  if (sprintNum <= 5) return 'module-3'
+  if (sprintNum <= 7) return 'module-4'
+  if (sprintNum <= 9) return 'module-5'
+  if (sprintNum <= 11) return 'module-6'
+  return 'module-7'
 }
 
 export default function GuidePage() {
   const { token, loadProgress, isCompleted } = useAuthStore()
-  const { lessons: courseLessons } = useFlagshipCourse()
+  const [lessons, setLessons] = useState<Lesson[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => { if (token) loadProgress() }, [token, loadProgress])
 
   useEffect(() => {
-    if (token) loadProgress()
-  }, [token, loadProgress])
+    api.getLessons()
+      .then((all) => {
+        setLessons(
+          all.filter((l) => l.module === 'course')
+            .sort((a, b) => getSprintNum(a.level) - getSprintNum(b.level) || a.order - b.order)
+        )
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
 
-  const completedLessons = useMemo(
-    () => courseLessons.filter((lesson) => isCompleted('lesson', lesson.id)).length,
-    [courseLessons, isCompleted]
-  )
-
-  const currentLesson = useMemo(
-    () => courseLessons.find((lesson) => !isCompleted('lesson', lesson.id)) || courseLessons.at(-1)!,
-    [courseLessons, isCompleted]
-  )
-
-  const courseModules = useMemo(() => {
-    const names: string[] = []
-    for (const lesson of courseLessons) {
-      if (!names.includes(lesson.module)) names.push(lesson.module)
+  const sprints = useMemo<SprintGroup[]>(() => {
+    const map = new Map<string, Lesson[]>()
+    for (const l of lessons) {
+      const arr = map.get(l.level) || []
+      arr.push(l)
+      map.set(l.level, arr)
     }
-    return names.map((name, index) => getStoryModuleMeta(name) ?? {
-      name,
-      sprint: `Module ${index + 1}`,
-      subtitle: courseLessons.find((lesson) => lesson.module === name)?.description || 'Новый модуль курса.',
-      project: 'Учебный модуль',
-      role: 'Intern Go Developer',
-      duration: `${courseLessons.filter((lesson) => lesson.module === name).length} уроков`,
-      ticket: `COURSE-${index + 1}`,
-      ritual: 'Изучение + практика',
-      deliverable: 'Завершить все уроки модуля',
-      mood: 'Двигаться маленькими шагами',
-    })
-  }, [courseLessons])
+    return Array.from(map.entries())
+      .map(([key, lsns]) => ({
+        sprintKey: key,
+        sprintNum: getSprintNum(key),
+        moduleSlug: getModuleSlug(getSprintNum(key)),
+        lessons: lsns,
+      }))
+      .sort((a, b) => a.sprintNum - b.sprintNum)
+  }, [lessons])
 
-  const currentModuleIndex = Math.max(
-    0,
-    courseModules.findIndex((module) => module.name === currentLesson.module)
-  )
-  const currentModule = courseModules[currentModuleIndex] ?? storyModuleMeta[0]
-  const currentModuleLessons = courseLessons.filter((lesson) => lesson.module === currentModule.name)
-  const currentModuleCompleted = currentModuleLessons.filter((lesson) => isCompleted('lesson', lesson.id)).length
-  const progressPercent = Math.round((completedLessons / Math.max(courseLessons.length, 1)) * 100)
-  const completedProjects = courseModules.slice(1, 4).filter((module) => {
-    const lessons = courseLessons.filter((lesson) => lesson.module === module.name)
-    return lessons.every((lesson) => isCompleted('lesson', lesson.id))
-  }).length
+  const totalLessons = lessons.length
+  const completedLessons = lessons.filter((l) => isCompleted('lesson', l.id)).length
+  const progressPercent = totalLessons ? Math.round((completedLessons / totalLessons) * 100) : 0
+  const currentLesson = lessons.find((l) => !isCompleted('lesson', l.id)) || lessons[0]
+  const currentSprintNum = currentLesson ? getSprintNum(currentLesson.level) : 1
+
+  // Sprint is unlocked if it's the current sprint or any previous sprint
+  const isSprintUnlocked = (num: number) => num <= currentSprintNum
+
+  const [expandedSprint, setExpandedSprint] = useState<number | null>(null)
+
+  // Auto-expand current sprint
+  useEffect(() => {
+    if (currentSprintNum) setExpandedSprint(currentSprintNum)
+  }, [currentSprintNum])
+
+  if (loading) {
+    return (
+      <main className="page-wrap py-10">
+        <div className="h-40 animate-pulse rounded-2xl bg-neutral-800" />
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3, 4, 5, 6].map((i) => <div key={i} className="h-48 animate-pulse rounded-2xl bg-neutral-800" />)}
+        </div>
+      </main>
+    )
+  }
+
+  const isFirstTime = completedLessons === 0
 
   return (
-    <main className="min-h-screen bg-[#050914]">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
-        <header className="rounded-[28px] border border-white/10 bg-white/[0.025] p-6 sm:p-8">
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#FFD60A]">
-              <span className="h-2 w-2 rounded-full bg-[#FFD60A] shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
-              Бесплатный курс · Go с нуля
-            </div>
-          </div>
-
-          <div className="mt-7 grid gap-7 lg:grid-cols-[1fr_0.34fr] lg:items-end">
+    <main className="page-wrap py-8 sm:py-10">
+      {/* Hero */}
+      <header className={`rounded-2xl p-6 sm:p-8 ${
+        isFirstTime
+          ? 'border border-[var(--app-yellow)]/20 bg-[var(--app-yellow)]/[0.05] text-center'
+          : 'border border-white/10 bg-white/[0.03]'
+      }`}>
+        {isFirstTime ? (
+          <>
+            <h1 className="text-3xl font-black tracking-tight text-white sm:text-5xl">
+              Программа курса
+            </h1>
+            <p className="mx-auto mt-4 max-w-xl text-base text-neutral-400">
+              {totalLessons} уроков · 12 спринтов · 3 проекта. Весь курс бесплатный.
+              Начни с первого урока — он занимает 5 минут.
+            </p>
+            {currentLesson && (
+              <Link href={`/guide/${currentLesson.slug}`} className="btn-primary mt-6 inline-flex text-base px-8 py-4">
+                Начать первый урок →
+              </Link>
+            )}
+          </>
+        ) : (
+          <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
             <div>
-              <p className="text-sm font-medium text-[#FFD60A]">Следующий урок</p>
-              <h1 className="mt-3 max-w-3xl text-3xl font-semibold leading-tight text-white sm:text-5xl">
-                {currentLesson.title}
-              </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-gray-400 sm:text-base">
-                {currentLesson.description}
-              </p>
-
-              <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Link
-                  href={`/guide/${currentLesson.slug}?module=${encodeURIComponent(currentLesson.module)}&topic=${encodeURIComponent(currentLesson.category)}`}
-                  className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-[#FFD60A] px-6 text-sm font-bold text-black shadow-[0_12px_35px_rgba(34,211,238,0.18)] hover:-translate-y-0.5 hover:bg-[#FFE44D]"
-                >
-                  Начать урок →
-                </Link>
-                <p className="text-xs leading-5 text-gray-500">
-                  Без регистрации на старте. Прогресс можно сохранить позже.
-                </p>
-              </div>
+              <p className="text-xs font-bold uppercase tracking-wider text-[var(--app-yellow)]">Продолжить</p>
+              <h1 className="mt-2 text-2xl font-black text-white">{currentLesson?.title}</h1>
+              <p className="mt-1 text-sm text-neutral-400">{currentLesson?.description}</p>
+              <Link href={`/guide/${currentLesson?.slug}`} className="btn-primary mt-4 inline-flex text-sm">
+                Продолжить урок →
+              </Link>
             </div>
-
-            <div className="rounded-3xl border border-white/8 bg-black/15 p-5">
-              <p className="text-xs text-gray-500">Прогресс курса</p>
-              <p className="mt-2 text-3xl font-semibold text-white">{progressPercent}%</p>
-              <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/8">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#FFD60A] via-[#FFE44D] to-[#FFD60A] transition-all duration-700"
-                  style={{ width: `${progressPercent}%` }}
-                />
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <p className="text-3xl font-black text-white">{progressPercent}%</p>
+                <p className="text-xs text-neutral-500">{completedLessons}/{totalLessons} уроков</p>
               </div>
-              <div className="mt-4 grid gap-1 text-xs leading-5 text-gray-500">
-                <span>{completedLessons} из {courseLessons.length} уроков</span>
-                <span>{completedProjects} из 3 проектов</span>
-                <span>Раздел: {currentModuleCompleted}/{currentModuleLessons.length}</span>
+              <div className="h-16 w-16 rounded-full border-4 border-white/10 relative">
+                <svg className="h-16 w-16 -rotate-90" viewBox="0 0 64 64">
+                  <circle cx="32" cy="32" r="28" fill="none" stroke="var(--app-yellow)" strokeWidth="4"
+                    strokeDasharray={`${progressPercent * 1.76} 176`} strokeLinecap="round" opacity="0.9" />
+                </svg>
               </div>
             </div>
           </div>
-        </header>
+        )}
+      </header>
 
-        <section className="mt-8 grid gap-4 lg:grid-cols-[1fr_0.38fr]">
-          <div className="rounded-[28px] border border-white/8 bg-white/[0.025] p-5 sm:p-6">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-500">Маршрут</p>
-              <h2 className="mt-2 text-2xl font-semibold text-white">5 коротких шагов</h2>
-            </div>
+      {/* Sprint grid */}
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {sprints.map((sprint) => {
+          const meta = sprintMeta[sprint.sprintNum] || { name: `Спринт ${sprint.sprintNum}`, icon: '📄', desc: '' }
+          const sCompleted = sprint.lessons.filter((l) => isCompleted('lesson', l.id)).length
+          const sDone = sCompleted === sprint.lessons.length && sprint.lessons.length > 0
+          const isCurrent = sprint.sprintNum === currentSprintNum
+          const unlocked = isSprintUnlocked(sprint.sprintNum)
+          const hasContent = sprint.lessons.some((l) => l.content)
+          const isExpanded = expandedSprint === sprint.sprintNum
 
-            <ol className="mt-5 space-y-3">
-              {courseModules.map((module, index) => {
-                const lessons = courseLessons.filter((lesson) => lesson.module === module.name)
-                const completedCount = lessons.filter((lesson) => isCompleted('lesson', lesson.id)).length
-                const state: SprintState = completedCount === lessons.length
-                  ? 'done'
-                  : index === currentModuleIndex
-                    ? 'active'
-                    : 'queued'
+          return (
+            <div key={sprint.sprintKey} className={`rounded-2xl border overflow-hidden transition-all ${
+              isCurrent
+                ? 'border-[var(--app-yellow)]/30 bg-[var(--app-yellow)]/[0.05]'
+                : sDone
+                  ? 'border-[var(--app-yellow)]/15 bg-white/[0.03]'
+                  : unlocked
+                    ? 'border-white/10 bg-white/[0.03]'
+                    : 'border-white/5 bg-white/[0.015] opacity-60'
+            }`}>
+              {/* Sprint card header */}
+              <button
+                type="button"
+                onClick={() => setExpandedSprint(isExpanded ? null : sprint.sprintNum)}
+                className="w-full text-left p-5"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="text-3xl">{meta.icon}</div>
+                  <div className="flex items-center gap-2">
+                    {sDone && (
+                      <span className="rounded-full bg-[var(--app-yellow)]/15 px-2 py-0.5 text-[10px] font-bold text-[var(--app-yellow)]">Пройден</span>
+                    )}
+                    {isCurrent && !sDone && (
+                      <span className="rounded-full bg-[var(--app-yellow)] px-2 py-0.5 text-[10px] font-bold text-black">Текущий</span>
+                    )}
+                    {!unlocked && (
+                      <span className="text-xs text-neutral-600">🔒</span>
+                    )}
+                  </div>
+                </div>
+                <h3 className="mt-3 text-base font-bold text-white">Спринт {sprint.sprintNum}</h3>
+                <p className="text-sm text-neutral-400">{meta.name}</p>
+                <p className="mt-1 text-xs text-neutral-500">{meta.desc}</p>
 
-                return (
-                  <SprintNode
-                    key={module.name}
-                    index={index}
-                    sprint={module}
-                    state={state}
-                    completedCount={completedCount}
-                    lessonCount={lessons.length}
+                {/* Progress bar */}
+                <div className="mt-4 flex items-center justify-between text-xs text-neutral-500">
+                  <span>{sCompleted}/{sprint.lessons.length} уроков</span>
+                  <span>{isExpanded ? '▲' : '▼'}</span>
+                </div>
+                <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-white/8">
+                  <div
+                    className="h-full rounded-full bg-[var(--app-yellow)] transition-all duration-500"
+                    style={{ width: `${sprint.lessons.length ? (sCompleted / sprint.lessons.length) * 100 : 0}%` }}
                   />
-                )
-              })}
-            </ol>
-          </div>
+                </div>
+              </button>
 
-          <aside className="rounded-[28px] border border-[#FFD60A]/12 bg-[linear-gradient(145deg,rgba(16,185,129,0.08),rgba(34,211,238,0.06))] p-5 sm:p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#FFD60A]">Результат</p>
-            <h2 className="mt-3 text-xl font-semibold text-white">После курса</h2>
-            <div className="mt-5 space-y-3">
-              {courseModules.slice(1, 4).map((module) => {
-                const lessons = courseLessons.filter((lesson) => lesson.module === module.name)
-                const done = lessons.every((lesson) => isCompleted('lesson', lesson.id))
+              {/* Expanded lesson list */}
+              {isExpanded && (
+                <div className="border-t border-white/8 px-5 py-3 space-y-0.5">
+                  {sprint.lessons.map((lesson, li) => {
+                    const done = isCompleted('lesson', lesson.id)
+                    const isCurrentLesson = currentLesson?.slug === lesson.slug
+                    const available = unlocked && hasContent && lesson.content
 
-                return (
-                  <Link
-                    key={module.name}
-                    href={`/guide/module/${encodeURIComponent(module.name)}`}
-                    className="flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-black/15 px-4 py-3 text-sm transition hover:border-white/16"
-                  >
-                    <span className="text-gray-300">{module.project}</span>
-                    <span className={done ? 'text-[#FFD60A]' : 'text-gray-600'}>{done ? '✓' : '○'}</span>
-                  </Link>
-                )
-              })}
+                    if (!available) {
+                      return (
+                        <div key={lesson.slug} className="flex items-center gap-3 rounded-xl px-3 py-2.5 opacity-40">
+                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white/5 text-[10px] font-bold text-neutral-600">
+                            {li + 1}
+                          </span>
+                          <span className="text-sm text-neutral-600">{lesson.title}</span>
+                          <span className="ml-auto text-[10px] text-neutral-700">скоро</span>
+                        </div>
+                      )
+                    }
+
+                    return (
+                      <Link
+                        key={lesson.slug}
+                        href={`/guide/${lesson.slug}`}
+                        className={`flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors group ${
+                          isCurrentLesson
+                            ? 'bg-[var(--app-yellow)]/[0.1]'
+                            : 'hover:bg-white/[0.04]'
+                        }`}
+                      >
+                        <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[10px] font-bold ${
+                          done
+                            ? 'bg-[var(--app-yellow)]/15 text-[var(--app-yellow)]'
+                            : isCurrentLesson
+                              ? 'bg-[var(--app-yellow)] text-black'
+                              : 'bg-white/5 text-neutral-500'
+                        }`}>
+                          {done ? '✓' : li + 1}
+                        </span>
+                        <span className={`flex-1 text-sm ${
+                          done ? 'text-neutral-400' : isCurrentLesson ? 'text-white font-semibold' : 'text-neutral-300'
+                        }`}>
+                          {lesson.title}
+                        </span>
+                        {isCurrentLesson && (
+                          <span className="rounded-lg bg-[var(--app-yellow)] px-3 py-1 text-xs font-bold text-black">
+                            Начать →
+                          </span>
+                        )}
+                        {!isCurrentLesson && !done && (
+                          <span className="hidden text-xs text-neutral-500 group-hover:block">Открыть</span>
+                        )}
+                      </Link>
+                    )
+                  })}
+                </div>
+              )}
             </div>
-            <div className="mt-5 border-t border-white/8 pt-4">
-              <p className="text-sm leading-6 text-gray-300">
-                Итог: 3 проекта, GitHub-описание и заготовка для первого резюме.
-              </p>
-            </div>
-          </aside>
-        </section>
+          )
+        })}
       </div>
+
+      {/* Bottom CTA for first-time users */}
+      {isFirstTime && currentLesson && (
+        <div className="mt-8 rounded-2xl border border-[var(--app-yellow)]/20 bg-[var(--app-yellow)]/[0.05] p-6 text-center">
+          <p className="text-base text-neutral-400">Не знаешь с чего начать?</p>
+          <Link href={`/guide/${currentLesson.slug}`} className="btn-primary mt-4 inline-flex text-sm">
+            Начать с урока 1.1 →
+          </Link>
+        </div>
+      )}
     </main>
   )
 }

@@ -886,6 +886,10 @@ func increment() {
 		db.Where("slug = ?", lessons[i].Slug).Attrs(lessons[i]).FirstOrCreate(&existing)
 	}
 
+	SeedCourseStructure(db)
+	SeedModule1Content(db)
+	SeedModule6to7Content(db)
+
 	exercises := generatedPracticeExercises("core", 1, 50)
 	exercises = append(exercises, juniorSprintExercises()...)
 

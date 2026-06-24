@@ -1,761 +1,340 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import ContinueBanner from '@/components/ContinueBanner'
 
-const freeProjects = [
-  {
-    title: 'Игра “Угадай число”',
-    description: 'CLI-проект с понятным README, командами запуска и простой логикой условий/циклов.',
-    meta: 'В портфолио: README · go run · сценарии игры',
-    files: ['README.md', 'main.go', 'examples/output.txt'],
-    learned: 'условия, циклы, ввод/вывод',
-  },
-  {
-    title: 'Сервис погоды',
-    description: 'Мини-сервис, который получает данные из интернета и показывает результат человеку.',
-    meta: 'В портфолио: HTTP · JSON · обработка ошибок',
-    files: ['README.md', 'server.go', '.env.example'],
-    learned: 'HTTP, JSON, внешние API',
-  },
-  {
-    title: 'Учёт расходов',
-    description: 'Проект с записями: добавить, посмотреть, изменить и объяснить продуктовый сценарий.',
-    meta: 'В портфолио: CRUD · хранение · команды запуска',
-    files: ['README.md', 'storage.go', 'commands.md'],
-    learned: 'CRUD, состояние, сценарии пользователя',
-  },
-]
-
-const resumeHighlights = [
-  '3 учебных проекта на Go с README и командами запуска',
-  'понимание базового синтаксиса, функций, структур и ошибок',
-  'первый опыт HTTP, JSON и простого хранения данных',
-  'умение объяснить проект: задача, решение, запуск, что улучшить дальше',
-]
-
-const resumeStack = ['Go', 'HTTP', 'JSON', 'CLI', 'GitHub', 'README', 'CRUD', 'Postman', 'Git', 'Базовые тесты']
-
-const resumeProjects = [
-  ['number-guessing-go', 'CLI-игра: ввод пользователя, условия, циклы, README и запуск через go run.'],
-  ['weather-service-go', 'HTTP-сервис: запрос к внешнему API, JSON-ответ, обработка ошибок и .env.example.'],
-  ['expense-tracker-go', 'CRUD-проект: добавление, просмотр и изменение расходов, хранение состояния.'],
-]
-
-const resumeExperience = [
-  'Поддерживал внутренний сервис учебных заявок: разбирал простые backend-задачи и фиксировал сценарии в README.',
-  'Собрал CLI-инструмент для проверки входных данных и описал команды запуска для команды поддержки.',
-  'Работал с HTTP-запросами, JSON-ответами, ошибками и базовой структурой Go-проекта.',
-]
-
-const stats = [
-  { value: '3', label: 'бесплатных проекта' },
-  { value: '30 мин', label: 'до первого запуска' },
-  { value: 'без входа', label: 'до сохранения прогресса' },
-]
-
-const firstThirtyMinutes = [
-  'запустишь первую Go-программу',
-  'изменишь код и увидишь результат',
-  'поймёшь package main, func main и fmt.Println',
-  'сможешь сохранить прогресс, когда будет что сохранять',
-]
-
-const diagnostics = [
-  ['Я совсем с нуля', 'Покажем первый урок и не заставим выбирать из всех разделов сразу.', '/guide/atlas-first-day', 'Начать с первого урока'],
-  ['Я знаю основы', 'Откроем маршрут курса, чтобы быстро дойти до первого проекта.', '/guide', 'Открыть маршрут'],
-  ['Хочу резюме', 'Покажем проекты, стек и формулировки, которые можно добавить в портфолио.', '/bootcamp', 'Посмотреть результат'],
-  ['Нужна практика', 'Отправим в тренажёр, если хочется закреплять темы короткими задачами.', '/trainer', 'Открыть тренажёр'],
-]
-
-const audienceFit = [
-  ['Не уверен, что IT твоё', 'не покупай годовой курс: пройди месяц, собери первые проекты и реши без давления.'],
-  ['Нет времени на группу', 'учись вечером, в выходные или в обед: уроки открыты, прогресс сохраняется, дедлайна группы нет.'],
-  ['Нужен результат в резюме', 'каждый этап заканчивается артефактом: GitHub, README, проект или формулировка для отклика.'],
-]
-
-const valuePoints = [
-  ['150 000 ₽ и кредит', '1000 ₽/мес. Можно остановиться в любой момент.'],
-  ['Год до результата', 'Первый код за 30 минут, первый проект - в бесплатной части.'],
-  ['Практика где-то потом', 'Каждый блок заканчивается задачей, GitHub или резюме.'],
-  ['Темп всей группы', 'Идёшь сам: урок открыт, прогресс сохраняется, дедлайна группы нет.'],
-]
-
-const testimonials = [
-  ['Алина, 29', 'Спасибо Godemy: я наконец свичнулась из поддержки в backend. Раньше бросала курсы после лекций, а тут через неделю уже был GitHub с проектами.'],
-  ['Руслан, 34', 'Мне было важно не брать кредит на обучение. Оплатил месяц, прошёл базу, понял что Go заходит, и спокойно продолжил.'],
-  ['Мария, 26', 'Самое ценное - не ждать группу и вебинар. Открыла урок после работы, сделала задачу, сохранила прогресс и пошла дальше.'],
-  ['Денис, 31', 'На собеседовании я показывал не сертификат, а проекты: игру, сервис погоды и учёт расходов. Разговор сразу стал предметным.'],
-]
-
-const companyLogos = ['Яндекс', 'Wildberries', 'Ozon', 'Bell Integrator', 'ICL', 'SberTech', 'T-Bank', 'VK Tech']
-
-function getOnlineLearners() {
-  const now = new Date()
-  const day = now.getDay()
-  const hour = now.getHours()
-  const isWeekend = day === 0 || day === 6
-  const seed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate() + hour * 17
-  const wave = Math.abs(Math.sin(seed))
-
-  if (hour >= 0 && hour < 9) return 3 + Math.floor(wave * 18)
-  if (!isWeekend && hour >= 19 && hour <= 23) return 180 + Math.floor(wave * 320)
-  if (isWeekend && hour >= 12 && hour <= 23) return 140 + Math.floor(wave * 360)
-  if (!isWeekend && hour >= 9 && hour < 19) return 40 + Math.floor(wave * 120)
-  return 18 + Math.floor(wave * 60)
-}
-
-const authorContext = [
-  'Курс собран как продуктовый маршрут: меньше развилок, больше одного понятного следующего шага.',
-  'Внутри нет обещания “выучишь всё за вечер”. Задача бесплатной части — дать первый рабочий результат.',
-  'Примеры проектов оформлены так, чтобы их можно было спокойно объяснить и положить в портфолио.',
-]
-
-const faq = [
-  ['Нужен ли опыт?', 'Нет. Старт рассчитан на человека, который только разбирается, что такое Go и backend.'],
-  ['Нужен ли английский?', 'Для первых уроков нет. Английские термины объясняются по ходу, без резкого входа в документацию.'],
-  ['Сколько времени нужно?', 'Первый результат можно получить за 30 минут. Бесплатную часть удобно проходить короткими подходами.'],
-  ['Это бесплатно?', 'Первый маршрут и 3 стартовых проекта доступны бесплатно. Регистрация нужна, чтобы сохранять прогресс.'],
-  ['Что дальше после 3 проектов?', 'Можно перейти к продвинутому маршруту: больше backend-практики, работы с данными и задач ближе к junior-уровню.'],
-]
-
-const firstLessonHref = '/guide/atlas-first-day'
-const previewCodeLines = [
+const codeLines = [
   'package main',
   '',
   'import "fmt"',
   '',
   'func main() {',
-  '    fmt.Println("Привет, Go")',
+  '    fmt.Println("Привет, Go!")',
   '}',
 ]
 
-const lessonPreviewSteps = [
-  ['Читаешь короткое объяснение', 'Зачем нужны package main, func main и fmt.Println.'],
-  ['Меняешь строку в коде', 'Пишешь свою фразу вместо готового текста.'],
-  ['Запускаешь и видишь результат', 'Сразу понятно, что именно сделал код.'],
+const projects = [
+  {
+    num: '01',
+    title: 'Игра «Угадай число»',
+    tags: ['CLI', 'циклы', 'условия'],
+    desc: 'Консольная игра с уровнями сложности. Первый проект в портфолио.',
+  },
+  {
+    num: '02',
+    title: 'Сервис погоды',
+    tags: ['HTTP', 'JSON', 'Docker'],
+    desc: 'Backend-сервис с внешним API, кешированием и контейнером.',
+  },
+  {
+    num: '03',
+    title: 'Todo-list API',
+    tags: ['REST', 'PostgreSQL', 'CRUD'],
+    desc: 'Полноценный API с базой данных и чистой архитектурой.',
+  },
+]
+
+const githubRepos = [
+  { name: 'number-guessing-go', desc: 'CLI-игра: ввод пользователя, условия, циклы, README', lang: 'Go' },
+  { name: 'weather-service-go', desc: 'HTTP-сервис: внешний API, JSON, кеширование, Docker', lang: 'Go' },
+  { name: 'todo-api-go', desc: 'REST API: PostgreSQL, CRUD, чистая архитектура', lang: 'Go' },
+]
+
+const resumeSkills = ['Go', 'HTTP', 'REST API', 'JSON', 'PostgreSQL', 'Docker', 'Git', 'CLI', 'Тесты', 'Clean Architecture']
+
+const comparison = [
+  { label: 'Цена', others: '150 000 ₽ + кредит', godemy: 'Бесплатно' },
+  { label: 'Срок до первого кода', others: '2–4 недели лекций', godemy: '30 минут' },
+  { label: 'Практика', others: 'После теории, где-то потом', godemy: 'С первого урока в тренажёре' },
+  { label: 'Проекты', others: 'В конце курса, если дойдёшь', godemy: '3 проекта уже в бесплатной части' },
+  { label: 'Портфолио', others: 'Сертификат PDF', godemy: 'GitHub с проектами + резюме' },
+  { label: 'Темп', others: 'Расписание группы', godemy: 'Свой темп, без дедлайнов' },
+]
+
+const faq = [
+  ['Нужен ли опыт?', 'Нет. Курс начинается с нуля — с установки Go и первой строчки кода.'],
+  ['Это правда бесплатно?', 'Да. Весь курс, 3 проекта, тренажёр и подготовка резюме — бесплатно. Продвинутая часть — 1000 ₽/мес.'],
+  ['Сколько времени?', 'Первый код за 30 минут. Весь курс — 3–6 месяцев в своём темпе.'],
+  ['Что будет в портфолио?', '3 проекта на GitHub с README, командами запуска и описанием стека.'],
 ]
 
 export default function Home() {
-  const [selectedPath, setSelectedPath] = useState(0)
-  const [onlineLearners] = useState(() => getOnlineLearners())
-  const selectedDiagnostic = diagnostics[selectedPath]
-
   return (
     <main className="page-shell">
       <ContinueBanner />
 
-      <section className="page-wrap pt-8 pb-16 sm:pt-10 sm:pb-20">
-        <div className="overflow-hidden rounded-[30px] border border-white/10 bg-[radial-gradient(circle_at_78%_18%,rgba(34,211,238,0.12),transparent_30%),linear-gradient(135deg,rgba(15,23,42,0.98),rgba(8,12,24,0.98))] px-6 py-7 shadow-[0_28px_90px_rgba(2,6,23,0.28)] sm:px-8 sm:py-9">
-          <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-            <div className="max-w-2xl">
-              <span className="inline-flex rounded-full border border-[#FFD60A]/20 bg-[#FFD60A]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#FFD60A]">
-                Первый урок без регистрации
-              </span>
-              <h1 className="mt-5 max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.04em] text-white sm:text-6xl">
-                Go с нуля:
-                <span className="block text-[#FFD60A]">первый код за 30 минут</span>
-              </h1>
-              <p className="mt-5 max-w-xl text-base leading-8 text-slate-300">
-                Открой урок, измени строку в коде и запусти результат. Аккаунт понадобится только тогда,
-                когда уже появится прогресс, который хочется сохранить.
-              </p>
-
-              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                <Link href={firstLessonHref} className="btn-primary justify-center text-sm sm:text-base">
-                  Начать первый урок
-                </Link>
-                <Link href="/trainer" className="btn-secondary justify-center text-sm sm:text-base">
-                  Открыть тренажёр
-                </Link>
-              </div>
-
-              <div className="mt-7 grid gap-3 sm:grid-cols-3">
-                {stats.map((item) => (
-                  <div key={item.label} className="rounded-2xl border border-white/8 bg-white/[0.035] px-4 py-3">
-                    <div className="text-xl font-black tracking-tight text-white">{item.value}</div>
-                    <div className="mt-1 text-xs leading-5 text-slate-500">{item.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="rounded-[26px] border border-white/10 bg-[#090f1d]/90 p-4 shadow-[0_24px_80px_rgba(2,6,23,0.34)] sm:p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#FFD60A]">Превью урока</p>
-                  <h2 className="mt-2 max-w-md text-xl font-bold leading-snug text-white sm:text-2xl">
-                    Так выглядит первый шаг внутри урока
-                  </h2>
-                </div>
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[#FFD60A]/20 bg-[#FFD60A]/10 text-sm font-bold text-[#FFD60A]">
-                  Go
-                </div>
-              </div>
-
-              <div className="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-[#050914]">
-                <div className="flex items-center gap-2 border-b border-white/8 px-4 py-2.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#FFD60A]" />
-                  <span className="ml-2 text-xs text-slate-500">first.go</span>
-                </div>
-                <pre className="overflow-x-auto px-4 py-4 text-[13px] leading-6 text-slate-200 sm:px-5 sm:text-sm">
-                  <code>
-                    {previewCodeLines.map((line, index) => (
-                      <span key={`${line}-${index}`} className="grid min-h-6 grid-cols-[2rem_1fr] gap-3">
-                        <span className="select-none text-right text-slate-600">{index + 1}</span>
-                        <span>{line || ' '}</span>
-                      </span>
-                    ))}
-                  </code>
-                </pre>
-                <div className="border-t border-white/8 bg-[#FFD60A]/[0.045] px-4 py-3 sm:px-5">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#FFD60A]">Результат</p>
-                  <p className="mt-2 font-mono text-sm text-[#FFD60A]">Привет, Go</p>
-                </div>
-              </div>
-
-              <div className="mt-4 grid gap-2">
-                {lessonPreviewSteps.map(([title, text], index) => (
-                  <div key={title} className="flex gap-3 rounded-2xl border border-white/8 bg-white/[0.035] px-3 py-3">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-[#FFD60A]/10 text-[11px] font-bold text-[#FFD60A]">
-                      {index + 1}
-                    </span>
-                    <p className="text-sm leading-6 text-slate-300">
-                      <span className="block font-semibold text-white">{title}</span>
-                      <span className="text-slate-500">{text}</span>
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="page-wrap pb-18 sm:pb-24">
-        <div className="surface-card rounded-[28px] p-6 sm:p-8">
-          <div className="grid gap-6 lg:grid-cols-[0.65fr_1.35fr] lg:items-center">
-            <div>
-              <span className="eyebrow">Первые 30 минут</span>
-              <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] text-white">
-                Не “изучить всё”, а сделать первый запуск
-              </h2>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {firstThirtyMinutes.map((item, index) => (
-                <div key={item} className="rounded-2xl border border-white/8 bg-white/[0.035] p-4">
-                  <p className="text-[11px] font-semibold text-[#FFD60A]">0{index + 1}</p>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">{item}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="page-wrap pb-18 sm:pb-24">
-        <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+      {/* ── Hero ── */}
+      <section className="page-wrap pt-10 pb-20 sm:pt-16 sm:pb-28">
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
-            <span className="eyebrow">Быстрый старт</span>
-            <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-white sm:text-5xl">
-              Не знаешь, с чего начать?
-            </h2>
-            <p className="mt-4 text-base leading-8 text-slate-400">
-              Выбери ситуацию, а мы сразу дадим один следующий шаг:
-              урок, маршрут, практику или карьерный результат.
+            <span className="inline-block rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-xs font-bold text-green-400">
+              Полностью бесплатный курс
+            </span>
+            <h1 className="mt-5 text-4xl font-black leading-[1.05] tracking-tight text-white sm:text-6xl">
+              Научись писать
+              <span className="block text-[var(--app-yellow)]">backend на Go</span>
+            </h1>
+            <p className="mt-6 max-w-lg text-lg leading-relaxed text-neutral-400">
+              Бесплатный курс с нуля до первой работы. 3&nbsp;реальных проекта для GitHub,
+              тренажёр с автопроверкой и готовое резюме в&nbsp;конце.
             </p>
-            <div className="mt-7 rounded-3xl border border-[#FFD60A]/20 bg-[#FFD60A]/[0.06] p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#FFD60A]">Твой следующий шаг</p>
-              <p className="mt-3 text-lg font-semibold text-white">{selectedDiagnostic[0]}</p>
-              <p className="mt-2 text-sm leading-6 text-slate-300">{selectedDiagnostic[1]}</p>
-              <Link href={selectedDiagnostic[2]} className="btn-primary mt-5 inline-flex text-sm">
-                {selectedDiagnostic[3]}
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link href="/guide" className="btn-primary text-center">
+                Начать бесплатно
+              </Link>
+              <Link href="/trainer" className="btn-secondary text-center">
+                Тренажёр
               </Link>
             </div>
+            <div className="mt-8 flex gap-6 text-sm text-neutral-500">
+              <span><strong className="text-white">106</strong> уроков</span>
+              <span><strong className="text-white">12</strong> спринтов</span>
+              <span><strong className="text-white">3</strong> проекта</span>
+              <span><strong className="text-white">0 ₽</strong></span>
+            </div>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {diagnostics.map(([title, text], index) => (
-              <button
-                key={title}
-                type="button"
-                onClick={() => setSelectedPath(index)}
-                className={`surface-card rounded-[24px] p-5 text-left transition ${
-                  selectedPath === index ? 'border-[#FFD60A]/40 bg-[#FFD60A]/[0.06]' : 'hover:border-[#FFD60A]/30'
-                }`}
-              >
-                <h3 className="text-lg font-semibold text-white">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-400">{text}</p>
-              </button>
-            ))}
+
+          {/* Code preview */}
+          <div className="rounded-2xl border border-white/10 bg-[#0d1117] overflow-hidden">
+            <div className="flex items-center gap-2 border-b border-white/8 px-4 py-2.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
+              <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/80" />
+              <span className="h-2.5 w-2.5 rounded-full bg-green-400/80" />
+              <span className="ml-3 text-xs text-neutral-500">main.go</span>
+            </div>
+            <pre className="px-5 py-5 text-sm leading-7 text-neutral-200 font-mono">
+              <code>{codeLines.map((line, i) => (
+                <span key={i} className="flex">
+                  <span className="w-8 select-none text-right text-neutral-600 mr-4">{i + 1}</span>
+                  <span>{line || ' '}</span>
+                </span>
+              ))}</code>
+            </pre>
+            <div className="border-t border-white/8 bg-green-500/5 px-5 py-3">
+              <span className="text-xs font-semibold text-green-400 uppercase tracking-wider">Вывод</span>
+              <p className="mt-1 font-mono text-sm text-green-300">Привет, Go!</p>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="page-wrap pb-18 sm:pb-24">
-        <div className="mb-8">
-          <span className="eyebrow">Портфолио после курса</span>
-          <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-white sm:text-5xl">
-            Так могут выглядеть первые проекты на GitHub
-          </h2>
-          <p className="mt-4 max-w-3xl text-base leading-8 text-slate-400">
-            После бесплатной части у тебя не просто пройденные уроки, а 3 репозитория:
-            их можно открыть, запустить и показать в резюме или на первом созвоне.
-          </p>
+      {/* ── How it works ── */}
+      <section className="page-wrap pb-20 sm:pb-28">
+        <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+          Как устроен курс
+        </h2>
+        <p className="mt-3 max-w-2xl text-base text-neutral-400">
+          Теория → тренажёр → проект. Каждый спринт заканчивается результатом.
+        </p>
+        <div className="mt-10 grid gap-px rounded-2xl border border-white/10 bg-white/5 overflow-hidden sm:grid-cols-4">
+          {[
+            ['Читаешь', 'Короткий урок с примерами кода. Без воды и видеолекций.'],
+            ['Решаешь', 'Задачи в тренажёре с автопроверкой прямо в браузере.'],
+            ['Собираешь', 'Проект по шагам: коммит за коммитом, как в реальной работе.'],
+            ['Получаешь', 'GitHub с проектами, резюме и навыки для собеседований.'],
+          ].map(([title, desc], i) => (
+            <div key={i} className="bg-[#0d1117] p-6 sm:p-8">
+              <span className="text-xs font-bold text-[var(--app-yellow)] uppercase tracking-wider">Шаг {i + 1}</span>
+              <h3 className="mt-3 text-xl font-bold text-white">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-neutral-400">{desc}</p>
+            </div>
+          ))}
         </div>
+      </section>
 
-        <div className="overflow-hidden rounded-[30px] border border-slate-700 bg-[#0d1117] shadow-[0_28px_90px_rgba(2,6,23,0.34)]">
-          <div className="flex flex-col gap-4 border-b border-slate-700 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-lg font-black text-[#0d1117]">
-                GH
+      {/* ── Projects ── */}
+      <section className="page-wrap pb-20 sm:pb-28">
+        <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+          3 реальных проекта для портфолио
+        </h2>
+        <p className="mt-3 max-w-2xl text-base text-neutral-400">
+          Не тесты и не домашки. Настоящие проекты — каждый ты пушишь на GitHub
+          и можешь показать на собеседовании.
+        </p>
+        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+          {projects.map((p) => (
+            <div key={p.num} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+              <span className="text-xs font-bold text-[var(--app-yellow)]">{p.num}</span>
+              <h3 className="mt-3 text-lg font-bold text-white">{p.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-neutral-400">{p.desc}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {p.tags.map((tag) => (
+                  <span key={tag} className="rounded-full border border-white/10 px-2.5 py-0.5 text-xs text-neutral-400">
+                    {tag}
+                  </span>
+                ))}
               </div>
-              <p className="text-sm font-bold text-slate-100">Марк Цукерберг</p>
             </div>
-            <div className="hidden min-w-72 rounded-xl border border-slate-700 bg-[#010409] px-4 py-2 text-sm text-slate-500 sm:block">
-              Type / to search
-            </div>
-          </div>
+          ))}
+        </div>
+      </section>
 
-          <div className="border-b border-slate-700 px-5">
-            <div className="flex gap-6 overflow-x-auto text-sm font-semibold text-slate-300">
-              {['Overview', 'Repositories 3', 'Projects', 'Packages', 'Stars'].map((item, index) => (
-                <div
-                  key={item}
-                  className={`shrink-0 border-b-2 py-3 ${index === 0 ? 'border-orange-400 text-white' : 'border-transparent text-slate-500'}`}
-                >
-                  {item}
+      {/* ── What you get: GitHub + Resume ── */}
+      <section className="page-wrap pb-20 sm:pb-28">
+        <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+          Что ты получишь в конце
+        </h2>
+        <p className="mt-3 max-w-2xl text-base text-neutral-400">
+          Не сертификат PDF, а рабочий GitHub-профиль и резюме,
+          с которым можно откликаться на junior-вакансии.
+        </p>
+
+        <div className="mt-10 grid gap-6 lg:grid-cols-2">
+          {/* GitHub mock */}
+          <div className="rounded-2xl border border-white/10 bg-[#0d1117] overflow-hidden">
+            <div className="flex items-center gap-3 border-b border-white/8 px-5 py-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-700 text-xs font-bold text-white">A</div>
+              <span className="text-sm font-semibold text-neutral-200">aleksei-petrov</span>
+              <span className="ml-auto text-xs text-neutral-500">Repositories 3</span>
+            </div>
+            <div className="p-5 space-y-3">
+              {githubRepos.map((repo) => (
+                <div key={repo.name} className="rounded-xl border border-white/8 bg-white/[0.03] p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h4 className="text-sm font-bold text-[var(--app-yellow)]">{repo.name}</h4>
+                      <p className="mt-1 text-xs text-neutral-500">{repo.desc}</p>
+                    </div>
+                    <span className="shrink-0 rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-neutral-500">Public</span>
+                  </div>
+                  <div className="mt-3 flex items-center gap-2 text-xs text-neutral-500">
+                    <span className="h-2.5 w-2.5 rounded-full bg-[var(--app-yellow)]" />
+                    {repo.lang}
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="grid gap-7 p-5 sm:p-7 lg:grid-cols-[0.36fr_0.64fr]">
-            <aside>
-	              <div className="relative h-32 w-32 overflow-hidden rounded-full border border-slate-700 bg-[#161b22] sm:h-44 sm:w-44">
-	                <Image
-	                  src="/people/mark-zuckerberg.png"
-	                  alt="Марк Цукерберг"
-	                  fill
-	                  sizes="(min-width: 640px) 176px, 128px"
-	                  className="object-cover"
-	                />
-	              </div>
-	              <h3 className="mt-5 text-2xl font-semibold text-slate-200">Марк Цукерберг</h3>
-	              <p className="mt-1 text-sm text-slate-500">Go Backend Intern</p>
-              <div className="mt-4 rounded-xl border border-slate-700 bg-[#21262d] px-4 py-2 text-center text-sm font-semibold text-slate-200">
-                Edit profile
-              </div>
-              <p className="mt-5 text-sm leading-6 text-slate-400">
-	                Учусь Go, собираю первые backend-проекты и готовлю портфолио для стажировки в Facebook.
+          {/* Resume mock */}
+          <div className="rounded-2xl border border-white/10 overflow-hidden">
+            <div className="bg-white px-6 py-6 sm:px-8 sm:py-8">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Пример резюме после курса</p>
+              <h3 className="mt-3 text-2xl font-black text-black sm:text-3xl">Алексей Петров</h3>
+              <p className="mt-1 text-xs text-neutral-500">Москва · 24 года · telegram: @aleksei_go</p>
+              <p className="mt-3 text-lg font-bold text-black">Go Backend Developer — Junior</p>
+              <p className="mt-2 text-sm leading-relaxed text-neutral-600">
+                Прошёл практический курс по Go. Собрал 3 backend-проекта с нуля,
+                оформил GitHub, умею работать с HTTP, PostgreSQL, Docker и объяснить код на созвоне.
               </p>
-            </aside>
 
-            <div>
-              <div className="mb-4 flex items-center justify-between gap-3">
-                <div>
-                  <h3 className="text-xl font-semibold text-slate-100">Popular repositories</h3>
-                  <p className="mt-1 text-sm text-slate-500">3 проекта после бесплатного курса</p>
-                </div>
-                <span className="hidden text-sm text-[#FFD60A] sm:inline">Customize your pins</span>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                {freeProjects.map((project, index) => (
-                  <article key={project.title} className="min-h-40 rounded-xl border border-slate-700 bg-[#0d1117] p-5">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <h4 className="text-lg font-semibold text-[#FFD60A]">
-                          {['number-guessing-go', 'weather-service-go', 'expense-tracker-go'][index]}
-                        </h4>
-                        <p className="mt-2 text-sm leading-6 text-slate-400">{project.description}</p>
-                      </div>
-                      <span className="rounded-full border border-slate-600 px-2.5 py-0.5 text-xs font-semibold text-slate-400">
-                        Public
-                      </span>
-                    </div>
-                    <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-400">
-                      <span className="inline-flex items-center gap-1.5">
-                        <span className="h-3 w-3 rounded-full bg-[#FFD60A]" />
-                        Go
-                      </span>
-                      <span>README</span>
-                      <span>{project.files[1]}</span>
-                    </div>
-                  </article>
-                ))}
-                <div className="rounded-xl border border-dashed border-slate-700 bg-[#010409] p-5">
-                  <p className="text-sm font-semibold text-slate-200">Что видно работодателю</p>
-                  <div className="mt-4 space-y-3 text-sm leading-6 text-slate-400">
-                    <p>Проекты названы понятно, у каждого есть описание и язык Go.</p>
-                    <p>В README можно добавить запуск, примеры вывода и чему научился.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 rounded-xl border border-slate-700 bg-[#010409] p-5">
-                <div className="mb-3 flex items-center justify-between">
-                  <h4 className="text-base font-semibold text-slate-100">Contribution activity</h4>
-                  <span className="rounded-lg bg-[#FFD60A] px-3 py-1 text-xs font-bold text-white">2026</span>
-                </div>
-                <div className="grid grid-cols-12 gap-1">
-                  {Array.from({ length: 84 }).map((_, index) => (
-                    <span
-                      key={index}
-                      className={`h-3 rounded-[3px] ${
-                        [8, 14, 21, 33, 45, 58, 71, 77].includes(index)
-                          ? 'bg-[#FFD60A]'
-                          : [6, 25, 46, 62, 81].includes(index)
-                            ? 'bg-[#FFB800]'
-                            : 'bg-[#161b22]'
-                      }`}
-                    />
+              <div className="mt-5">
+                <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Навыки</p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {resumeSkills.map((s) => (
+                    <span key={s} className="rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-0.5 text-[11px] font-medium text-neutral-700">{s}</span>
                   ))}
                 </div>
               </div>
 
-              <p className="mt-5 rounded-2xl border border-[#FFD60A]/20 bg-[#FFD60A]/[0.07] p-4 text-sm leading-7 text-[#FFF8DC]">
-                Такой GitHub-блок можно приложить к резюме: 3 учебных проекта на Go,
-                понятные README и видимая активность вместо пустого профиля.
+              <div className="mt-5">
+                <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Проекты</p>
+                <div className="mt-2 space-y-2">
+                  {githubRepos.map((r) => (
+                    <div key={r.name} className="rounded-lg bg-neutral-50 border border-neutral-200 px-3 py-2">
+                      <span className="text-xs font-bold text-black">{r.name}</span>
+                      <span className="ml-2 text-xs text-neutral-500">{r.desc}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="bg-neutral-900 px-6 py-4">
+              <p className="text-sm text-neutral-300">
+                Такой GitHub + резюме можно собрать за время прохождения курса.
+                Всё <strong className="text-white">бесплатно</strong>.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="page-wrap pb-18 sm:pb-24">
-        <div className="grid gap-7 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
-          <div>
-            <span className="eyebrow">После бесплатного курса</span>
-            <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-white sm:text-5xl">
-              Уже можно готовить резюме и начинать искать первые вакансии
-            </h2>
-            <p className="mt-4 text-base leading-8 text-slate-400">
-              Бесплатная часть даёт не просто “посмотрел уроки”, а набор конкретных пунктов:
-              проекты, стек, GitHub-ссылки и понятное описание того, что ты умеешь делать на Go.
-              С таким резюме можно откликаться на стажировки, trainee и junior-позиции, параллельно
-              усиливая портфолио в продвинутом маршруте.
-            </p>
-
-            <div className="mt-7 grid gap-3">
-              {resumeHighlights.map((item, index) => (
-                <div key={item} className="flex gap-3 rounded-2xl border border-white/8 bg-white/[0.035] p-4">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#FFD60A]/10 text-xs font-black text-[#FFD60A]">
-                    {index + 1}
-                  </span>
-                  <p className="text-sm leading-6 text-slate-300">{item}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <Link href="/guide" className="btn-primary justify-center text-sm">
-                Пройти бесплатный курс
-              </Link>
-              <Link href="/bootcamp" className="btn-secondary justify-center text-sm">
-                Усилить резюме дальше
-              </Link>
-            </div>
-          </div>
-
-          <div className="rounded-[30px] border border-white/10 bg-slate-950 p-3 shadow-[0_28px_90px_rgba(2,6,23,0.34)] sm:p-5">
-            <div className="overflow-hidden rounded-[24px] border border-white/10 bg-[#f7f7f5] text-black">
-              <div className="flex items-center justify-between border-b border-slate-200 bg-[#e9e9e7] px-5 py-3">
-                <span className="text-xs font-semibold text-slate-500">resume-mark-zuckerberg.pdf</span>
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-sm font-black text-white">hh</span>
-              </div>
-
-              <div className="bg-white px-5 py-6 sm:px-7 sm:py-8">
-                <div className="grid gap-5 border-b border-slate-200 pb-6 sm:grid-cols-[1fr_auto]">
-                  <div>
-                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Пример резюме после курса</p>
-                    <h3 className="mt-2 text-3xl font-black tracking-[-0.04em] text-black sm:text-4xl">
-                      Марк Цукерберг
-                    </h3>
-                    <p className="mt-1 text-sm text-slate-500">Москва · 23 года · telegram: @mark_zuckerberg_go</p>
-                    <p className="mt-4 text-xl font-black text-black">Go Backend Developer Intern</p>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">
-                      Начинающий backend-разработчик. После практического курса собрал 3 проекта на Go,
-                      оформил GitHub, умею запускать сервисы, читать JSON и объяснять код на созвоне.
-                    </p>
-                  </div>
-
-                  <div className="flex flex-row items-center gap-4 sm:flex-col sm:items-end">
-                    <div className="relative h-24 w-24 overflow-hidden rounded-full border border-slate-200 bg-slate-100">
-                      <Image
-                        src="/people/mark-zuckerberg.png"
-                        alt="Марк Цукерберг"
-                        fill
-                        sizes="96px"
-                        className="object-cover"
-                      />
-                    </div>
-                    <span className="rounded-full border border-[#FFD60A] bg-[#FFF8DC] px-3 py-1 text-xs font-black text-black">
-                      Готов к стажировке
-                    </span>
-                  </div>
-                </div>
-
-                <div className="grid gap-6 py-6 lg:grid-cols-[0.72fr_1.28fr]">
-                  <aside className="space-y-5">
-                    <div>
-                      <p className="border-b border-slate-200 pb-1 text-sm font-semibold text-slate-400">Навыки</p>
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {resumeStack.map((item) => (
-                          <span key={item} className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-semibold text-slate-700">
-                            {item}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <p className="border-b border-slate-200 pb-1 text-sm font-semibold text-slate-400">О себе</p>
-                      <p className="mt-3 text-xs leading-5 text-slate-600">
-                        Ищу первую роль в Go/backend. Быстро учусь, веду README, не боюсь правок
-                        и хочу расти через code review и реальные задачи.
-                      </p>
-                    </div>
-                  </aside>
-
-                  <div className="space-y-6">
-                    <div>
-                      <p className="border-b border-slate-200 pb-1 text-sm font-semibold text-slate-400">Опыт работы</p>
-                      <div className="mt-4 grid gap-4 sm:grid-cols-[120px_1fr]">
-                        <div className="text-xs leading-5 text-slate-500">
-                          Май 2026 - сейчас
-                          <br />
-                          2 месяца
-                        </div>
-                        <div>
-                          <h4 className="text-lg font-black text-black">Facebook, стажировка</h4>
-                          <p className="mt-1 text-sm text-slate-500">Учебный пример · backend-практика на Go</p>
-                          <ul className="mt-3 space-y-2 text-xs leading-5 text-slate-700">
-                            {resumeExperience.map((item) => (
-                              <li key={item}>- {item}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <p className="border-b border-slate-200 pb-1 text-sm font-semibold text-slate-400">Проекты</p>
-                      <div className="mt-3 space-y-3">
-                        {resumeProjects.map(([title, text]) => (
-                          <div key={title} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                            <h4 className="text-sm font-black text-black">{title}</h4>
-                            <p className="mt-1 text-xs leading-5 text-slate-600">{text}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border-t border-slate-200 pt-5">
-                  <p className="rounded-2xl bg-slate-950 p-4 text-sm leading-7 text-slate-100">
-                    Такой пример выглядит как настоящее стартовое резюме: есть должность,
-                    опыт, 3 проекта, стек, GitHub-логика и понятное описание того, что кандидат делал руками.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="page-wrap pb-18 sm:pb-24">
-        <div className="overflow-hidden rounded-[32px] border border-white/10 bg-[radial-gradient(circle_at_18%_10%,rgba(16,185,129,0.16),transparent_28%),linear-gradient(135deg,rgba(15,23,42,0.96),rgba(7,10,22,0.98))]">
-          <div className="px-6 py-8 sm:px-8 sm:py-10">
-            <div className="grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-end">
-              <div>
-                <span className="eyebrow">Почему дешевле и быстрее</span>
-                <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-white sm:text-5xl">
-                  Не кредит. Не год ожидания. Практика сразу.
-                </h2>
-              </div>
-
-              <div className="rounded-[28px] border border-[#FFD60A]/25 bg-[#FFD60A]/[0.08] p-5">
-                <p className="text-sm font-semibold text-[#FFE44D]">Проверь за месяц, твоё ли это</p>
-                <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                  <p className="text-6xl font-black tracking-[-0.06em] text-white">1000 ₽</p>
-                  <p className="text-sm font-bold text-[#FFE44D] sm:pb-2">
-                    в месяц, без кредита и оплаты за год
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-7 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              {valuePoints.map(([pain, answer]) => (
-                <div key={pain} className="rounded-[24px] border border-white/10 bg-white/[0.045] p-5">
-                  <p className="text-xs font-black uppercase tracking-[0.16em] text-rose-200">Боль</p>
-                  <h3 className="mt-3 min-h-14 text-xl font-black leading-tight text-white">{pain}</h3>
-                  <div className="mt-4 h-px bg-white/10" />
-                  <p className="mt-4 text-xs font-black uppercase tracking-[0.16em] text-[#FFD60A]">Godemy</p>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">{answer}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-5 rounded-[24px] border border-[#FFD60A]/20 bg-[#FFD60A]/[0.07] px-5 py-4">
-              <p className="text-base font-black leading-7 text-[#FFF8DC]">
-                Смысл простой: сначала реальные задания и первые проекты, потом решение - продолжать или нет.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="page-wrap pb-18 sm:pb-24">
-        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="surface-card rounded-[32px] p-6 sm:p-7">
-            <div>
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="eyebrow">Отзывы</span>
-                <span className="inline-flex items-center gap-2 rounded-full border border-[#FFD60A]/20 bg-[#FFD60A]/[0.08] px-3 py-1 text-xs font-bold text-[#FFE44D]">
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#FFD60A] shadow-[0_0_16px_rgba(255,214,10,0.9)]" />
-                  {onlineLearners} онлайн сейчас
-                </span>
-              </div>
-              <div>
-                <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-white sm:text-5xl">
-                  Люди приходят не за лекциями, а за переходом
-                </h2>
-              </div>
-            </div>
-
-            <div className="mt-7 grid gap-4 md:grid-cols-2">
-              {testimonials.map(([person, text]) => (
-                <article key={person} className="rounded-[24px] border border-white/10 bg-white/[0.045] p-5">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FFD60A]/10 text-sm font-black text-[#FFE44D]">
-                      {person.slice(0, 1)}
-                    </div>
-                    <div>
-                      <h3 className="text-base font-black text-white">{person}</h3>
-                      <p className="text-xs font-semibold text-slate-500">перешёл в IT через практику</p>
-                    </div>
-                  </div>
-                  <p className="mt-4 text-sm leading-7 text-slate-300">“{text}”</p>
-                </article>
-              ))}
-            </div>
-          </div>
-
-          <div className="surface-highlight rounded-[32px] p-6 sm:p-7">
-            <span className="eyebrow">Где работают</span>
-            <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-white">
-              Наши пользователи работают в сильных IT-командах
-            </h2>
-            <p className="mt-4 text-sm leading-7 text-slate-400">
-              Практический путь нужен не для галочки в сертификате, а чтобы уверенно говорить
-              про код, проекты и backend-задачи на собеседованиях.
-            </p>
-
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              {companyLogos.map((company) => (
-                <div key={company} className="rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-center text-sm font-black text-slate-100">
-                  {company}
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-6 rounded-[24px] border border-[#FFD60A]/20 bg-[#FFD60A]/[0.07] p-5">
-              <p className="text-sm leading-7 text-[#FFF8DC]">
-                Рынок смотрит не только на диплом: GitHub, README, стек и понятное объяснение
-                своих проектов помогают пройти первый технический разговор спокойнее.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="page-wrap pb-18 sm:pb-24">
-        <div className="surface-card rounded-[32px] p-6 sm:p-8">
-          <div className="grid gap-7 lg:grid-cols-[0.78fr_1.22fr] lg:items-center">
-            <div>
-              <span className="eyebrow">Кому это особенно полезно</span>
-              <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-white sm:text-5xl">
-                Когда страшно платить много, а попробовать хочется
-              </h2>
-              <p className="mt-4 text-base leading-8 text-slate-400">
-                Этот формат закрывает главный риск новичка: не потерять год и большую сумму,
-                если программирование окажется не твоим.
-              </p>
-            </div>
-
-            <div className="grid gap-4">
-              {audienceFit.map(([title, text], index) => (
-                <div key={title} className="grid gap-4 rounded-[24px] border border-white/10 bg-white/[0.045] p-5 sm:grid-cols-[56px_1fr] sm:items-start">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFD60A]/10 text-sm font-black text-[#FFE44D]">
-                    {index + 1}
-                  </span>
-                  <div>
-                    <h3 className="text-xl font-black text-white">{title}</h3>
-                    <p className="mt-2 text-sm leading-7 text-slate-300">{text}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="page-wrap pb-18 sm:pb-24">
-        <div className="grid gap-6 lg:grid-cols-[0.78fr_1.22fr]">
-          <div className="surface-card rounded-[32px] p-7">
-            <span className="eyebrow">Авторский подход</span>
-            <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-white">
-              Не энциклопедия, а путь до первого результата
-            </h2>
-            <p className="mt-4 text-base leading-8 text-slate-400">
-              Godemy объясняет Go через действия: открыть урок, изменить код,
-              собрать проект и понять, что делать дальше.
-            </p>
-            <ul className="mt-6 space-y-3">
-              {authorContext.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm leading-6 text-slate-300">
-                  <span className="icon-chip h-8 w-8 rounded-xl text-sm">✓</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="surface-highlight rounded-[32px] p-7">
-            <span className="eyebrow">FAQ</span>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {faq.map(([title, text]) => (
-                <div key={title} className="surface-subcard rounded-[24px] p-5">
-                  <h3 className="text-lg font-semibold text-white">{title}</h3>
-                  <p className="mt-2 text-sm leading-7 text-slate-400">{text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
+      {/* ── Comparison ── */}
       <section className="page-wrap pb-20 sm:pb-28">
-        <div className="section-frame rounded-[36px] px-6 py-8 sm:px-10 sm:py-12">
-          <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div>
-              <span className="eyebrow">Когда база понятна</span>
-              <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-white sm:text-5xl">
-                После первых проектов можно идти глубже
-              </h2>
-              <p className="mt-4 max-w-2xl text-base leading-8 text-slate-400">
-                Продвинутый курс нужен не в первый день, а после базы: там больше практики,
-                длиннее задачи и понятный рост к уровню работы в команде.
-              </p>
+        <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+          Чем Godemy отличается
+        </h2>
+        <p className="mt-3 max-w-2xl text-base text-neutral-400">
+          Честное сравнение с платными онлайн-школами.
+        </p>
+
+        <div className="mt-10 overflow-hidden rounded-2xl border border-white/10">
+          {/* Header */}
+          <div className="grid grid-cols-3 bg-white/[0.06]">
+            <div className="p-4 text-sm font-bold text-neutral-400" />
+            <div className="p-4 text-sm font-bold text-neutral-400 text-center">Другие курсы</div>
+            <div className="p-4 text-sm font-bold text-[var(--app-yellow)] text-center">Godemy</div>
+          </div>
+          {/* Rows */}
+          {comparison.map((row, i) => (
+            <div key={row.label} className={`grid grid-cols-3 ${i % 2 === 0 ? 'bg-white/[0.02]' : 'bg-white/[0.04]'}`}>
+              <div className="p-4 text-sm font-semibold text-white">{row.label}</div>
+              <div className="p-4 text-sm text-neutral-500 text-center">{row.others}</div>
+              <div className="p-4 text-sm text-green-400 font-semibold text-center">{row.godemy}</div>
             </div>
-            <Link href="/bootcamp" className="btn-primary text-center">
-              Посмотреть следующий этап
+          ))}
+        </div>
+      </section>
+
+      {/* ── Trainer & Practice ── */}
+      <section className="page-wrap pb-20 sm:pb-28">
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">
+            <span className="text-xs font-bold text-[var(--app-yellow)] uppercase tracking-wider">Тренажёр</span>
+            <h3 className="mt-3 text-2xl font-black text-white">Пиши код в браузере</h3>
+            <p className="mt-3 text-sm leading-relaxed text-neutral-400">
+              Десятки задач с автопроверкой — от переменных до горутин.
+              Не нужно ничего устанавливать. Открыл, написал, запустил.
+            </p>
+            <Link href="/trainer" className="mt-6 inline-flex btn-secondary text-sm">
+              Открыть тренажёр
+            </Link>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">
+            <span className="text-xs font-bold text-[var(--app-yellow)] uppercase tracking-wider">Практика</span>
+            <h3 className="mt-3 text-2xl font-black text-white">Проекты по шагам</h3>
+            <p className="mt-3 text-sm leading-relaxed text-neutral-400">
+              Каждый проект разбит на требования. Ты пишешь код, коммитишь
+              и получаешь готовый репозиторий — как в настоящей работе.
+            </p>
+            <Link href="/guide" className="mt-6 inline-flex btn-secondary text-sm">
+              Начать курс
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section className="page-wrap pb-20 sm:pb-28">
+        <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+          Частые вопросы
+        </h2>
+        <div className="mt-10 grid gap-4 sm:grid-cols-2">
+          {faq.map(([q, a]) => (
+            <div key={q} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+              <h3 className="text-base font-bold text-white">{q}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-neutral-400">{a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Final CTA ── */}
+      <section className="page-wrap pb-20 sm:pb-28">
+        <div className="rounded-2xl border border-[var(--app-yellow)]/20 bg-[var(--app-yellow)]/[0.05] px-6 py-10 text-center sm:px-12 sm:py-14">
+          <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+            Бесплатно. Без регистрации. Прямо сейчас.
+          </h2>
+          <p className="mx-auto mt-4 max-w-lg text-base text-neutral-400">
+            Открой первый урок и напиши свой первый Go-код за 30 минут.
+            Регистрация нужна только чтобы сохранить прогресс.
+          </p>
+          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <Link href="/guide" className="btn-primary text-center">
+              Начать бесплатно
+            </Link>
+            <Link href="/bootcamp" className="btn-secondary text-center">
+              Продвинутый курс
             </Link>
           </div>
         </div>
