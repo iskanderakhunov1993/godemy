@@ -406,11 +406,9 @@ function ProfileContent() {
                     <span className="font-semibold text-gray-200 text-sm">Bootcamp · Junior</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-bold text-amber-400">
-                      {user.isPremium ? '5%' : '0%'}
-                    </span>
+                    <span className="text-sm font-bold text-amber-400">Открыт</span>
                     <Link
-                      href={user.isPremium ? '/junior' : '/bootcamp'}
+                      href="/junior"
                       className="text-xs font-semibold text-black bg-amber-400 hover:bg-amber-300 px-3 py-1 rounded-lg transition-colors"
                     >
                       Начать
@@ -420,11 +418,11 @@ function ProfileContent() {
                 <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-amber-400 rounded-full transition-all"
-                    style={{ width: user.isPremium ? '5%' : '0%' }}
+                    style={{ width: '8%' }}
                   />
                 </div>
                 <p className="text-xs text-gray-500 mt-1.5">
-                  {user.isPremium ? 'Уровень Junior открыт' : 'Доступ по подписке Godemy Pro'}
+                  Go Junior Bootcamp открыт бесплатно в MVP. Войди и сохраняй прогресс.
                 </p>
               </div>
             </div>
@@ -528,8 +526,8 @@ function ProfileContent() {
 
             <div className="mt-4 rounded-2xl border border-gray-800 bg-gray-900/60 px-4 py-3 text-sm text-gray-400">
               {earnedCount > 0
-                ? 'Открывай раздел сертификатов, чтобы выпустить, посмотреть и скачать свои документы.'
-                : 'Сертификаты появятся после полного завершения бесплатного курса, тренажёра или буткемпа.'}
+                ? 'Открывай раздел сертификатов, чтобы выпустить, посмотреть и скачать документ.'
+                : 'Go Junior Certificate появится после завершения Bootcamp, проектов и checkpoint.'}
             </div>
           </section>
 

@@ -7,25 +7,25 @@ import ContinueBanner from '@/components/ContinueBanner'
 
 const freeProjects = [
   {
-    title: 'Игра “Угадай число”',
-    description: 'CLI-проект с понятным README, командами запуска и простой логикой условий/циклов.',
-    meta: 'В портфолио: README · go run · сценарии игры',
+    title: 'CLI-калькулятор',
+    description: 'Консольная программа: ввод чисел, выбор операции, результат и обработка ошибок.',
+    meta: 'В портфолио: README · go run · ошибки ввода',
     files: ['README.md', 'main.go', 'examples/output.txt'],
-    learned: 'условия, циклы, ввод/вывод',
+    learned: 'ввод/вывод, функции, ошибки',
   },
   {
-    title: 'Сервис погоды',
-    description: 'Мини-сервис, который получает данные из интернета и показывает результат человеку.',
-    meta: 'В портфолио: HTTP · JSON · обработка ошибок',
-    files: ['README.md', 'server.go', '.env.example'],
-    learned: 'HTTP, JSON, внешние API',
+    title: 'To-do приложение в консоли',
+    description: 'CLI-приложение: добавить задачу, посмотреть список, отметить выполненной и сохранить в файл.',
+    meta: 'В портфолио: JSON-файл · команды · состояние',
+    files: ['README.md', 'todo.go', 'tasks.json'],
+    learned: 'структуры, файлы, JSON',
   },
   {
-    title: 'Учёт расходов',
-    description: 'Проект с записями: добавить, посмотреть, изменить и объяснить продуктовый сценарий.',
-    meta: 'В портфолио: CRUD · хранение · команды запуска',
-    files: ['README.md', 'storage.go', 'commands.md'],
-    learned: 'CRUD, состояние, сценарии пользователя',
+    title: 'Мини REST API',
+    description: 'Локальный HTTP-сервер с endpoints, JSON-ответами и curl/Postman проверками.',
+    meta: 'В портфолио: HTTP · JSON · REST',
+    files: ['README.md', 'server.go', 'requests.http'],
+    learned: 'HTTP, JSON, status codes',
   },
 ]
 
@@ -39,9 +39,9 @@ const resumeHighlights = [
 const resumeStack = ['Go', 'HTTP', 'JSON', 'CLI', 'GitHub', 'README', 'CRUD', 'Postman', 'Git', 'Базовые тесты']
 
 const resumeProjects = [
-  ['number-guessing-go', 'CLI-игра: ввод пользователя, условия, циклы, README и запуск через go run.'],
-  ['weather-service-go', 'HTTP-сервис: запрос к внешнему API, JSON-ответ, обработка ошибок и .env.example.'],
-  ['expense-tracker-go', 'CRUD-проект: добавление, просмотр и изменение расходов, хранение состояния.'],
+  ['cli-calculator-go', 'CLI-калькулятор: ввод чисел, операции, ошибки, README и запуск через go run.'],
+  ['console-todo-go', 'To-do в консоли: команды add/list/done, JSON-файл и сохранение состояния.'],
+  ['mini-rest-api-go', 'Мини REST API: HTTP endpoints, JSON-ответы, status codes и curl/Postman проверки.'],
 ]
 
 const resumeExperience = [

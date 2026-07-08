@@ -7,9 +7,7 @@ import { api, type CertificateStatus, type UserProfile } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
 
 const CERT_THEME: Record<CertificateStatus['id'], { accent: string; glow: string; ribbon: string }> = {
-  course: { accent: '#8b5cf6', glow: 'rgba(139,92,246,0.28)', ribbon: 'Основы Go' },
-  trainer: { accent: '#06b6d4', glow: 'rgba(6,182,212,0.28)', ribbon: 'Тренажёр Go' },
-  bootcamp: { accent: '#f59e0b', glow: 'rgba(245,158,11,0.26)', ribbon: 'Bootcamp Junior' },
+  'go-junior': { accent: '#f59e0b', glow: 'rgba(245,158,11,0.26)', ribbon: 'Go Junior' },
 }
 
 function formatDate(value?: string) {
@@ -35,7 +33,7 @@ function CertificateContent() {
   const [sending, setSending] = useState(false)
   const [flashMessage, setFlashMessage] = useState<string | null>(null)
 
-  const type = (searchParams.get('type') || 'course') as CertificateStatus['id']
+  const type = (searchParams.get('type') || 'go-junior') as CertificateStatus['id']
   const autoprint = searchParams.get('print') === '1'
 
   useEffect(() => {
@@ -53,7 +51,7 @@ function CertificateContent() {
     [userProfile, type]
   )
 
-  const theme = CERT_THEME[type] || CERT_THEME.course
+  const theme = CERT_THEME[type] || CERT_THEME['go-junior']
 
   const sendToEmail = async () => {
     if (!certificate?.emailAllowed) return
@@ -154,21 +152,12 @@ function CertificateContent() {
               {sending ? 'Отправляем...' : 'Выслать на почту'}
             </button>
           )}
-          {certificate.downloadAllowed ? (
-            <button
-              onClick={() => window.print()}
-              className="rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-bold px-5 py-2.5 text-sm transition-colors"
-            >
-              Скачать PDF
-            </button>
-          ) : (
-            <Link
-              href="/bootcamp/buy"
-              className="rounded-xl border border-amber-500/20 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-semibold px-5 py-2.5 text-sm transition-colors"
-            >
-              Godemy Pro для скачивания
-            </Link>
-          )}
+          <button
+            onClick={() => window.print()}
+            className="rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-bold px-5 py-2.5 text-sm transition-colors"
+          >
+            Скачать PDF
+          </button>
         </div>
       </div>
 
@@ -245,11 +234,9 @@ function CertificateContent() {
                 и получил(а) практические знания и навыки для разработки современных и надёжных продуктов на Go.
               </p>
 
-              {!certificate.downloadAllowed && (
-                <div className="mt-8 inline-flex max-w-2xl rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm leading-6 text-amber-100">
-                  Сертификат уже выпущен и доступен для просмотра. Скачать PDF и отправить его на почту можно после активации подписки Godemy Pro.
-                </div>
-              )}
+              <div className="mt-8 inline-flex max-w-2xl rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm leading-6 text-emerald-100">
+                Сертификат выпущен бесплатно. Публичный ID для проверки: {certificate.certificateNumber}.
+              </div>
 
               <div className="mt-16 flex items-end justify-between gap-6">
                 <div>

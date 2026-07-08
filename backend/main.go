@@ -39,6 +39,12 @@ func main() {
 	levelRepo := repository.NewGormLevelRepository(database.DB)
 	trainerTopicRepo := repository.NewTrainerTopicRepository(database.DB)
 	skillRepo := repository.NewSkillRepository(database.DB)
+	projectRepo := repository.NewProjectRepository(database.DB)
+	projectSubmissionRepo := repository.NewProjectSubmissionRepository(database.DB)
+	certificateRepo := repository.NewCertificateRepository(database.DB)
+	if err := projectRepo.SeedDefaults(data.DefaultProjects()); err != nil {
+		log.Fatalf("Failed to seed projects: %v", err)
+	}
 
 	var rdb *redis.Client
 	if cfg.RedisAddr != "" {
@@ -60,7 +66,7 @@ func main() {
 	}
 
 	authUC := usecase.NewAuthUseCase(userRepo, passwordResetRepo, emailVerificationRepo, cfg.JWTSecret)
-	contentUC := usecase.NewContentUseCase(lessonRepo, exerciseRepo, progressRepo, levelRepo, trainerTopicRepo, skillRepo)
+	contentUC := usecase.NewContentUseCase(lessonRepo, exerciseRepo, progressRepo, levelRepo, trainerTopicRepo, skillRepo, projectRepo, projectSubmissionRepo, certificateRepo)
 	runnerUC := usecase.NewRunnerUseCase(exerciseRepo, progressRepo)
 	h := httpdelivery.NewHandler(authUC, contentUC, runnerUC, cfg, rdb)
 
@@ -129,6 +135,9 @@ func main() {
 	// Trainer topics (public)
 	api.GET("/trainer/topics", h.GetTrainerTopics())
 	api.GET("/trainer/topics/:slug", h.GetTrainerTopic())
+	api.GET("/projects", h.GetProjects())
+	api.GET("/projects/:slug", h.GetProject())
+	api.GET("/certificates/public/:certificateId", h.GetPublicCertificate())
 
 	runnerLimit := middleware.RedisRateLimit(rdb, "runner", 12, time.Minute)
 	api.POST("/run", runnerLimit, h.RunCode())
@@ -153,6 +162,8 @@ func main() {
 	protected.POST("/progress", h.UpdateProgress())
 	protected.GET("/user/profile", h.GetProfile())
 	protected.POST("/certificates/:type/email", h.EmailCertificate())
+	protected.GET("/project-submissions", h.GetProjectSubmissions())
+	protected.POST("/projects/:id/submission", h.UpsertProjectSubmission())
 
 	// Admin (protected by authenticated admin role)
 	admin := api.Group("/admin")
@@ -161,6 +172,11 @@ func main() {
 	admin.GET("/users", h.AdminListUsers())
 	admin.GET("/users/:id", h.AdminGetUser())
 	admin.PUT("/users/:id", h.AdminUpdateUser())
+	admin.GET("/projects", h.AdminGetProjects())
+	admin.GET("/projects/:id", h.AdminGetProject())
+	admin.POST("/projects", h.AdminCreateProject())
+	admin.PUT("/projects/:id", h.AdminUpdateProject())
+	admin.DELETE("/projects/:id", h.AdminDeleteProject())
 
 	// Admin: Lessons CRUD
 	admin.GET("/lessons", h.AdminGetLessons())

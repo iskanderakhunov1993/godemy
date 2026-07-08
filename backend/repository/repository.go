@@ -74,3 +74,25 @@ type ProgressRepository interface {
 	FindOne(userID uint, entityType string, entityID uint) (*models.Progress, error)
 	Upsert(userID uint, entityType string, entityID uint, status string, payload string) (*models.Progress, error)
 }
+
+type ProjectRepository interface {
+	FindAll(level string) ([]models.Project, error)
+	FindBySlug(slug string) (*models.Project, error)
+	FindByID(id uint) (*models.Project, error)
+	Create(project *models.Project) error
+	Update(project *models.Project) error
+	Delete(id uint) error
+	SeedDefaults(projects []models.Project) error
+}
+
+type ProjectSubmissionRepository interface {
+	FindByUser(userID uint) ([]models.ProjectSubmission, error)
+	FindOne(userID uint, projectID uint) (*models.ProjectSubmission, error)
+	Upsert(userID uint, projectID uint, status string, githubURL string, note string) (*models.ProjectSubmission, error)
+}
+
+type CertificateRepository interface {
+	FindByUserAndType(userID uint, certType string) (*models.Certificate, error)
+	FindByCertificateID(certificateID string) (*models.Certificate, error)
+	Create(certificate *models.Certificate) error
+}

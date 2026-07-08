@@ -6,7 +6,7 @@ import { api } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
 
 export default function StartPage() {
-  const { user, token, progress, loadProgress } = useAuthStore()
+  const { token, progress, loadProgress } = useAuthStore()
   const [lessonsTotal, setLessonsTotal] = useState(0)
   const [exercisesTotal, setExercisesTotal] = useState(0)
 
@@ -128,10 +128,10 @@ export default function StartPage() {
               </div>
             </div>
             <Link
-              href={user?.isPremium ? '/junior' : '/bootcamp'}
+              href="/junior"
               className="whitespace-nowrap rounded-xl bg-amber-400 px-6 py-3 text-center font-bold text-gray-950 transition-colors hover:bg-amber-300"
             >
-              {user?.isPremium ? 'Продолжить курс →' : 'Посмотреть следующий этап →'}
+              Открыть Bootcamp →
             </Link>
           </div>
         </section>

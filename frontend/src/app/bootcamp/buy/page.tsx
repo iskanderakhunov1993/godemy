@@ -2,118 +2,58 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Godemy Pro — продвинутый курс',
-  description: 'Доступ к следующему этапу после бесплатной базы: проекты, практика, проверка прогресса и сертификаты.',
+  title: 'Go Junior Bootcamp открыт бесплатно | Godemy',
+  description: 'В MVP GoDemy весь Go Junior Bootcamp открыт бесплатно. Войдите, чтобы сохранять прогресс и получить сертификат.',
 }
-
-const included = [
-  'Путь роста от первых рабочих задач к сложным проектам',
-  'Практические проекты для портфолио',
-  'Все продвинутые упражнения в практике',
-  'Проверка прогресса по каждому уровню',
-  'PDF-сертификаты без доплаты',
-]
-
-const outcomes = [
-  ['Первый рабочий уровень', 'Начинаешь сам собирать небольшие сервисы и понимать типовые задачи продукта.'],
-  ['Уверенный уровень', 'Понимаешь интеграции, устойчивость, очереди и почему проекту нужна архитектура.'],
-  ['Системный уровень', 'Смотришь на проект целиком: нагрузка, безопасность, скорость и качество решений.'],
-]
 
 export default function BuyPage() {
   return (
-    <main className="mx-auto max-w-5xl px-4 py-14 sm:px-6">
-      <Link href="/bootcamp" className="text-sm text-gray-500 transition-colors hover:text-white">
-        ← Назад к продвинутому курсу
-      </Link>
+    <main className="page-shell">
+      <section className="page-wrap py-14">
+        <Link href="/bootcamp" className="text-sm text-gray-500 transition-colors hover:text-white">
+          ← Назад к Bootcamp
+        </Link>
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_390px]">
-        <section>
-          <span className="inline-flex rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-2 text-sm font-bold text-violet-300">
-            Следующий этап
-          </span>
-          <h1 className="mt-6 text-4xl font-black text-white sm:text-5xl">
-            Доступ к продвинутой практике
-            <span className="block text-violet-400">для профессионального роста</span>
-          </h1>
-          <p className="mt-5 max-w-xl text-lg leading-relaxed text-gray-400">
-            Бесплатный курс и основной тренажёр остаются доступны всем.
-            Доступ открывает более длинные проекты, уровни роста и сертификаты.
-          </p>
-
-          <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-5">
-            <p className="text-[11px] uppercase tracking-[0.24em] text-violet-300">Что ты покупаешь по сути</p>
-            <p className="mt-2 text-sm leading-6 text-gray-300">
-              Не “ещё набор уроков”, а следующий слой роста после бесплатных 3 проектов:
-              длинные практические задачи, понятные уровни развития и больше самостоятельности.
+        <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_380px]">
+          <section className="surface-card rounded-[34px] p-8">
+            <span className="eyebrow">MVP-доступ</span>
+            <h1 className="mt-5 text-5xl font-black tracking-[-0.05em] text-white">
+              Go Junior Bootcamp открыт бесплатно
+            </h1>
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-gray-300">
+              Подписку подключим позже. Сейчас можно пройти Bootcamp, выполнить проекты, checkpoint и получить Go Junior Certificate без оплаты.
             </p>
-          </div>
 
-          <div className="mt-10 space-y-3">
-            {included.map((item) => (
-              <div key={item} className="flex items-center gap-3 rounded-2xl border border-gray-800 bg-gray-900 p-4">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-sm text-emerald-300">✓</span>
-                <span className="text-gray-200">{item}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5">
-            <p className="font-semibold text-cyan-200">Сначала хочешь проверить платформу?</p>
-            <p className="mt-2 text-sm text-gray-400">
-              Пройди бесплатный путь и собери три проекта. Подписка понадобится только для следующего уровня.
-            </p>
-            <Link href="/guide" className="mt-4 inline-flex text-sm font-bold text-cyan-300 hover:text-cyan-200">
-              Начать бесплатно →
-            </Link>
-          </div>
-
-          <div className="mt-8 rounded-2xl border border-gray-800 bg-gray-900/70 p-5">
-            <p className="text-sm font-semibold text-white">Что меняется после подписки</p>
-            <div className="mt-4 space-y-3">
-              {outcomes.map(([level, description]) => (
-                <div key={level} className="rounded-xl border border-gray-800 bg-gray-950/70 p-4">
-                  <p className="font-semibold text-violet-300">{level}</p>
-                  <p className="mt-2 text-sm leading-6 text-gray-400">{description}</p>
+            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              {[
+                'HTTP, REST API, PostgreSQL и Docker',
+                '4 проекта для портфолио',
+                'Финальный checkpoint',
+                'Бесплатный сертификат после условий',
+              ].map((item) => (
+                <div key={item} className="rounded-2xl border border-white/8 bg-white/[0.04] p-4 text-sm text-gray-200">
+                  {item}
                 </div>
               ))}
             </div>
-          </div>
-        </section>
 
-        <aside className="h-fit rounded-3xl border border-violet-500/30 bg-gray-900 p-6 shadow-2xl">
-          <p className="text-sm font-bold text-violet-300">Доступ Godemy Pro</p>
-          <div className="mt-5 flex items-end gap-2">
-            <span className="text-5xl font-black text-white">2 490 ₽</span>
-            <span className="mb-1 text-gray-500">/ месяц</span>
-          </div>
-          <p className="mt-2 text-sm text-gray-500">Отменить можно в любой момент.</p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link href="/junior" className="btn-primary justify-center">Начать Bootcamp</Link>
+              <Link href="/auth/login?next=/junior" className="btn-secondary justify-center">Войти, чтобы сохранить прогресс</Link>
+            </div>
+          </section>
 
-          <div className="my-6 border-t border-gray-800" />
-
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Запуск оплаты</p>
-          <p className="mt-3 text-sm leading-relaxed text-gray-400">
-            Онлайн-оплата ещё подключается. Оставь заявку в Telegram — мы активируем доступ вручную и поможем начать.
-          </p>
-          <a
-            href="https://t.me/golangacademy"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-6 flex w-full items-center justify-center rounded-xl bg-violet-500 px-5 py-3.5 font-bold text-white transition-colors hover:bg-violet-400"
-          >
-            Оставить заявку
-          </a>
-          <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4">
-            <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Подходит, если</p>
-            <ul className="mt-3 space-y-2 text-sm leading-6 text-gray-300">
-              <li>• ты уже понял, что хочешь расти в Go дальше бесплатной базы;</li>
-              <li>• тебе нужны проекты сильнее, чем стартовые упражнения;</li>
-              <li>• ты хочешь дойти до сертификатов и уровневой системы роста.</li>
-            </ul>
-          </div>
-          <p className="mt-4 text-center text-xs text-gray-600">Не вводи данные карты на сайте — оплата пока проходит вручную.</p>
-        </aside>
-      </div>
+          <aside className="surface-card h-fit rounded-[30px] p-6">
+            <p className="text-sm font-bold text-cyan-300">Что будет потом</p>
+            <p className="mt-3 text-sm leading-7 text-gray-400">
+              GoDemy Pro вернётся как подписка на всю платформу: Go, SQL, QA и будущие направления. В этом MVP мы сначала проверяем ценность обучения и проектов.
+            </p>
+            <div className="mt-5 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm text-emerald-100">
+              Сейчас карту вводить не нужно. Все материалы Go-трека открыты.
+            </div>
+          </aside>
+        </div>
+      </section>
     </main>
   )
 }

@@ -28,6 +28,9 @@ func Init(dsn string) error {
 		&models.TrainerTopic{},
 		&models.Exercise{},
 		&models.Progress{},
+		&models.Project{},
+		&models.ProjectSubmission{},
+		&models.Certificate{},
 	)
 	if err != nil {
 		return err

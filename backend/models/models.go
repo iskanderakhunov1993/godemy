@@ -132,6 +132,52 @@ type Progress struct {
 	DeletedAt  gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
+type Project struct {
+	ID             uint           `json:"id" gorm:"primaryKey"`
+	Kind           string         `json:"kind" gorm:"index;not null"`  // free_project | bootcamp_project | checkpoint
+	Level          string         `json:"level" gorm:"index;not null"` // free-go | go-junior
+	Slug           string         `json:"slug" gorm:"uniqueIndex;not null"`
+	Title          string         `json:"title" gorm:"not null"`
+	Description    string         `json:"description" gorm:"type:text"`
+	Requirements   string         `json:"requirements" gorm:"type:text"`
+	ExpectedResult string         `json:"expectedResult" gorm:"type:text"`
+	Checklist      string         `json:"checklist" gorm:"type:text"`
+	Solution       string         `json:"solution" gorm:"type:text"`
+	Order          int            `json:"order" gorm:"not null;default:0"`
+	CreatedAt      time.Time      `json:"createdAt"`
+	UpdatedAt      time.Time      `json:"updatedAt"`
+	DeletedAt      gorm.DeletedAt `json:"-" gorm:"index"`
+}
+
+type ProjectSubmission struct {
+	ID        uint           `json:"id" gorm:"primaryKey"`
+	UserID    uint           `json:"userId" gorm:"not null;index;uniqueIndex:idx_user_project_submission"`
+	ProjectID uint           `json:"projectId" gorm:"not null;index;uniqueIndex:idx_user_project_submission"`
+	Status    string         `json:"status" gorm:"not null;default:started"` // started | completed
+	GithubURL string         `json:"githubUrl" gorm:"type:text"`
+	Note      string         `json:"note" gorm:"type:text"`
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
+
+	Project *Project `json:"project,omitempty" gorm:"foreignKey:ProjectID"`
+}
+
+type Certificate struct {
+	ID               uint           `json:"id" gorm:"primaryKey"`
+	CertificateID    string         `json:"certificateId" gorm:"uniqueIndex;not null"`
+	UserID           uint           `json:"userId" gorm:"not null;index"`
+	Type             string         `json:"type" gorm:"index;not null"` // go-junior
+	Status           string         `json:"status" gorm:"not null;default:issued"`
+	IssuedAt         time.Time      `json:"issuedAt" gorm:"index"`
+	ProjectsSnapshot string         `json:"projectsSnapshot" gorm:"type:text"`
+	CreatedAt        time.Time      `json:"createdAt"`
+	UpdatedAt        time.Time      `json:"updatedAt"`
+	DeletedAt        gorm.DeletedAt `json:"-" gorm:"index"`
+
+	User *User `json:"user,omitempty" gorm:"foreignKey:UserID"`
+}
+
 // Skill — навык (го структуры, горутины, интерфейсы и т.д.)
 type Skill struct {
 	ID          uint           `json:"id" gorm:"primaryKey"`

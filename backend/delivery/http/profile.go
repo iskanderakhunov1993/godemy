@@ -43,24 +43,25 @@ type skillDTO struct {
 }
 
 type certificateDTO struct {
-	ID                string `json:"id"`
-	Title             string `json:"title"`
-	Subtitle          string `json:"subtitle"`
-	CourseName        string `json:"courseName"`
-	Description       string `json:"description"`
-	Earned            bool   `json:"earned"`
-	Progress          int    `json:"progress"`
-	Total             int    `json:"total"`
-	EarnedAt          string `json:"earnedAt,omitempty"`
-	CertificateNumber string `json:"certificateNumber,omitempty"`
-	PreviewAllowed    bool   `json:"previewAllowed"`
-	DownloadAllowed   bool   `json:"downloadAllowed"`
-	EmailAllowed      bool   `json:"emailAllowed"`
-	RequiresPremium   bool   `json:"requiresPremium"`
-	FullNameRequired  bool   `json:"fullNameRequired"`
-	LockedReason      string `json:"lockedReason,omitempty"`
-	CtaLabel          string `json:"ctaLabel"`
-	CtaHref           string `json:"ctaHref"`
+	ID                string                             `json:"id"`
+	Title             string                             `json:"title"`
+	Subtitle          string                             `json:"subtitle"`
+	CourseName        string                             `json:"courseName"`
+	Description       string                             `json:"description"`
+	Earned            bool                               `json:"earned"`
+	Progress          int                                `json:"progress"`
+	Total             int                                `json:"total"`
+	EarnedAt          string                             `json:"earnedAt,omitempty"`
+	CertificateNumber string                             `json:"certificateNumber,omitempty"`
+	PreviewAllowed    bool                               `json:"previewAllowed"`
+	DownloadAllowed   bool                               `json:"downloadAllowed"`
+	EmailAllowed      bool                               `json:"emailAllowed"`
+	RequiresPremium   bool                               `json:"requiresPremium"`
+	FullNameRequired  bool                               `json:"fullNameRequired"`
+	LockedReason      string                             `json:"lockedReason,omitempty"`
+	CtaLabel          string                             `json:"ctaLabel"`
+	CtaHref           string                             `json:"ctaHref"`
+	Projects          []usecase.CertificateProjectStatus `json:"projects,omitempty"`
 }
 
 // GetProfile возвращает полный профиль пользователя с информацией о скилах, курсах и готовности
@@ -117,24 +118,6 @@ func (h *Handler) GetProfile() gin.HandlerFunc {
 			return
 		}
 
-		allProgress, err := h.content.GetProgress(userID)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch certificate progress"})
-			return
-		}
-
-		allLessons, err := h.content.GetLessons("")
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch lessons for certificates"})
-			return
-		}
-
-		allExercises, err := h.content.GetExercises("", "", "")
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch exercises for certificates"})
-			return
-		}
-
 		// Если пользовательские скилы еще не заполнены, выводим производные навыки из прогресса.
 		if len(skillDTOs) == 0 && totalLessons > 0 {
 			derivedSkills, derivedReadiness := buildDerivedSkills(completedLessons, totalLessons, completedSprints)
@@ -146,6 +129,17 @@ func (h *Handler) GetProfile() gin.HandlerFunc {
 
 		// Определяем persona на основе готовности
 		persona := getPersonaType(readiness)
+
+		goJuniorCertificate, err := h.content.BuildGoJuniorCertificateStatus(user)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to build certificate status"})
+			return
+		}
+		if goJuniorCertificate.Earned && !goJuniorCertificate.FullNameRequired && !goJuniorCertificate.PreviewAllowed {
+			if _, err := h.content.EnsureGoJuniorCertificate(user); err == nil {
+				goJuniorCertificate, _ = h.content.BuildGoJuniorCertificateStatus(user)
+			}
+		}
 
 		profile := ProfileResponse{
 			User: &profileUserDTO{
@@ -162,10 +156,34 @@ func (h *Handler) GetProfile() gin.HandlerFunc {
 			CompletedSprints:  completedSprints,
 			TotalLessonsCount: totalLessons,
 			CompletedLessons:  completedLessons,
-			Certificates:      buildCertificates(user, allProgress, allLessons, allExercises),
+			Certificates:      []certificateDTO{certificateFromUseCase(goJuniorCertificate)},
 		}
 
 		c.JSON(http.StatusOK, profile)
+	}
+}
+
+func certificateFromUseCase(cert *usecase.GoJuniorCertificateStatus) certificateDTO {
+	return certificateDTO{
+		ID:                cert.ID,
+		Title:             cert.Title,
+		Subtitle:          cert.Subtitle,
+		CourseName:        cert.CourseName,
+		Description:       cert.Description,
+		Earned:            cert.Earned,
+		Progress:          cert.Progress,
+		Total:             cert.Total,
+		EarnedAt:          cert.EarnedAt,
+		CertificateNumber: cert.CertificateID,
+		PreviewAllowed:    cert.PreviewAllowed,
+		DownloadAllowed:   cert.DownloadAllowed,
+		EmailAllowed:      cert.EmailAllowed,
+		RequiresPremium:   cert.RequiresPremium,
+		FullNameRequired:  cert.FullNameRequired,
+		LockedReason:      cert.LockedReason,
+		CtaLabel:          cert.CtaLabel,
+		CtaHref:           cert.CtaHref,
+		Projects:          cert.Projects,
 	}
 }
 

@@ -1,0 +1,55 @@
+{
+  "status": "complete",
+  "skill": "analyze-project",
+  "date": "2026-07-08",
+  "repository": "/Users/iskander/Desktop/golanger-develop",
+  "mode": "read-only analysis with expected analysis artifact writes",
+  "heavy_jobs_run": false,
+  "code_modified": false,
+  "outputs": [
+    "analysis_outputs/SUMMARY.md",
+    "analysis_outputs/RISKS.md",
+    "analysis_outputs/status.json"
+  ],
+  "inspected": {
+    "backend": [
+      "backend/main.go",
+      "backend/config/config.go",
+      "backend/models/models.go",
+      "backend/usecase/content.go",
+      "backend/usecase/runner.go",
+      "backend/delivery/http/content.go",
+      "backend/delivery/http/auth.go",
+      "backend/delivery/http/profile.go",
+      "backend/delivery/http/certificates.go",
+      "backend/sandbox/runner.go",
+      "backend/middleware/auth.go",
+      "backend/middleware/admin.go",
+      "backend/middleware/rate_limit.go",
+      "backend/database/db.go"
+    ],
+    "frontend": [
+      "frontend/src/lib/api.ts",
+      "frontend/src/app/page.tsx",
+      "frontend/src/app/bootcamp/page.tsx",
+      "frontend/src/app/bootcamp/buy/page.tsx",
+      "frontend/src/app/junior/layout.tsx"
+    ],
+    "product_attachment": "/Users/iskander/.codex/attachments/ae17061b-9f2d-4b84-a132-5e4b7b9a0e3d/pasted-text.txt"
+  },
+  "reference_files": {
+    "available": [
+      "/Users/iskander/.codex/skills/analyze-project/references/analysis-policy.md"
+    ],
+    "missing": [
+      "/Users/iskander/.codex/references/agent-operating-principles.md",
+      "/Users/iskander/.codex/skills/analyze-project/references/research-pitfall-checklist.md"
+    ]
+  },
+  "top_findings": [
+    "Paid bootcamp content appears gated primarily in frontend, while lesson/exercise APIs are public.",
+    "Runner defaults to local execution unless SANDBOX_MODE=docker is set.",
+    "Certificate eligibility does not yet model required projects/checkpoints/GitHub evidence from the final MVP document.",
+    "Free project names differ between the product attachment and current homepage copy."
+  ]
+}

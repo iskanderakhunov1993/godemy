@@ -15,17 +15,14 @@ export default function JuniorLayout({ children }: { children: React.ReactNode }
       router.replace('/auth/login?next=/junior')
       return
     }
-    if (!user.isPremium && !user.isAdmin) {
-      router.replace('/bootcamp/buy')
-    }
   }, [hasHydrated, router, user])
 
-  if (!hasHydrated || !user || (!user.isPremium && !user.isAdmin)) {
+  if (!hasHydrated || !user) {
     return (
       <div className="mx-auto flex min-h-[55vh] max-w-xl items-center justify-center px-4 text-center">
         <div>
           <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gray-700 border-t-violet-400" />
-          <p className="mt-4 text-sm text-gray-500">Проверяем доступ к Bootcamp…</p>
+          <p className="mt-4 text-sm text-gray-500">Проверяем вход для сохранения прогресса…</p>
         </div>
       </div>
     )

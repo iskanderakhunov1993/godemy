@@ -56,6 +56,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: '/admin/users', label: 'Пользователи' },
     { href: '/admin/structure', label: 'Редактор курса' },
     { href: '/admin/bootcamp', label: 'Редактор буткемпа' },
+    { href: '/admin/projects', label: 'Проекты' },
     { href: '/admin/course-generator', label: 'Генератор курса' },
     { href: '/admin/trainer', label: 'Тренажер' },
   ]

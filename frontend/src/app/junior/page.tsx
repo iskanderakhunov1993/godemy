@@ -18,7 +18,7 @@ export default function JuniorModulePage() {
         </div>
         <h1 className="text-4xl font-bold text-white mb-3">Junior Module</h1>
         <p className="text-gray-400 max-w-2xl">
-          Нулевая неделя + 5 спринтов = 5 реальных Go-проектов для резюме. Доступ входит в подписку Godemy Pro.
+          Нулевая неделя + 5 спринтов = реальные Go-проекты для резюме. В MVP Bootcamp открыт бесплатно.
         </p>
       </div>
 
@@ -62,16 +62,12 @@ export default function JuniorModulePage() {
         </div>
         <ul className="space-y-2 mb-6">
           {sprints.map((s, i) => (
-            <li key={s.label} className={`flex items-center gap-3 ${s.free ? 'text-gray-300' : 'text-gray-600'}`}>
-              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 ${
-                s.free
-                  ? 'bg-cyan-500/20 border border-cyan-500/30 text-cyan-400'
-                  : 'bg-gray-800 border border-gray-700 text-gray-600'
-              }`}>
-                {s.free ? i + 1 : '🔒'}
+            <li key={s.label} className="flex items-center gap-3 text-gray-300">
+              <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 bg-cyan-500/20 border border-cyan-500/30 text-cyan-400">
+                {i + 1}
               </span>
               <span className="flex-1">{s.label}</span>
-              <span className="text-xs text-violet-300 font-semibold">Godemy Pro</span>
+              <span className="text-xs text-emerald-300 font-semibold">Открыто</span>
             </li>
           ))}
         </ul>
@@ -82,14 +78,12 @@ export default function JuniorModulePage() {
             <p className="text-white font-bold mb-1">Все 5 проектов уже доступны</p>
             <p className="text-gray-400 text-sm">Авто-проверка кода · Задачи · Сертификат Junior</p>
           </div>
-          <a
-            href="https://t.me/golangacademy"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/go"
             className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-2.5 rounded-xl transition-colors whitespace-nowrap text-sm"
           >
-            Поддержка в Telegram →
-          </a>
+            Смотреть проекты →
+          </Link>
         </div>
       </div>
     </div>

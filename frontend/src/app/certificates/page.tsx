@@ -1,349 +1,166 @@
 'use client'
 
 import Link from 'next/link'
-import { Suspense, useEffect, useMemo, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { api, type CertificateStatus, type UserProfile } from '@/lib/api'
 import { useAuthStore } from '@/lib/store'
 
-function formatEarnedDate(value?: string) {
+function formatDate(value?: string) {
   if (!value) return '—'
-  return new Intl.DateTimeFormat('ru-RU', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  }).format(new Date(value))
-}
-
-function certificateEmoji(id: CertificateStatus['id']) {
-  switch (id) {
-    case 'course':
-      return '🎓'
-    case 'trainer':
-      return '⚡'
-    case 'bootcamp':
-      return '🏆'
-    default:
-      return '📘'
-  }
-}
-
-function getCertificateState(cert: CertificateStatus) {
-  if (!cert.earned) {
-    return {
-      label: 'В процессе',
-      tone: 'bg-gray-800 text-gray-400 border border-gray-700',
-      panelTone: 'border-gray-800 bg-gray-900/70',
-      summary: 'Заверши программу, чтобы выпустить сертификат.',
-    }
-  }
-
-  if (!cert.previewAllowed) {
-    return {
-      label: 'Нужно ФИО',
-      tone: 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/20',
-      panelTone: 'border-cyan-500/30 bg-[radial-gradient(circle_at_top_right,rgba(6,182,212,0.14),rgba(17,24,39,0.96)_42%)]',
-      summary: 'Сертификат уже заработан, но нужно заполнить ФИО для выпуска.',
-    }
-  }
-
-  if (!cert.downloadAllowed) {
-    return {
-      label: 'Нужен Pro',
-      tone: 'bg-amber-500/15 text-amber-300 border border-amber-500/20',
-      panelTone: 'border-violet-500/30 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.18),rgba(17,24,39,0.96)_42%)]',
-      summary: 'Сертификат готов. Просмотр доступен, скачивание и email — по подписке.',
-    }
-  }
-
-  return {
-    label: 'Готов',
-    tone: 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20',
-    panelTone: 'border-violet-500/30 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.18),rgba(17,24,39,0.96)_42%)] shadow-[0_16px_50px_rgba(76,29,149,0.18)]',
-    summary: 'Сертификат полностью доступен: просмотр, PDF и отправка на почту.',
-  }
+  return new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' }).format(new Date(value))
 }
 
 function CertificatesContent() {
   const router = useRouter()
   const { user, token, setAuth } = useAuthStore()
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const [profile, setProfile] = useState<UserProfile | null>(null)
   const [fullNameDraft, setFullNameDraft] = useState('')
   const [savingName, setSavingName] = useState(false)
-  const [emailingId, setEmailingId] = useState<string | null>(null)
-  const [flashMessage, setFlashMessage] = useState<string | null>(null)
+  const [emailing, setEmailing] = useState(false)
+  const [flash, setFlash] = useState('')
 
   useEffect(() => {
     if (!token) {
-      router.push('/auth/login')
+      router.push('/auth/login?next=/certificates')
       return
     }
-
-    api.getUserProfile()
-      .then((profile) => {
-        setUserProfile(profile)
-        setFullNameDraft(profile.user.fullName || '')
-      })
-      .catch(() => {
-        setUserProfile(null)
-      })
-  }, [token, router])
-
-  const certificates = userProfile?.certificates ?? []
-  const earnedCount = useMemo(() => certificates.filter((cert) => cert.earned).length, [certificates])
-  const readyToDownloadCount = useMemo(() => certificates.filter((cert) => cert.downloadAllowed).length, [certificates])
-  const needsFullNameCount = useMemo(() => certificates.filter((cert) => cert.earned && !cert.previewAllowed).length, [certificates])
-  const sortedCertificates = useMemo(() => {
-    return [...certificates].sort((a, b) => {
-      const score = (cert: CertificateStatus) => {
-        if (cert.downloadAllowed) return 4
-        if (cert.previewAllowed) return 3
-        if (cert.earned) return 2
-        return 1
-      }
-      return score(b) - score(a)
+    api.getUserProfile().then((next) => {
+      setProfile(next)
+      setFullNameDraft(next.user.fullName || '')
     })
-  }, [certificates])
+  }, [router, token])
 
-  const saveFullName = async () => {
+  const cert = profile?.certificates[0] as CertificateStatus | undefined
+
+  async function refresh() {
+    const next = await api.getUserProfile()
+    setProfile(next)
+    setFullNameDraft(next.user.fullName || '')
+  }
+
+  async function saveFullName() {
     if (!token || !user) return
     const trimmed = fullNameDraft.trim()
     if (trimmed.length < 5) return
-
     setSavingName(true)
     try {
       const updated = await api.updateMe({ fullName: trimmed })
       setAuth(token, updated)
-      const profile = await api.getUserProfile()
-      setUserProfile(profile)
-      setFlashMessage('ФИО сохранено. Сертификаты обновлены.')
+      await refresh()
+      setFlash('ФИО сохранено. Статус сертификата обновлён.')
     } finally {
       setSavingName(false)
     }
   }
 
-  const sendToEmail = async (type: CertificateStatus['id']) => {
-    setEmailingId(type)
-    setFlashMessage(null)
+  async function sendToEmail() {
+    if (!cert?.emailAllowed) return
+    setEmailing(true)
     try {
-      const response = await api.emailCertificate(type)
-      setFlashMessage(response.message)
+      const response = await api.emailCertificate(cert.id)
+      setFlash(response.message)
     } catch (error) {
-      setFlashMessage(error instanceof Error ? error.message : 'Не удалось отправить письмо')
+      setFlash(error instanceof Error ? error.message : 'Не удалось отправить письмо')
     } finally {
-      setEmailingId(null)
+      setEmailing(false)
     }
   }
 
-  if (!token || !user) return null
+  if (!token || !user || !cert) {
+    return <div className="mx-auto max-w-5xl px-4 py-12 text-gray-400">Загружаем сертификат...</div>
+  }
+
+  const percent = cert.total > 0 ? Math.round((cert.progress / cert.total) * 100) : 0
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-      <div className="mb-8">
-        <Link
-          href="/profile"
-          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-300 mb-5 transition-colors"
-        >
-          ← Назад в профиль
-        </Link>
-        <div className="flex items-start justify-between flex-wrap gap-4">
-          <div>
-            <h1 className="text-4xl font-black text-white">Сертификаты</h1>
-            <p className="text-gray-400 mt-2 max-w-3xl">
-              Сертификат появляется только после полного завершения трека. Открыть его можно сразу,
-              а скачать PDF или отправить себе на почту — только с подпиской Godemy Pro.
+    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <Link href="/profile" className="text-sm text-gray-500 hover:text-gray-300">← Назад в профиль</Link>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
+        <section className="surface-card rounded-[32px] p-7">
+          <span className="eyebrow">Сертификат результата</span>
+          <h1 className="mt-4 text-4xl font-black tracking-[-0.04em] text-white">{cert.title}</h1>
+          <p className="mt-3 max-w-2xl text-gray-400 leading-7">{cert.description}</p>
+
+          <div className="mt-6 rounded-2xl border border-white/8 bg-white/[0.035] p-5">
+            <div className="flex items-center justify-between text-sm text-gray-400">
+              <span>Прогресс к сертификату</span>
+              <span>{cert.progress} / {cert.total}</span>
+            </div>
+            <div className="mt-3 h-3 overflow-hidden rounded-full bg-gray-800">
+              <div className="h-full rounded-full bg-emerald-400" style={{ width: `${percent}%` }} />
+            </div>
+            <p className="mt-2 text-sm font-semibold text-emerald-300">{percent}%</p>
+          </div>
+
+          <h2 className="mt-8 text-2xl font-bold text-white">Обязательные проекты</h2>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {(cert.projects || []).map((project) => (
+              <Link key={project.id} href={`/projects/${project.slug}`} className="rounded-2xl border border-gray-800 bg-gray-900/70 p-4 hover:border-cyan-400/40">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.18em] text-cyan-300">{project.kind === 'checkpoint' ? 'Checkpoint' : 'Project'}</p>
+                    <h3 className="mt-1 font-bold text-white">{project.title}</h3>
+                  </div>
+                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${project.status === 'completed' ? 'bg-emerald-400/10 text-emerald-300' : 'bg-gray-800 text-gray-400'}`}>
+                    {project.status === 'completed' ? 'Готово' : 'Не готово'}
+                  </span>
+                </div>
+                {project.githubUrl && <p className="mt-2 truncate text-xs text-gray-500">{project.githubUrl}</p>}
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <aside className="surface-card h-fit rounded-[32px] p-6">
+          <div className={`rounded-2xl border p-4 ${cert.previewAllowed ? 'border-emerald-400/20 bg-emerald-400/10' : 'border-amber-400/20 bg-amber-400/10'}`}>
+            <p className={`font-semibold ${cert.previewAllowed ? 'text-emerald-300' : 'text-amber-300'}`}>
+              {cert.previewAllowed ? 'Сертификат готов' : 'Сертификат пока закрыт'}
             </p>
+            <p className="mt-2 text-sm leading-6 text-gray-300">{cert.lockedReason || 'Можно открыть, скачать PDF и отправить на email.'}</p>
           </div>
-          <div className="flex items-center gap-2.5 bg-amber-500/10 border border-amber-500/20 rounded-full px-5 py-2">
-            <span className="text-amber-400 text-xl">🏅</span>
-            <span className="text-amber-300 font-bold">{earnedCount} из {certificates.length} получено</span>
-          </div>
-        </div>
 
-        <div className="mt-5 grid gap-3 md:grid-cols-3">
-          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4">
-            <p className="text-xs uppercase tracking-[0.18em] text-emerald-300">Полностью доступны</p>
-            <p className="mt-2 text-3xl font-black text-white">{readyToDownloadCount}</p>
-            <p className="mt-2 text-sm text-emerald-100/80">Можно скачать PDF и выслать на почту.</p>
-          </div>
-          <div className="rounded-2xl border border-violet-500/20 bg-violet-500/10 p-4">
-            <p className="text-xs uppercase tracking-[0.18em] text-violet-300">Уже заработаны</p>
-            <p className="mt-2 text-3xl font-black text-white">{earnedCount}</p>
-            <p className="mt-2 text-sm text-violet-100/80">Сертификаты, которые уже можно выпустить или открыть.</p>
-          </div>
-          <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-4">
-            <p className="text-xs uppercase tracking-[0.18em] text-cyan-300">Требуют ФИО</p>
-            <p className="mt-2 text-3xl font-black text-white">{needsFullNameCount}</p>
-            <p className="mt-2 text-sm text-cyan-100/80">Заполни имя и фамилию, чтобы выпустить сертификат.</p>
-          </div>
-        </div>
-
-        <div className="mt-5 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-4">
-          <p className="text-sm text-cyan-200 font-semibold mb-2">ФИО для сертификата</p>
-          <div className="flex flex-col sm:flex-row gap-2">
+          <div className="mt-5">
+            <p className="text-sm font-semibold text-cyan-200">ФИО для сертификата</p>
             <input
-              id="certificate-full-name"
               value={fullNameDraft}
-              onChange={(e) => setFullNameDraft(e.target.value)}
-              placeholder="Например: Иванов Иван Иванович"
-              className="flex-1 rounded-xl border border-gray-700 bg-gray-900 px-4 py-2.5 text-sm text-white outline-none focus:border-cyan-500"
+              onChange={(event) => setFullNameDraft(event.target.value)}
+              placeholder="Иванов Иван"
+              className="mt-2 w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400"
             />
             <button
               onClick={saveFullName}
               disabled={savingName || fullNameDraft.trim().length < 5}
-              className="rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold px-4 py-2.5 text-sm"
+              className="mt-3 w-full rounded-xl bg-cyan-400 px-4 py-3 text-sm font-bold text-black disabled:opacity-50"
             >
               {savingName ? 'Сохраняем...' : 'Сохранить ФИО'}
             </button>
           </div>
-          <p className="mt-2 text-xs text-gray-500">
-            Для выпуска сертификата нужно указать минимум имя и фамилию.
-          </p>
-        </div>
 
-        {flashMessage && (
-          <div className="mt-4 rounded-2xl border border-violet-500/20 bg-violet-500/10 px-4 py-3 text-sm text-violet-100">
-            {flashMessage}
-          </div>
-        )}
-      </div>
+          <dl className="mt-5 space-y-2 text-sm">
+            <div className="flex justify-between gap-3"><dt className="text-gray-500">Дата выдачи</dt><dd className="text-white">{formatDate(cert.earnedAt)}</dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-gray-500">ID</dt><dd className="text-right text-white">{cert.certificateNumber || '—'}</dd></div>
+          </dl>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        {sortedCertificates.map((cert) => {
-          const state = getCertificateState(cert)
-
-          return (
-            <article
-              key={cert.id}
-              className={`rounded-[28px] border p-6 transition-all ${state.panelTone}`}
-            >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="mb-3 text-3xl">{certificateEmoji(cert.id)}</div>
-                <p className="text-xs uppercase tracking-[0.2em] text-violet-300">{cert.subtitle}</p>
-                <h2 className="mt-2 text-2xl font-black text-white">{cert.title}</h2>
-              </div>
-              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${state.tone}`}>
-                {state.label}
-              </span>
-            </div>
-
-            <p className="mt-3 text-sm leading-7 text-gray-400">{cert.description}</p>
-            <p className="mt-2 text-sm text-gray-300">{state.summary}</p>
-
-            <div className="mt-5 rounded-2xl border border-gray-800 bg-black/20 p-4">
-              <div className="flex items-center justify-between text-xs text-gray-500">
-                <span>Прогресс</span>
-                <span>{cert.progress} / {cert.total}</span>
-              </div>
-              <div className="mt-2 h-2 rounded-full bg-gray-800 overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all ${cert.earned ? 'bg-emerald-400' : 'bg-violet-400'}`}
-                  style={{ width: `${cert.total > 0 ? (cert.progress / cert.total) * 100 : 0}%` }}
-                />
-              </div>
-            </div>
-
-            <dl className="mt-5 space-y-2 text-sm">
-              <div className="flex items-center justify-between gap-3">
-                <dt className="text-gray-500">Курс</dt>
-                <dd className="text-white text-right">{cert.courseName}</dd>
-              </div>
-              <div className="flex items-center justify-between gap-3">
-                <dt className="text-gray-500">Дата выдачи</dt>
-                <dd className="text-white text-right">{formatEarnedDate(cert.earnedAt)}</dd>
-              </div>
-              <div className="flex items-center justify-between gap-3">
-                <dt className="text-gray-500">Номер</dt>
-                <dd className="text-white text-right">{cert.certificateNumber || '—'}</dd>
-              </div>
-            </dl>
-
-            {cert.lockedReason && (
-              <div className="mt-4 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
-                {cert.lockedReason}
-              </div>
-            )}
-
-            <div className="mt-5 space-y-3">
-              {cert.previewAllowed ? (
-                <Link
-                  href={`/certificate?type=${cert.id}`}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-violet-500 hover:bg-violet-400 text-white font-bold px-4 py-3 transition-colors"
-                >
-                  Открыть сертификат
-                </Link>
-              ) : cert.earned && cert.fullNameRequired ? (
-                <button
-                  onClick={() => document.getElementById('certificate-full-name')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-bold px-4 py-3 transition-colors"
-                >
-                  Заполнить ФИО
+          <div className="mt-5 space-y-3">
+            {cert.previewAllowed ? (
+              <>
+                <Link href={`/certificate?type=${cert.id}`} className="btn-primary w-full justify-center">Открыть сертификат</Link>
+                <a href={`/certificate?type=${cert.id}&print=1`} target="_blank" rel="noopener noreferrer" className="flex w-full justify-center rounded-xl bg-amber-400 px-4 py-3 font-bold text-black">Скачать PDF</a>
+                <button onClick={sendToEmail} disabled={emailing} className="w-full rounded-xl border border-violet-400/30 bg-violet-400/10 px-4 py-3 font-semibold text-violet-200 disabled:opacity-50">
+                  {emailing ? 'Отправляем...' : 'Выслать на почту'}
                 </button>
-              ) : (
-                <Link
-                  href={cert.ctaHref}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-semibold px-4 py-3 transition-colors"
-                >
-                  {cert.ctaLabel}
-                </Link>
-              )}
+              </>
+            ) : (
+              <Link href={cert.ctaHref} className="btn-primary w-full justify-center">{cert.ctaLabel}</Link>
+            )}
+          </div>
 
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {cert.downloadAllowed ? (
-                  <a
-                    href={`/certificate?type=${cert.id}&print=1`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-bold px-4 py-2.5 transition-colors"
-                  >
-                    Скачать PDF
-                  </a>
-                ) : cert.previewAllowed ? (
-                  <Link
-                    href="/bootcamp/buy"
-                    className="flex items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-semibold px-4 py-2.5 transition-colors"
-                  >
-                    Открыть PDF с Pro
-                  </Link>
-                ) : (
-                  <Link
-                    href={cert.ctaHref}
-                    className="flex items-center justify-center rounded-xl border border-gray-700 bg-gray-900 text-gray-300 hover:border-gray-500 font-semibold px-4 py-2.5 transition-colors"
-                  >
-                    {cert.earned ? 'Выпустить' : 'Продолжить'}
-                  </Link>
-                )}
-
-                {cert.emailAllowed ? (
-                  <button
-                    onClick={() => sendToEmail(cert.id)}
-                    disabled={emailingId === cert.id}
-                    className="rounded-xl border border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/20 disabled:opacity-50 text-violet-200 font-semibold px-4 py-2.5 transition-colors"
-                  >
-                    {emailingId === cert.id ? 'Отправляем...' : 'Выслать на почту'}
-                  </button>
-                ) : cert.previewAllowed ? (
-                  <Link
-                    href="/bootcamp/buy"
-                    className="flex items-center justify-center rounded-xl border border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/20 text-violet-200 font-semibold px-4 py-2.5 transition-colors"
-                  >
-                    Email с Pro
-                  </Link>
-                ) : (
-                  <button
-                    disabled
-                    className="rounded-xl border border-gray-800 bg-gray-900 text-gray-500 font-semibold px-4 py-2.5 cursor-not-allowed"
-                  >
-                    Пока недоступно
-                  </button>
-                )}
-              </div>
-            </div>
-          </article>
-        )})}
+          {flash && <p className="mt-4 rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 text-sm text-cyan-100">{flash}</p>}
+        </aside>
       </div>
-    </div>
+    </main>
   )
 }
 

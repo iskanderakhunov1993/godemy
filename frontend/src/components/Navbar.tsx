@@ -83,18 +83,12 @@ export function Navbar() {
 
             {user ? (
               <>
-                {user.isPremium ? (
-                  <span className="hidden lg:flex items-center rounded-full border border-cyan-400/15 bg-cyan-400/5 px-3 py-2 text-xs font-medium text-cyan-200/80">
-                    Продвинутый курс
-                  </span>
-                ) : (
-                  <Link
-                    href="/bootcamp/buy"
-                    className="hidden lg:flex items-center text-xs font-medium text-gray-500 hover:text-cyan-200"
-                  >
-                    Продвинутый курс
-                  </Link>
-                )}
+                <Link
+                  href="/junior"
+                  className="hidden lg:flex items-center text-xs font-medium text-gray-500 hover:text-cyan-200"
+                >
+                  Junior Bootcamp
+                </Link>
 
                 {/* Avatar + dropdown */}
                 <div className="relative">
@@ -138,15 +132,13 @@ export function Navbar() {
                         >
                           Обратная связь
                         </Link>
-                        {!user.isPremium && (
-                          <Link
-                            href="/bootcamp/buy"
-                            className="block px-5 py-2.5 text-sm text-gray-300 hover:bg-white/[0.06] hover:text-white"
-                            onClick={() => setMenuOpen(false)}
-                          >
-                            Открыть продвинутый курс
-                          </Link>
-                        )}
+                        <Link
+                          href="/junior"
+                          className="block px-5 py-2.5 text-sm text-gray-300 hover:bg-white/[0.06] hover:text-white"
+                          onClick={() => setMenuOpen(false)}
+                        >
+                          Junior Bootcamp
+                        </Link>
                         <div className="my-1.5 border-t border-white/8" />
                         <button
                           onClick={() => { logout(); setMenuOpen(false) }}

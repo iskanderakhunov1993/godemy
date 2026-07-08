@@ -24,39 +24,22 @@ func (h *Handler) EmailCertificate() gin.HandlerFunc {
 			return
 		}
 
-		progresses, err := h.content.GetProgress(userID)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch progress"})
-			return
-		}
-
-		lessons, err := h.content.GetLessons("")
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch lessons"})
-			return
-		}
-
-		exercises, err := h.content.GetExercises("", "", "")
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch exercises"})
-			return
-		}
-
 		certificateType := strings.TrimSpace(c.Param("type"))
-		certificates := buildCertificates(user, progresses, lessons, exercises)
-
-		var selected *certificateDTO
-		for i := range certificates {
-			if certificates[i].ID == certificateType {
-				selected = &certificates[i]
-				break
-			}
-		}
-
-		if selected == nil {
+		if certificateType != "go-junior" {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Certificate not found"})
 			return
 		}
+		status, err := h.content.BuildGoJuniorCertificateStatus(user)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch certificate"})
+			return
+		}
+		if status.Earned && !status.FullNameRequired && !status.PreviewAllowed {
+			if _, err := h.content.EnsureGoJuniorCertificate(user); err == nil {
+				status, _ = h.content.BuildGoJuniorCertificateStatus(user)
+			}
+		}
+		selected := certificateFromUseCase(status)
 
 		if !selected.Earned {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Certificate is not earned yet"})
@@ -67,7 +50,7 @@ func (h *Handler) EmailCertificate() gin.HandlerFunc {
 			return
 		}
 
-		if err := h.sendCertificateEmail(user.Email, user.FullName, *selected); err != nil {
+		if err := h.sendCertificateEmail(user.Email, user.FullName, selected); err != nil {
 			log.Printf("certificate email send error for %s: %v", user.Email, err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send certificate email"})
 			return

@@ -1,7 +1,10 @@
 package usecase
 
 import (
+	"crypto/sha1"
+	"encoding/hex"
 	"errors"
+	"fmt"
 	"sort"
 	"strconv"
 	"strings"
@@ -26,6 +29,38 @@ type CourseProgress struct {
 	TotalLessons int    `json:"totalLessons"`
 }
 
+type CertificateProjectStatus struct {
+	ID        uint   `json:"id"`
+	Title     string `json:"title"`
+	Slug      string `json:"slug"`
+	Kind      string `json:"kind"`
+	Status    string `json:"status"`
+	GithubURL string `json:"githubUrl,omitempty"`
+}
+
+type GoJuniorCertificateStatus struct {
+	ID               string                     `json:"id"`
+	Title            string                     `json:"title"`
+	Subtitle         string                     `json:"subtitle"`
+	CourseName       string                     `json:"courseName"`
+	Description      string                     `json:"description"`
+	Earned           bool                       `json:"earned"`
+	Progress         int                        `json:"progress"`
+	Total            int                        `json:"total"`
+	EarnedAt         string                     `json:"earnedAt,omitempty"`
+	CertificateID    string                     `json:"certificateId,omitempty"`
+	PreviewAllowed   bool                       `json:"previewAllowed"`
+	DownloadAllowed  bool                       `json:"downloadAllowed"`
+	EmailAllowed     bool                       `json:"emailAllowed"`
+	RequiresPremium  bool                       `json:"requiresPremium"`
+	FullNameRequired bool                       `json:"fullNameRequired"`
+	LockedReason     string                     `json:"lockedReason,omitempty"`
+	CtaLabel         string                     `json:"ctaLabel"`
+	CtaHref          string                     `json:"ctaHref"`
+	Projects         []CertificateProjectStatus `json:"projects"`
+	ProjectsSnapshot string                     `json:"-"`
+}
+
 type ContentUseCase struct {
 	lessons       repository.LessonRepository
 	exercises     repository.ExerciseRepository
@@ -33,6 +68,9 @@ type ContentUseCase struct {
 	levels        repository.LevelRepository
 	trainerTopics repository.TrainerTopicRepository
 	skillRepo     *repository.SkillRepo // для работы со скилами
+	projects      repository.ProjectRepository
+	submissions   repository.ProjectSubmissionRepository
+	certificates  repository.CertificateRepository
 }
 
 func NewContentUseCase(
@@ -42,6 +80,9 @@ func NewContentUseCase(
 	levels repository.LevelRepository,
 	trainerTopics repository.TrainerTopicRepository,
 	skillRepo *repository.SkillRepo,
+	projects repository.ProjectRepository,
+	submissions repository.ProjectSubmissionRepository,
+	certificates repository.CertificateRepository,
 ) *ContentUseCase {
 	return &ContentUseCase{
 		lessons:       lessons,
@@ -50,6 +91,9 @@ func NewContentUseCase(
 		levels:        levels,
 		trainerTopics: trainerTopics,
 		skillRepo:     skillRepo,
+		projects:      projects,
+		submissions:   submissions,
+		certificates:  certificates,
 	}
 }
 
@@ -89,6 +133,229 @@ func (u *ContentUseCase) UpdateProgress(userID uint, entityType string, entityID
 		return nil, ErrInvalidInput
 	}
 	return u.progress.Upsert(userID, entityType, entityID, status, payload)
+}
+
+func (u *ContentUseCase) GetProjects(level string) ([]models.Project, error) {
+	return u.projects.FindAll(level)
+}
+
+func (u *ContentUseCase) GetProject(slug string) (*models.Project, error) {
+	project, err := u.projects.FindBySlug(slug)
+	if errors.Is(err, repository.ErrNotFound) {
+		return nil, ErrNotFound
+	}
+	return project, err
+}
+
+func (u *ContentUseCase) GetProjectByID(id uint) (*models.Project, error) {
+	project, err := u.projects.FindByID(id)
+	if errors.Is(err, repository.ErrNotFound) {
+		return nil, ErrNotFound
+	}
+	return project, err
+}
+
+func (u *ContentUseCase) CreateProject(project *models.Project) error {
+	return u.projects.Create(project)
+}
+
+func (u *ContentUseCase) UpdateProject(project *models.Project) error {
+	return u.projects.Update(project)
+}
+
+func (u *ContentUseCase) DeleteProject(id uint) error {
+	return u.projects.Delete(id)
+}
+
+func (u *ContentUseCase) GetProjectSubmissions(userID uint) ([]models.ProjectSubmission, error) {
+	return u.submissions.FindByUser(userID)
+}
+
+func (u *ContentUseCase) UpsertProjectSubmission(userID uint, projectID uint, status string, githubURL string, note string) (*models.ProjectSubmission, error) {
+	if status != "started" && status != "completed" {
+		return nil, ErrInvalidInput
+	}
+	if _, err := u.projects.FindByID(projectID); errors.Is(err, repository.ErrNotFound) {
+		return nil, ErrNotFound
+	} else if err != nil {
+		return nil, err
+	}
+	return u.submissions.Upsert(userID, projectID, status, strings.TrimSpace(githubURL), strings.TrimSpace(note))
+}
+
+func (u *ContentUseCase) FindCertificateByPublicID(certificateID string) (*models.Certificate, error) {
+	certificate, err := u.certificates.FindByCertificateID(certificateID)
+	if errors.Is(err, repository.ErrNotFound) {
+		return nil, ErrNotFound
+	}
+	return certificate, err
+}
+
+func (u *ContentUseCase) EnsureGoJuniorCertificate(user *models.User) (*models.Certificate, error) {
+	status, err := u.BuildGoJuniorCertificateStatus(user)
+	if err != nil {
+		return nil, err
+	}
+	if !status.Earned || status.FullNameRequired {
+		return nil, ErrInvalidInput
+	}
+	existing, err := u.certificates.FindByUserAndType(user.ID, "go-junior")
+	if err == nil {
+		return existing, nil
+	}
+	if !errors.Is(err, repository.ErrNotFound) {
+		return nil, err
+	}
+	certificate := &models.Certificate{
+		CertificateID:    makeCertificateID(user.ID, "go-junior", time.Now()),
+		UserID:           user.ID,
+		Type:             "go-junior",
+		Status:           "issued",
+		IssuedAt:         time.Now(),
+		ProjectsSnapshot: status.ProjectsSnapshot,
+	}
+	if err := u.certificates.Create(certificate); err != nil {
+		return nil, err
+	}
+	return certificate, nil
+}
+
+func (u *ContentUseCase) BuildGoJuniorCertificateStatus(user *models.User) (*GoJuniorCertificateStatus, error) {
+	progresses, err := u.progress.FindByUser(user.ID)
+	if err != nil {
+		return nil, err
+	}
+	lessons, err := u.lessons.FindAll("bootcamp")
+	if err != nil {
+		return nil, err
+	}
+	exercises, err := u.exercises.FindAll("bootcamp", "", "")
+	if err != nil {
+		return nil, err
+	}
+	projects, err := u.projects.FindAll("go-junior")
+	if err != nil {
+		return nil, err
+	}
+	submissions, err := u.submissions.FindByUser(user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	completedLessons := map[uint]bool{}
+	completedExercises := map[uint]bool{}
+	for _, progress := range progresses {
+		if progress.Status != "completed" {
+			continue
+		}
+		switch progress.EntityType {
+		case "lesson":
+			completedLessons[progress.EntityID] = true
+		case "exercise":
+			completedExercises[progress.EntityID] = true
+		}
+	}
+
+	submissionByProject := map[uint]models.ProjectSubmission{}
+	for _, submission := range submissions {
+		submissionByProject[submission.ProjectID] = submission
+	}
+
+	progress := 0
+	total := len(lessons) + len(exercises) + len(projects)
+	for _, lesson := range lessons {
+		if completedLessons[lesson.ID] {
+			progress++
+		}
+	}
+	for _, exercise := range exercises {
+		if completedExercises[exercise.ID] {
+			progress++
+		}
+	}
+
+	projectStatuses := make([]CertificateProjectStatus, 0, len(projects))
+	for _, project := range projects {
+		status := "started"
+		githubURL := ""
+		if submission, ok := submissionByProject[project.ID]; ok {
+			status = submission.Status
+			githubURL = submission.GithubURL
+			if submission.Status == "completed" {
+				progress++
+			}
+		}
+		projectStatuses = append(projectStatuses, CertificateProjectStatus{
+			ID:        project.ID,
+			Title:     project.Title,
+			Slug:      project.Slug,
+			Kind:      project.Kind,
+			Status:    status,
+			GithubURL: githubURL,
+		})
+	}
+
+	fullNameReady := len(strings.Fields(strings.TrimSpace(user.FullName))) >= 2
+	earned := total > 0 && progress >= total
+	certificate, certErr := u.certificates.FindByUserAndType(user.ID, "go-junior")
+	if certErr != nil && !errors.Is(certErr, repository.ErrNotFound) {
+		return nil, certErr
+	}
+	issued := certErr == nil
+
+	lockedReason := ""
+	switch {
+	case !earned:
+		lockedReason = "Заверши Go Junior Bootcamp, четыре проекта и финальный checkpoint."
+	case !fullNameReady:
+		lockedReason = "Добавь имя и фамилию в профиле, чтобы выпустить сертификат."
+	}
+
+	earnedAt := ""
+	certificateID := ""
+	if issued {
+		earnedAt = certificate.IssuedAt.Format(time.RFC3339)
+		certificateID = certificate.CertificateID
+	}
+
+	return &GoJuniorCertificateStatus{
+		ID:               "go-junior",
+		Title:            "Go Junior Certificate",
+		Subtitle:         "Go Junior Bootcamp завершён",
+		CourseName:       "Go Junior Bootcamp",
+		Description:      "Выдаётся бесплатно после завершения Bootcamp, обязательных проектов и финального checkpoint.",
+		Earned:           earned,
+		Progress:         progress,
+		Total:            total,
+		EarnedAt:         earnedAt,
+		CertificateID:    certificateID,
+		PreviewAllowed:   issued,
+		DownloadAllowed:  issued,
+		EmailAllowed:     issued,
+		RequiresPremium:  false,
+		FullNameRequired: !fullNameReady,
+		LockedReason:     lockedReason,
+		CtaLabel:         "Продолжить Bootcamp",
+		CtaHref:          "/junior",
+		Projects:         projectStatuses,
+		ProjectsSnapshot: buildProjectsSnapshot(projectStatuses),
+	}, nil
+}
+
+func buildProjectsSnapshot(projects []CertificateProjectStatus) string {
+	parts := make([]string, 0, len(projects))
+	for _, project := range projects {
+		if project.Status == "completed" {
+			parts = append(parts, fmt.Sprintf("%s|%s|%s", project.Title, project.Kind, project.GithubURL))
+		}
+	}
+	return strings.Join(parts, "\n")
+}
+
+func makeCertificateID(userID uint, certType string, issuedAt time.Time) string {
+	raw := fmt.Sprintf("%d:%s:%s", userID, certType, issuedAt.Format(time.RFC3339Nano))
+	sum := sha1.Sum([]byte(raw))
+	return fmt.Sprintf("GDMY-%d-%s", issuedAt.Year(), strings.ToUpper(hex.EncodeToString(sum[:4])))
 }
 
 // Admin: Lessons

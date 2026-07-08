@@ -96,6 +96,43 @@ export interface Progress {
   updatedAt: string
 }
 
+export interface Project {
+  id: number
+  kind: 'free_project' | 'bootcamp_project' | 'checkpoint'
+  level: 'free-go' | 'go-junior'
+  slug: string
+  title: string
+  description: string
+  requirements: string
+  expectedResult: string
+  checklist: string
+  solution: string
+  order: number
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface ProjectSubmission {
+  id: number
+  userId: number
+  projectId: number
+  status: 'started' | 'completed'
+  githubUrl?: string
+  note?: string
+  createdAt: string
+  updatedAt: string
+  project?: Project
+}
+
+export interface CertificateProject {
+  id: number
+  title: string
+  slug: string
+  kind: Project['kind']
+  status: 'started' | 'completed'
+  githubUrl?: string
+}
+
 export interface UserSkill {
   id: number
   name: string
@@ -114,7 +151,7 @@ export interface UserCourseProgress {
 }
 
 export interface CertificateStatus {
-  id: 'course' | 'trainer' | 'bootcamp'
+  id: 'go-junior'
   title: string
   subtitle: string
   courseName: string
@@ -124,6 +161,7 @@ export interface CertificateStatus {
   total: number
   earnedAt?: string
   certificateNumber?: string
+  certificateId?: string
   previewAllowed: boolean
   downloadAllowed: boolean
   emailAllowed: boolean
@@ -132,6 +170,7 @@ export interface CertificateStatus {
   lockedReason?: string
   ctaLabel: string
   ctaHref: string
+  projects?: CertificateProject[]
 }
 
 export interface UserProfile {
@@ -358,6 +397,22 @@ export const api = {
   // Progress
   getProgress: () => request<Progress[]>('/api/progress'),
   getUserProfile: () => request<UserProfile>('/api/user/profile'),
+  getProjects: (params?: { level?: Project['level'] }) => {
+    const q = new URLSearchParams()
+    if (params?.level) q.set('level', params.level)
+    const query = q.toString()
+    return request<Project[]>(`/api/projects${query ? `?${query}` : ''}`)
+  },
+  getProject: (slug: string) => request<Project>(`/api/projects/${slug}`),
+  getProjectSubmissions: () => request<ProjectSubmission[]>('/api/project-submissions'),
+  saveProjectSubmission: (
+    projectId: number,
+    data: { status: ProjectSubmission['status']; githubUrl?: string; note?: string }
+  ) =>
+    request<ProjectSubmission>(`/api/projects/${projectId}/submission`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
   updateProgress: (entityType: string, entityId: number, status: string, payload = '') =>
     request<Progress>('/api/progress', {
       method: 'POST',
@@ -436,6 +491,8 @@ export interface AdminLevel {
   order: number
   description?: string
 }
+
+export type AdminProject = Project
 
 export interface AdminUserActivity {
   id: number
@@ -628,6 +685,35 @@ export const adminApi = {
 
   deleteLevel: (_secret: string, id: number) =>
     request<{ ok: boolean }>(`/api/admin/levels/${id}`, {
+      method: 'DELETE',
+      headers: adminHeaders(),
+    }),
+
+  getProjects: (secret = '', level?: Project['level']) => {
+    void secret
+    const q = level ? `?level=${level}` : ''
+    return request<AdminProject[]>(`/api/admin/projects${q}`, { headers: adminHeaders() })
+  },
+
+  getProject: (_secret: string, id: number) =>
+    request<AdminProject>(`/api/admin/projects/${id}`, { headers: adminHeaders() }),
+
+  createProject: (_secret: string, data: Omit<AdminProject, 'id' | 'createdAt' | 'updatedAt'>) =>
+    request<AdminProject>('/api/admin/projects', {
+      method: 'POST',
+      headers: adminHeaders(),
+      body: JSON.stringify(data),
+    }),
+
+  updateProject: (_secret: string, id: number, data: Partial<AdminProject>) =>
+    request<AdminProject>(`/api/admin/projects/${id}`, {
+      method: 'PUT',
+      headers: adminHeaders(),
+      body: JSON.stringify(data),
+    }),
+
+  deleteProject: (_secret: string, id: number) =>
+    request<{ ok: boolean }>(`/api/admin/projects/${id}`, {
       method: 'DELETE',
       headers: adminHeaders(),
     }),
