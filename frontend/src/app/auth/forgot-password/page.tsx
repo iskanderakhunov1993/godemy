@@ -26,7 +26,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-56px)] flex items-center justify-center px-4 py-10">
+    <div className="godemy-light min-h-[calc(100vh-56px)] flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md card">
         <h1 className="text-2xl font-bold text-white mb-2">Восстановление пароля</h1>
         <p className="text-sm text-gray-500 mb-6">Укажи email, и мы отправим ссылку для сброса</p>

@@ -448,7 +448,7 @@ export default function JuniorLessonPage() {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-10">
+      <div className="godemy-light max-w-4xl mx-auto px-4 py-10">
         <div className="h-8 bg-gray-800 rounded w-1/3 animate-pulse mb-4" />
         <div className="space-y-3">
           {[...Array(8)].map((_, i) => <div key={i} className="h-4 bg-gray-800 rounded animate-pulse" />)}
@@ -467,7 +467,7 @@ export default function JuniorLessonPage() {
   const isSprint17 = lesson.slug === 'junior-sprint1-interview-questions'
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+    <div className="godemy-light max-w-4xl mx-auto px-4 sm:px-6 py-10">
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
         <Link href="/junior" className="hover:text-cyan-400 transition-colors">Junior</Link>
         <span>/</span>

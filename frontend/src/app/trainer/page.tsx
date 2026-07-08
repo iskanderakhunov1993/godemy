@@ -218,7 +218,7 @@ export default function TrainerPage() {
   const hiddenConceptCount = hiddenConceptGroups.reduce((total, group) => total + group.concepts.length, 0)
 
   return (
-    <main className="min-h-screen bg-[#050914] text-white">
+    <main className="godemy-light min-h-screen">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
         <header className="overflow-hidden rounded-[32px] border border-white/10 bg-[radial-gradient(circle_at_10%_0%,rgba(34,211,238,0.13),transparent_30%),radial-gradient(circle_at_100%_0%,rgba(139,92,246,0.14),transparent_30%),#0a1020]">
           <div className="grid lg:grid-cols-[0.72fr_1.28fr]">

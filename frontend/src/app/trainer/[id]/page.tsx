@@ -217,7 +217,7 @@ export default function ExercisePage() {
 
   if (loading || !exercise || !layout) {
     return (
-      <div className="min-h-screen bg-[#020617] px-4 sm:px-6 py-6">
+      <div className="godemy-light min-h-screen px-4 sm:px-6 py-6">
         <div className="mx-auto max-w-[1500px] space-y-4">
           <div className="h-20 rounded-2xl bg-[#111827] animate-pulse" />
           <div className="h-[720px] rounded-2xl bg-[#111827] animate-pulse" />
@@ -227,7 +227,7 @@ export default function ExercisePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white px-4 sm:px-6 py-6">
+    <div className="godemy-light min-h-screen px-4 sm:px-6 py-6">
       <div className="mx-auto max-w-[1500px] space-y-5">
         <div className="text-sm text-gray-400 flex items-center gap-2">
           <Link href="/trainer" className="hover:text-cyan-300 transition-colors">Тренажер</Link>

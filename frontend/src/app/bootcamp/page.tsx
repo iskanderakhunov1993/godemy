@@ -36,7 +36,7 @@ const benefits = [
 
 export default function BootcampPage() {
   return (
-    <main className="page-shell">
+    <main className="godemy-light page-shell">
       <section className="page-wrap pt-10 pb-16 sm:pt-14 sm:pb-20">
         <div className="section-frame rounded-[36px] px-6 py-8 sm:px-10 sm:py-12">
           <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">

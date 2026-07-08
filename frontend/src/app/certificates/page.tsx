@@ -74,7 +74,7 @@ function CertificatesContent() {
   const percent = cert.total > 0 ? Math.round((cert.progress / cert.total) * 100) : 0
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+    <main className="godemy-light mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <Link href="/profile" className="text-sm text-gray-500 hover:text-gray-300">← Назад в профиль</Link>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">

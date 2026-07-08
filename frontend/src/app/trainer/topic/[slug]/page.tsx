@@ -249,7 +249,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
 
   if (loading || !topic) {
     return (
-      <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+      <main className="godemy-light mx-auto max-w-7xl px-4 py-10 sm:px-6">
         <div className="h-16 animate-pulse rounded-3xl bg-gray-900" />
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="h-[720px] animate-pulse rounded-3xl bg-gray-900" />
@@ -297,7 +297,7 @@ function TrainerTopicContent({ slug }: { slug: string }) {
   const displaySummary = getTopicSummary(slug, summary)
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+    <main className="godemy-light mx-auto max-w-7xl px-4 py-8 sm:px-6">
       <div className="rounded-[34px] border border-[#d6ddfb] bg-[#eef2ff] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.08)] sm:p-8">
         <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500">
           <Link href="/trainer" className="transition-colors hover:text-slate-950">Практика</Link>

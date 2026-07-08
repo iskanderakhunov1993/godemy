@@ -28,7 +28,7 @@ function TopicContent() {
 
   if (topicLessons.length === 0) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-16 text-center">
+      <div className="godemy-light mx-auto max-w-3xl px-4 py-16 text-center">
         <p className="text-gray-400">Тема не найдена.</p>
         <Link href="/guide" className="mt-4 inline-block text-cyan-400 hover:underline">← Назад к курсу</Link>
       </div>
@@ -39,7 +39,7 @@ function TopicContent() {
   const levelSlug = topicLessons[0]?.level
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+    <div className="godemy-light mx-auto max-w-3xl px-4 py-10 sm:px-6">
       <nav className="mb-8 flex flex-wrap items-center gap-2 text-sm text-gray-500">
         <Link href="/guide" className="transition-colors hover:text-white">Курс</Link>
         {levelSlug && (

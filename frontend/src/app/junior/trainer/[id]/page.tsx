@@ -142,7 +142,7 @@ export default function JuniorExercisePage() {
 
   if (loading || !exercise) {
     return (
-      <div className="min-h-screen bg-[#020617] px-6 py-6">
+      <div className="godemy-light min-h-screen px-6 py-6">
         <div className="mx-auto max-w-[1500px] space-y-4">
           <div className="h-14 rounded-2xl bg-[#111827] animate-pulse" />
           <div className="h-[760px] rounded-2xl bg-[#111827] animate-pulse" />
@@ -154,7 +154,7 @@ export default function JuniorExercisePage() {
   const completed = isCompleted('exercise', exercise.id)
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white px-6 py-5">
+    <div className="godemy-light min-h-screen px-6 py-5">
       <div className="mx-auto max-w-[1500px] min-w-[1200px]">
         <div className="grid grid-cols-[55%_45%] gap-4 items-start">
           <section className="space-y-4">

@@ -44,7 +44,7 @@ export default function ModulePage() {
 
   if (moduleLessons.length === 0) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-16 text-center">
+      <div className="godemy-light max-w-3xl mx-auto px-4 py-16 text-center">
         <p className="text-gray-400">Модуль не найден или уроки ещё не добавлены.</p>
         <Link href="/guide" className="mt-4 inline-block text-cyan-400 hover:underline">← Назад к курсу</Link>
       </div>
@@ -52,7 +52,7 @@ export default function ModulePage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
+    <div className="godemy-light max-w-3xl mx-auto px-4 sm:px-6 py-10">
 
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8 flex-wrap">

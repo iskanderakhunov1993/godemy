@@ -27,7 +27,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="auth-shell">
+    <div className="godemy-light auth-shell">
       <div className="auth-card">
         <p className="eyebrow">Новый аккаунт</p>
         <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-white">Начать обучение</h1>

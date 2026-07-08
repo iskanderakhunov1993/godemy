@@ -41,7 +41,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="auth-shell">
+    <div className="godemy-light auth-shell">
       <div className="auth-card">
         <p className="eyebrow">Возвращение к курсу</p>
         <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-[#17201d]">Вход</h1>

@@ -76,7 +76,7 @@ function CertificateContent() {
 
   if (!token || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="godemy-light min-h-screen flex items-center justify-center px-4">
         <div className="rounded-3xl border border-gray-800 bg-gray-900 p-8 text-center max-w-lg">
           <h1 className="text-2xl font-black text-white">Нужен вход</h1>
           <p className="mt-3 text-gray-400">Войди в аккаунт, чтобы открыть свои сертификаты.</p>
@@ -89,12 +89,12 @@ function CertificateContent() {
   }
 
   if (loading) {
-    return <div className="min-h-screen bg-[#090b14]" />
+    return <div className="godemy-light min-h-screen" />
   }
 
   if (!certificate) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="godemy-light min-h-screen flex items-center justify-center px-4">
         <div className="rounded-3xl border border-gray-800 bg-gray-900 p-8 text-center max-w-lg">
           <h1 className="text-2xl font-black text-white">Сертификат не найден</h1>
           <Link href="/certificates" className="mt-6 inline-flex rounded-xl border border-gray-700 px-5 py-3 font-semibold text-gray-200 hover:border-gray-500 transition-colors">
@@ -107,7 +107,7 @@ function CertificateContent() {
 
   if (!certificate.previewAllowed) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="godemy-light min-h-screen flex items-center justify-center px-4">
         <div className="rounded-3xl border border-gray-800 bg-gray-900 p-8 max-w-xl">
           <h1 className="text-3xl font-black text-white">{lockedStateTitle(certificate)}</h1>
           <p className="mt-4 text-gray-400 leading-7">{certificate.lockedReason || 'Сначала заверши программу.'}</p>
@@ -138,7 +138,7 @@ function CertificateContent() {
         }
       `}</style>
 
-      <div className="no-print max-w-6xl mx-auto px-4 py-5 flex flex-wrap items-center justify-between gap-3">
+      <div className="godemy-light no-print max-w-6xl mx-auto px-4 py-5 flex flex-wrap items-center justify-between gap-3">
         <Link href="/certificates" className="text-sm text-gray-500 hover:text-gray-300 transition-colors">
           ← Назад к сертификатам
         </Link>
@@ -162,14 +162,14 @@ function CertificateContent() {
       </div>
 
       {flashMessage && (
-        <div className="no-print max-w-6xl mx-auto px-4">
+        <div className="godemy-light no-print max-w-6xl mx-auto px-4">
           <div className="rounded-2xl border border-violet-500/20 bg-violet-500/10 px-4 py-3 text-sm text-violet-100">
             {flashMessage}
           </div>
         </div>
       )}
 
-      <div className="min-h-[80vh] flex items-center justify-center px-4 py-6 bg-[#090b14]">
+      <div className="godemy-light min-h-[80vh] flex items-center justify-center px-4 py-6">
         <div
           id="certificate-printable"
           className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#090b14]"

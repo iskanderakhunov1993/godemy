@@ -272,7 +272,7 @@ function ProfileContent() {
 
   if (!token || !user) {
     return (
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16">
+      <div className="godemy-light max-w-5xl mx-auto px-4 sm:px-6 py-16">
         <div className="surface-card rounded-3xl px-6 py-8 text-center">
           <h1 className="text-2xl font-bold text-gray-100 mb-2">Профиль недоступен</h1>
           <p className="text-gray-400 mb-4">Войди, чтобы увидеть свою активность и прогресс обучения.</p>
@@ -285,7 +285,7 @@ function ProfileContent() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+    <div className="godemy-light max-w-7xl mx-auto px-4 sm:px-6 py-10">
       <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
         <aside className="space-y-6">
           <section className="surface-card rounded-[32px] px-6 py-8 text-center">

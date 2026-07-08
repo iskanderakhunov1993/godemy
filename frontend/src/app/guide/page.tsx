@@ -144,7 +144,7 @@ export default function GuidePage() {
   }).length
 
   return (
-    <main className="min-h-screen bg-[#050914]">
+    <main className="godemy-light min-h-screen">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
         <header className="rounded-[28px] border border-white/10 bg-white/[0.025] p-6 sm:p-8">
           <div className="flex flex-wrap items-center gap-3">

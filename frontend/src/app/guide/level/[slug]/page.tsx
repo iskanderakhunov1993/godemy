@@ -41,7 +41,7 @@ export default function LevelPage() {
 
   if (!levelInfo || levelLessons.length === 0) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-16 text-center">
+      <div className="godemy-light mx-auto max-w-3xl px-4 py-16 text-center">
         <p className="text-gray-400">Уровень не найден.</p>
         <Link href="/guide" className="mt-4 inline-block text-cyan-400 hover:underline">← Назад к курсу</Link>
       </div>
@@ -49,7 +49,7 @@ export default function LevelPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+    <div className="godemy-light mx-auto max-w-4xl px-4 py-10 sm:px-6">
       <nav className="mb-8 flex items-center gap-2 text-sm text-gray-500">
         <Link href="/guide" className="transition-colors hover:text-white">Курс</Link>
         <span className="text-gray-700">→</span>

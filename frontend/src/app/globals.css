@@ -314,6 +314,90 @@ html.light .card {
   box-shadow: 0 22px 56px rgba(17, 24, 39, 0.09);
 }
 
+.godemy-light {
+  color: #17201d;
+}
+
+.godemy-light [class*="bg-[#050914]"],
+.godemy-light [class*="bg-[#020617]"],
+.godemy-light [class*="bg-[#070b14]"],
+.godemy-light [class*="bg-[#0a1020]"],
+.godemy-light [class*="bg-[#0b1222]"],
+.godemy-light [class*="bg-[#0d1729]"],
+.godemy-light [class*="bg-[#111315]"],
+.godemy-light [class*="bg-gray-900"],
+.godemy-light [class*="bg-gray-800"],
+.godemy-light [class*="bg-slate-900"],
+.godemy-light [class*="bg-slate-950"],
+.godemy-light [class*="bg-black/"],
+.godemy-light [class*="bg-[radial-gradient"],
+.godemy-light [class*="bg-[linear-gradient"],
+.godemy-light [class*="bg-gradient-to"] {
+  background: rgba(255, 255, 255, 0.86) !important;
+}
+
+.godemy-light [class*="bg-white/"],
+.godemy-light [class*="bg-cyan-300/"],
+.godemy-light [class*="bg-violet-"],
+.godemy-light [class*="bg-purple-"] {
+  background: rgba(248, 250, 244, 0.82) !important;
+}
+
+.godemy-light [class*="border-white"],
+.godemy-light [class*="border-gray-"],
+.godemy-light [class*="border-slate-"],
+.godemy-light [class*="border-violet"],
+.godemy-light [class*="border-purple"] {
+  border-color: #dfe6dc !important;
+}
+
+.godemy-light .text-white,
+.godemy-light .text-gray-100,
+.godemy-light .text-gray-200,
+.godemy-light .text-slate-100,
+.godemy-light .text-slate-200 {
+  color: #17201d !important;
+}
+
+.godemy-light .text-gray-300,
+.godemy-light .text-gray-400,
+.godemy-light .text-gray-500,
+.godemy-light .text-slate-300,
+.godemy-light .text-slate-400,
+.godemy-light .text-slate-500 {
+  color: #647067 !important;
+}
+
+.godemy-light [class*="text-violet"],
+.godemy-light [class*="text-purple"],
+.godemy-light [class*="text-cyan"] {
+  color: #087a43 !important;
+}
+
+.godemy-light [class*="shadow-[0_"],
+.godemy-light .shadow-2xl {
+  box-shadow: 0 18px 48px rgba(17, 24, 39, 0.08) !important;
+}
+
+.godemy-light [class*="rounded-[32px]"],
+.godemy-light [class*="rounded-[28px]"],
+.godemy-light .rounded-3xl {
+  border-radius: 1.25rem !important;
+}
+
+.godemy-light input,
+.godemy-light textarea,
+.godemy-light select {
+  background: #ffffff !important;
+  border-color: #dfe6dc !important;
+  color: #17201d !important;
+}
+
+.godemy-light input::placeholder,
+.godemy-light textarea::placeholder {
+  color: #93a096 !important;
+}
+
 .auth-shell {
   min-height: calc(100vh - 72px);
   display: flex;

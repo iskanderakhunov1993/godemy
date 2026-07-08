@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function BuyPage() {
   return (
-    <main className="page-shell">
+    <main className="godemy-light page-shell">
       <section className="page-wrap py-14">
         <Link href="/bootcamp" className="text-sm text-gray-500 transition-colors hover:text-white">
           ← Назад к Bootcamp

@@ -81,7 +81,7 @@ function LessonContent() {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+      <div className="godemy-light max-w-7xl mx-auto px-4 sm:px-6 py-10">
         <div className="h-8 bg-gray-800 rounded w-1/3 animate-pulse mb-4" />
         <div className="space-y-3">
           {[...Array(8)].map((_, i) => <div key={i} className="h-4 bg-gray-800 rounded animate-pulse" />)}
@@ -130,7 +130,7 @@ function LessonContent() {
   const showNextLevelButton = completed && !nextLesson && !!nextLevelFirstLesson
 
   return (
-    <div>
+    <div className="godemy-light">
       {/* Breadcrumb bar — sits right below navbar line */}
       <div className="border-b border-gray-800 bg-gray-950/60">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-2 text-sm text-gray-500 flex-wrap">
@@ -158,7 +158,7 @@ function LessonContent() {
         </nav>
       </div>
 
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+    <div className="godemy-light max-w-7xl mx-auto px-4 sm:px-6 py-10">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
         {/* Sidebar */}
         <aside className="lg:col-span-1 order-2 lg:order-1 lg:border-r lg:border-gray-800/60 lg:pr-6">
