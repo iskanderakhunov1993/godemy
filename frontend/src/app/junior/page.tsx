@@ -1,91 +1,102 @@
 import Link from 'next/link'
 
+const projects = ['URL Shortener', 'Task Tracker API', 'Auth Service', 'Final Backend Project']
+const topics = ['HTTP', 'REST API', 'PostgreSQL', 'Docker', 'Тесты', 'GitHub', 'Архитектура проекта', 'Конфиги', 'Логирование']
 const sprints = [
-  { label: 'Sprint 0: IT контекст, Agile, роли и карьера Go специалиста', free: false },
-  { label: 'Sprint 1: Todo List API (roadmap.sh)', free: false },
-  { label: 'Sprint 2: Blogging Platform API (roadmap.sh)', free: false },
-  { label: 'Sprint 3: Weather API Wrapper Service (roadmap.sh)', free: false },
-  { label: 'Sprint 4: Expense Tracker API (roadmap.sh)', free: false },
-  { label: 'Sprint 5: GitHub User Activity CLI/API (roadmap.sh)', free: false },
+  'Sprint 0: IT контекст, Agile, роли и карьера Go специалиста',
+  'Sprint 1: Todo List API',
+  'Sprint 2: Blogging Platform API',
+  'Sprint 3: Weather API Wrapper Service',
+  'Sprint 4: Expense Tracker API',
+  'Sprint 5: GitHub User Activity CLI/API',
 ]
 
 export default function JuniorModulePage() {
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
-      <div className="mb-8">
-        <div className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 mb-4">
-          Bootcamp Junior
-        </div>
-        <h1 className="text-4xl font-bold text-white mb-3">Junior Module</h1>
-        <p className="text-gray-400 max-w-2xl">
-          Нулевая неделя + 5 спринтов = реальные Go-проекты для резюме. В MVP Bootcamp открыт бесплатно.
-        </p>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-5">
-        <Link
-          href="/junior/guide"
-          className="card hover:bg-gray-800 transition-colors border-cyan-500/20"
-        >
-          <div className="text-cyan-400 text-sm mb-2">Junior • Курс</div>
-          <h2 className="text-2xl font-semibold text-white mb-2">Курс Junior</h2>
-          <p className="text-gray-400 mb-4">
-            Пошаговые уроки для уверенного старта в Go на уровне junior-разработчика.
-          </p>
-          <span className="text-cyan-400">Открыть курс →</span>
-        </Link>
-
-        <Link
-          href="/junior/trainer"
-          className="card hover:bg-gray-800 transition-colors border-cyan-500/20"
-        >
-          <div className="text-cyan-400 text-sm mb-2">Junior • Тренажёр</div>
-          <h2 className="text-2xl font-semibold text-white mb-2">Тренажёр Junior</h2>
-          <p className="text-gray-400 mb-4">
-            Практические задачи уровня junior с автопроверкой и подсказками.
-          </p>
-          <span className="text-cyan-400">Открыть тренажёр →</span>
-        </Link>
-      </div>
-
-      <div className="mt-8 card">
-        <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
-          <h3 className="text-xl font-semibold text-white">Программа Bootcamp Junior</h3>
-          <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            Уровень 1 из 3
-          </span>
-        </div>
-        <div className="grid md:grid-cols-3 gap-3 text-sm mb-5">
-          <div className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-gray-300">Теория: 10-20%</div>
-          <div className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-gray-300">Практика: 80-90%</div>
-          <div className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-gray-300">На спринт: 5 примеров + 2 задачи</div>
-        </div>
-        <ul className="space-y-2 mb-6">
-          {sprints.map((s, i) => (
-            <li key={s.label} className="flex items-center gap-3 text-gray-300">
-              <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 bg-cyan-500/20 border border-cyan-500/30 text-cyan-400">
-                {i + 1}
-              </span>
-              <span className="flex-1">{s.label}</span>
-              <span className="text-xs text-emerald-300 font-semibold">Открыто</span>
-            </li>
-          ))}
-        </ul>
-
-        {/* Buy CTA */}
-        <div className="border border-amber-500/30 bg-amber-500/5 rounded-xl px-5 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <main className="page-shell">
+      <section className="page-wrap py-12 sm:py-16">
+        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div>
-            <p className="text-white font-bold mb-1">Все 5 проектов уже доступны</p>
-            <p className="text-gray-400 text-sm">Авто-проверка кода · Задачи · Сертификат Junior</p>
+            <span className="eyebrow">JUNIOR BOOTCAMP</span>
+            <h1 className="mt-5 text-4xl font-black tracking-[-0.04em] text-[#17201d] sm:text-6xl">Go Junior Bootcamp</h1>
+            <p className="mt-5 max-w-2xl text-base leading-8 text-[#647067]">
+              Прокачайся от базового Go до уровня Junior Backend Developer через реальные backend-проекты.
+              В MVP bootcamp открыт бесплатно, а сертификат зависит от результата.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link href="/junior/guide" className="btn-primary">Начать Bootcamp</Link>
+              <Link href="/certificates" className="btn-secondary">Проверить сертификат</Link>
+            </div>
           </div>
-          <Link
-            href="/go"
-            className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-2.5 rounded-xl transition-colors whitespace-nowrap text-sm"
-          >
-            Смотреть проекты →
-          </Link>
+          <div className="terminal-panel">
+            <div className="terminal-bar">
+              <span className="terminal-dot bg-[#ff5f57]" />
+              <span className="terminal-dot bg-[#ffbd2e]" />
+              <span className="terminal-dot bg-[#28c840]" />
+              <span className="ml-2 font-mono text-xs text-slate-400">junior-checkpoint.log</span>
+            </div>
+            <pre className="px-5 py-5 font-mono text-sm leading-7">
+              <code>{`lessons: required
+exercises: required
+projects: 4 required
+final_checkpoint: required
+certificate: go-junior`}</code>
+            </pre>
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+
+      <section className="page-wrap pb-16">
+        <div className="grid gap-4 md:grid-cols-4">
+          {projects.map((project, index) => (
+            <article key={project} className="bento-card p-5">
+              <span className="mono-chip">PROJECT {String(index + 1).padStart(2, '0')}</span>
+              <h2 className="mt-4 text-xl font-black text-[#17201d]">{project}</h2>
+              <p className="mt-3 text-sm leading-6 text-[#647067]">
+                Рабочий backend-brief с требованиями, командами запуска и self-check готовности.
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="page-wrap pb-16">
+        <div className="bento-card p-6 sm:p-8">
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <span className="eyebrow">PROGRAM</span>
+              <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] text-[#17201d]">Спринты Junior уровня</h2>
+            </div>
+            <Link href="/junior/trainer" className="btn-secondary">Открыть тренажёр Junior</Link>
+          </div>
+          <div className="mt-6 space-y-3">
+            {sprints.map((sprint, index) => (
+              <div key={sprint} className="grid gap-3 rounded-2xl border border-[#dfe6dc] bg-[#f8faf4] p-4 sm:grid-cols-[56px_1fr_auto] sm:items-center">
+                <span className="font-mono text-xl font-black text-[#20a865]">{String(index).padStart(2, '0')}</span>
+                <p className="font-semibold text-[#17201d]">{sprint}</p>
+                <span className="mono-chip">OPEN</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="page-wrap pb-20">
+        <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+          <div>
+            <span className="eyebrow">STACK</span>
+            <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] text-[#17201d]">Темы bootcamp</h2>
+            <p className="mt-3 text-sm leading-7 text-[#647067]">
+              Фокус на практику backend-разработчика: API, хранение данных, окружение и проверка результата.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {topics.map((topic) => (
+              <span key={topic} className="mono-chip">{topic}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+    </main>
   )
 }

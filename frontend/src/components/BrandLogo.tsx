@@ -13,9 +13,9 @@ export function BrandLogo({ className = '', compact = false }: BrandLogoProps) {
       className={`inline-flex items-center gap-1.5 font-mono font-semibold tracking-[-0.03em] ${sizeClass} ${className}`}
       aria-label="godemy"
     >
-      <span className="text-violet-400">[</span>
-      <span className="text-white">godemy</span>
-      <span className="text-cyan-300">_</span>
+      <span className="text-[#20a865]">[</span>
+      <span className="text-[#17201d]">godemy</span>
+      <span className="text-[#18a8b8]">_</span>
     </span>
   )
 }

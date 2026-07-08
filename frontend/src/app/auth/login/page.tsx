@@ -44,8 +44,8 @@ export default function LoginPage() {
     <div className="auth-shell">
       <div className="auth-card">
         <p className="eyebrow">Возвращение к курсу</p>
-        <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-white">Вход</h1>
-        <p className="mt-3 text-sm leading-6 text-slate-400">Войди, чтобы продолжить обучение с того же места и не потерять прогресс.</p>
+        <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-[#17201d]">Вход</h1>
+        <p className="mt-3 text-sm leading-6 text-[#647067]">Войди, чтобы продолжить обучение с того же места и не потерять прогресс.</p>
 
         <form onSubmit={onSubmit} className="mt-8 space-y-4">
           <div>
@@ -71,7 +71,7 @@ export default function LoginPage() {
               placeholder="••••••••"
             />
             <div className="mt-1.5 text-right">
-              <Link href="/auth/forgot-password" className="text-xs text-violet-300 transition hover:text-white">
+              <Link href="/auth/forgot-password" className="text-xs font-semibold text-[#087a43] transition hover:text-[#17201d]">
                 Забыли пароль?
               </Link>
             </div>
@@ -92,9 +92,9 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-sm text-slate-400">
+        <p className="mt-6 text-sm text-[#647067]">
           Нет аккаунта?{' '}
-          <Link href="/auth/register" className="font-medium text-violet-300 transition hover:text-white">
+          <Link href="/auth/register" className="font-medium text-[#087a43] transition hover:text-[#17201d]">
             Зарегистрироваться
           </Link>
         </p>

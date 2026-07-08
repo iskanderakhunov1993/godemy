@@ -2,21 +2,21 @@
 @import "tailwindcss";
 
 :root {
-  color-scheme: dark;
-  --app-bg: #070b14;
-  --app-bg-soft: #0d1322;
-  --app-surface: rgba(15, 23, 42, 0.78);
-  --app-surface-strong: rgba(15, 23, 42, 0.92);
-  --app-surface-soft: rgba(148, 163, 184, 0.06);
-  --app-border: rgba(148, 163, 184, 0.14);
-  --app-border-strong: rgba(148, 163, 184, 0.24);
-  --app-text: #f8fafc;
-  --app-muted: #94a3b8;
-  --app-muted-strong: #cbd5e1;
-  --app-accent: #7c3aed;
-  --app-accent-soft: rgba(124, 58, 237, 0.14);
+  color-scheme: light;
+  --app-bg: #f6f7f2;
+  --app-bg-soft: #fbfcf8;
+  --app-surface: rgba(255, 255, 255, 0.86);
+  --app-surface-strong: #ffffff;
+  --app-surface-soft: rgba(15, 23, 42, 0.035);
+  --app-border: rgba(33, 41, 54, 0.1);
+  --app-border-strong: rgba(33, 41, 54, 0.16);
+  --app-text: #17201d;
+  --app-muted: #647067;
+  --app-muted-strong: #37423d;
+  --app-accent: #20d47b;
+  --app-accent-soft: rgba(32, 212, 123, 0.12);
   --app-accent-2: #22d3ee;
-  --app-shadow: 0 24px 70px rgba(2, 6, 23, 0.35);
+  --app-shadow: 0 20px 60px rgba(17, 24, 39, 0.08);
 }
 
 * {
@@ -31,14 +31,17 @@ body {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--app-text);
   background:
-    radial-gradient(circle at top left, rgba(34, 211, 238, 0.07), transparent 28%),
-    radial-gradient(circle at top right, rgba(124, 58, 237, 0.1), transparent 26%),
-    linear-gradient(180deg, #060913 0%, #0a1020 42%, #070b14 100%);
+    linear-gradient(rgba(17, 24, 39, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 24, 39, 0.025) 1px, transparent 1px),
+    radial-gradient(circle at top left, rgba(32, 212, 123, 0.12), transparent 30%),
+    radial-gradient(circle at top right, rgba(34, 211, 238, 0.1), transparent 28%),
+    linear-gradient(180deg, #fbfcf8 0%, #f5f7f1 52%, #eef4ef 100%);
+  background-size: 34px 34px, 34px 34px, auto, auto, auto;
   min-height: 100vh;
 }
 
 body::selection {
-  background: rgba(124, 58, 237, 0.28);
+  background: rgba(32, 212, 123, 0.24);
 }
 
 a,
@@ -68,19 +71,20 @@ button {
   align-items: center;
   gap: 0.5rem;
   border-radius: 999px;
-  border: 1px solid rgba(34, 211, 238, 0.22);
-  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(32, 212, 123, 0.22);
+  background: rgba(32, 212, 123, 0.1);
   padding: 0.45rem 0.85rem;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #a5f3fc;
+  color: #087a43;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 .section-frame {
   border: 1px solid var(--app-border);
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.72));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.78));
   box-shadow: var(--app-shadow);
   backdrop-filter: blur(16px);
 }
@@ -92,8 +96,8 @@ button {
 
 .stat-card {
   border: 1px solid var(--app-border);
-  background: rgba(15, 23, 42, 0.68);
-  box-shadow: 0 14px 34px rgba(2, 6, 23, 0.18);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 14px 34px rgba(17, 24, 39, 0.06);
 }
 
 .icon-chip {
@@ -103,9 +107,9 @@ button {
   height: 2.8rem;
   width: 2.8rem;
   border-radius: 0.95rem;
-  border: 1px solid rgba(34, 211, 238, 0.22);
-  background: linear-gradient(180deg, rgba(34, 211, 238, 0.16), rgba(16, 185, 129, 0.08));
-  color: #cffafe;
+  border: 1px solid rgba(32, 212, 123, 0.24);
+  background: linear-gradient(180deg, rgba(32, 212, 123, 0.16), rgba(34, 211, 238, 0.08));
+  color: #087a43;
 }
 
 /* ── Light mode: invert gray palette ─────────────────────────── */
@@ -178,8 +182,11 @@ html.accent-orange {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #34d399 0%, #22d3ee 100%);
-  color: #06121f;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #21d37a 0%, #37d6c3 100%);
+  color: #071713;
   font-weight: 700;
   padding: 0.75rem 1.25rem;
   border-radius: 0.95rem;
@@ -192,9 +199,12 @@ html.accent-orange {
 }
 
 .btn-secondary {
-  background: rgba(15, 23, 42, 0.6);
-  color: rgb(243 244 246);
-  border: 1px solid rgba(148, 163, 184, 0.16);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.78);
+  color: #17201d;
+  border: 1px solid var(--app-border-strong);
   font-weight: 600;
   padding: 0.75rem 1.25rem;
   border-radius: 0.95rem;
@@ -202,8 +212,8 @@ html.accent-orange {
 }
 
 .btn-secondary:hover {
-  background: rgba(30, 41, 59, 0.85);
-  border-color: rgba(148, 163, 184, 0.28);
+  background: #ffffff;
+  border-color: rgba(32, 212, 123, 0.36);
 }
 
 html.light .btn-secondary {
@@ -219,7 +229,7 @@ html.light .btn-secondary:hover {
 .card {
   background: var(--app-surface);
   border: 1px solid var(--app-border);
-  border-radius: 1.5rem;
+  border-radius: 1.25rem;
   padding: 1.25rem;
   box-shadow: var(--app-shadow);
 }
@@ -231,24 +241,77 @@ html.light .card {
 }
 
 .surface-card {
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.86), rgba(15, 23, 42, 0.72));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.76));
   border: 1px solid var(--app-border);
   box-shadow: var(--app-shadow);
   backdrop-filter: blur(14px);
 }
 
 .surface-subcard {
-  background: rgba(148, 163, 184, 0.05);
-  border: 1px solid rgba(148, 163, 184, 0.1);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  background: rgba(246, 248, 243, 0.84);
+  border: 1px solid var(--app-border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 .surface-highlight {
   background:
-    radial-gradient(circle at top left, rgba(124, 58, 237, 0.16), transparent 35%),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.78));
-  border: 1px solid rgba(124, 58, 237, 0.22);
-  box-shadow: 0 24px 54px rgba(15, 23, 42, 0.26);
+    radial-gradient(circle at top left, rgba(32, 212, 123, 0.18), transparent 35%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.8));
+  border: 1px solid rgba(32, 212, 123, 0.24);
+  box-shadow: 0 24px 54px rgba(17, 24, 39, 0.09);
+}
+
+.mono-chip {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 999px;
+  border: 1px solid rgba(33, 41, 54, 0.1);
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.35rem 0.65rem;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #3d4a44;
+}
+
+.terminal-panel {
+  overflow: hidden;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: #07110f;
+  box-shadow: 0 22px 54px rgba(7, 17, 15, 0.22);
+  color: #d8fff0;
+}
+
+.terminal-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.75rem 1rem;
+}
+
+.terminal-dot {
+  height: 0.65rem;
+  width: 0.65rem;
+  border-radius: 999px;
+}
+
+.bento-card {
+  border: 1px solid var(--app-border);
+  background: rgba(255, 255, 255, 0.82);
+  border-radius: 1.25rem;
+  box-shadow: 0 18px 48px rgba(17, 24, 39, 0.06);
+}
+
+.bento-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(32, 212, 123, 0.32);
+  box-shadow: 0 22px 56px rgba(17, 24, 39, 0.09);
 }
 
 .auth-shell {
@@ -262,12 +325,12 @@ html.light .card {
 .auth-card {
   width: 100%;
   max-width: 30rem;
-  border-radius: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.5rem;
+  border: 1px solid var(--app-border);
   background:
-    radial-gradient(circle at top, rgba(139, 92, 246, 0.15), transparent 38%),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(2, 6, 23, 0.98));
-  box-shadow: 0 28px 80px rgba(2, 6, 23, 0.46);
+    radial-gradient(circle at top, rgba(32, 212, 123, 0.13), transparent 38%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.88));
+  box-shadow: 0 28px 80px rgba(17, 24, 39, 0.1);
   padding: 2rem;
 }
 
@@ -275,37 +338,37 @@ html.light .card {
   display: block;
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
-  color: rgba(226, 232, 240, 0.88);
+  color: #3d4a44;
 }
 
 .app-input {
   width: 100%;
   border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid var(--app-border);
+  background: rgba(255, 255, 255, 0.9);
   padding: 0.9rem 1rem;
-  color: rgba(248, 250, 252, 0.96);
+  color: #17201d;
   transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
 }
 
 .app-input::placeholder {
-  color: rgba(148, 163, 184, 0.72);
+  color: #93a096;
 }
 
 .app-input:focus {
   outline: none;
-  border-color: rgba(139, 92, 246, 0.72);
-  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.14);
-  background: rgba(15, 23, 42, 0.84);
+  border-color: rgba(32, 212, 123, 0.72);
+  box-shadow: 0 0 0 4px rgba(32, 212, 123, 0.14);
+  background: #ffffff;
 }
 
 .app-alert {
   border-radius: 1rem;
   border: 1px solid rgba(248, 113, 113, 0.24);
-  background: rgba(127, 29, 29, 0.12);
+  background: rgba(254, 226, 226, 0.86);
   padding: 0.9rem 1rem;
   font-size: 0.95rem;
-  color: rgb(252, 165, 165);
+  color: #b42318;
 }
 
 .auth-divider {
@@ -319,16 +382,16 @@ html.light .card {
   top: 50%;
   left: 0;
   right: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.09);
+  border-top: 1px solid var(--app-border);
 }
 
 .auth-divider span {
   position: relative;
   display: inline-block;
   padding: 0 0.9rem;
-  color: rgba(148, 163, 184, 0.84);
+  color: #647067;
   font-size: 0.75rem;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.86);
 }
 
 html.light .surface-card {
@@ -343,8 +406,10 @@ html.light .surface-subcard {
 }
 
 html.light .surface-highlight {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(243, 244, 255, 1) 100%);
-  border-color: rgba(124, 58, 237, 0.18);
+  background:
+    radial-gradient(circle at top left, rgba(32, 212, 123, 0.18), transparent 35%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.8));
+  border-color: rgba(32, 212, 123, 0.24);
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
 }
 

@@ -49,7 +49,7 @@ export default function ProjectPage() {
   }
 
   if (!project) {
-    return <main className="page-shell"><div className="page-wrap py-16 text-slate-400">Загружаем проект...</div></main>
+    return <main className="page-shell"><div className="page-wrap py-16 text-[#647067]">Загружаем проект...</div></main>
   }
 
   const completed = submission?.status === 'completed'
@@ -57,14 +57,28 @@ export default function ProjectPage() {
   return (
     <main className="page-shell">
       <section className="page-wrap py-10">
-        <Link href={project.level === 'go-junior' ? '/go' : '/guide'} className="text-sm text-slate-500 hover:text-slate-300">
+        <Link href={project.level === 'go-junior' ? '/go' : '/guide'} className="text-sm font-semibold text-[#647067] hover:text-[#17201d]">
           ← Назад к маршруту
         </Link>
         <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_380px]">
-          <article className="surface-card rounded-[30px] p-7">
+          <article className="surface-card rounded-[28px] p-6 sm:p-8">
             <span className="eyebrow">{project.level === 'go-junior' ? 'Go Junior' : 'Free Go'} · {project.kind === 'checkpoint' ? 'Checkpoint' : 'Project'}</span>
-            <h1 className="mt-4 text-4xl font-black tracking-[-0.04em] text-white">{project.title}</h1>
-            <p className="mt-4 text-lg leading-8 text-slate-300">{project.description}</p>
+            <h1 className="mt-4 text-4xl font-black tracking-[-0.04em] text-[#17201d]">{project.title}</h1>
+            <p className="mt-4 text-lg leading-8 text-[#647067]">{project.description}</p>
+
+            <div className="mt-6 terminal-panel">
+              <div className="terminal-bar">
+                <span className="terminal-dot bg-[#ff5f57]" />
+                <span className="terminal-dot bg-[#ffbd2e]" />
+                <span className="terminal-dot bg-[#28c840]" />
+                <span className="ml-2 font-mono text-xs text-slate-400">project-brief.md</span>
+              </div>
+              <pre className="px-5 py-4 font-mono text-sm leading-7">
+                <code>{`$ go mod init godemy/${project.slug}
+$ go run .
+status: self-check required`}</code>
+              </pre>
+            </div>
 
             {[
               ['Что сделать', project.requirements],
@@ -72,19 +86,19 @@ export default function ProjectPage() {
               ['Чек-лист проверки', project.checklist],
               ['Эталонное направление', project.solution],
             ].map(([title, text]) => (
-              <section key={title} className="mt-6 rounded-2xl border border-white/8 bg-white/[0.035] p-5">
-                <h2 className="text-lg font-bold text-white">{title}</h2>
-                <p className="mt-2 whitespace-pre-line text-sm leading-7 text-slate-400">{text}</p>
+              <section key={title} className="mt-5 rounded-2xl border border-[#dfe6dc] bg-[#f8faf4] p-5">
+                <h2 className="text-lg font-black text-[#17201d]">{title}</h2>
+                <p className="mt-2 whitespace-pre-line text-sm leading-7 text-[#647067]">{text}</p>
               </section>
             ))}
           </article>
 
-          <aside className="surface-card h-fit rounded-[30px] p-6">
-            <div className={`rounded-2xl border p-4 ${completed ? 'border-emerald-400/20 bg-emerald-400/10' : 'border-amber-400/20 bg-amber-400/10'}`}>
-              <p className={`text-sm font-semibold ${completed ? 'text-emerald-300' : 'text-amber-300'}`}>
+          <aside className="surface-card h-fit rounded-[28px] p-6">
+            <div className={`rounded-2xl border p-4 ${completed ? 'border-emerald-300 bg-emerald-50' : 'border-amber-200 bg-amber-50'}`}>
+              <p className={`font-mono text-xs font-bold uppercase tracking-[0.14em] ${completed ? 'text-emerald-700' : 'text-amber-700'}`}>
                 {completed ? 'Выполнено' : 'Self-check'}
               </p>
-              <p className="mt-2 text-sm leading-6 text-slate-300">
+              <p className="mt-2 text-sm leading-6 text-[#647067]">
                 В MVP проект подтверждается самостоятельно. Добавь GitHub-ссылку или заметку и отметь готовность.
               </p>
             </div>
@@ -99,22 +113,22 @@ export default function ProjectPage() {
                   value={githubUrl}
                   onChange={(event) => setGithubUrl(event.target.value)}
                   placeholder="GitHub URL, опционально"
-                  className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400"
+                  className="w-full rounded-xl border border-[#dfe6dc] bg-white px-4 py-3 text-sm text-[#17201d] outline-none focus:border-[#20d47b]"
                 />
                 <textarea
                   value={note}
                   onChange={(event) => setNote(event.target.value)}
                   placeholder="Заметка: что сделал, как запускать, что проверить"
                   rows={5}
-                  className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400"
+                  className="w-full rounded-xl border border-[#dfe6dc] bg-white px-4 py-3 text-sm text-[#17201d] outline-none focus:border-[#20d47b]"
                 />
-                <button disabled={saving} onClick={() => save('started')} className="w-full rounded-xl border border-gray-700 px-4 py-3 text-sm font-semibold text-slate-200 hover:border-gray-500 disabled:opacity-50">
+                <button disabled={saving} onClick={() => save('started')} className="w-full rounded-xl border border-[#dfe6dc] bg-white px-4 py-3 text-sm font-semibold text-[#3d4a44] hover:border-[#20d47b]/40 disabled:opacity-50">
                   Сохранить прогресс
                 </button>
                 <button disabled={saving} onClick={() => save('completed')} className="btn-primary w-full justify-center disabled:opacity-50">
                   Отметить как решённое
                 </button>
-                {flash && <p className="rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 text-sm text-cyan-200">{flash}</p>}
+                {flash && <p className="rounded-xl border border-[#b9d7c7] bg-[#effbf3] px-4 py-3 text-sm text-[#087a43]">{flash}</p>}
               </div>
             )}
           </aside>
