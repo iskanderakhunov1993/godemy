@@ -19,7 +19,7 @@ function getCanonicalOrigin(origin: string): string {
 function getBackendUrlCandidates(): string[] {
   // Production serves the API through nginx on the same origin. Prefer it so a
   // stale or invalid public env value cannot break auth and other core flows.
-  const candidates = [browserOrigin, getCanonicalOrigin(browserOrigin), envBackendUrl]
+  const candidates = [envBackendUrl, browserOrigin, getCanonicalOrigin(browserOrigin)]
     .map(trimTrailingSlash)
     .filter(Boolean)
 

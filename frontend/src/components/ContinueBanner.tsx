@@ -1,11 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { getLastVisited, LastVisited } from '@/lib/streak'
 
 export default function ContinueBanner() {
-  const [last] = useState<LastVisited | null>(() => getLastVisited())
+  const [last, setLast] = useState<LastVisited | null>(null)
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setLast(getLastVisited())
+    }, 0)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [])
 
   if (!last) return null
 
@@ -18,13 +26,13 @@ export default function ContinueBanner() {
     <div className="mx-auto max-w-7xl px-4 pt-5 sm:px-6">
       <Link
         href={last.href}
-        className="group flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.035] px-4 py-3 text-sm transition hover:border-cyan-300/25 hover:bg-white/[0.055]"
+        className="group flex items-center gap-3 rounded-2xl border border-[#dfe6dc] bg-white/80 px-4 py-3 text-sm shadow-sm transition hover:border-[#20d47b]/35 hover:bg-white"
       >
-        <div className="h-2 w-2 shrink-0 rounded-full bg-cyan-300 shadow-[0_0_14px_rgba(34,211,238,0.65)]" />
-        <div className="min-w-0 flex-1 truncate text-gray-400">
-          Продолжить: <span className="font-semibold text-gray-100">{label.toLowerCase()} · {title}</span>
+        <div className="h-2 w-2 shrink-0 rounded-full bg-[#20d47b] shadow-[0_0_14px_rgba(32,212,123,0.45)]" />
+        <div className="min-w-0 flex-1 truncate text-[#647067]">
+          Продолжить: <span className="font-semibold text-[#17201d]">{label.toLowerCase()} · {title}</span>
         </div>
-        <div className="shrink-0 text-base text-cyan-300 transition-transform group-hover:translate-x-1">
+        <div className="shrink-0 text-base text-[#087a43] transition-transform group-hover:translate-x-1">
           →
         </div>
       </Link>
